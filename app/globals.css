@@ -37,7 +37,11 @@
   color: var(--color-fg);
 }
 
-.tone-dark {
+/* The second selector is the Services grid's no-JS / reduced-motion branch.
+   It shares this declaration block rather than restating the role values, so
+   the scripted path and the CSS path cannot drift apart. */
+.tone-dark,
+.services-grid:not([data-slider]) .service-card:hover {
   --color-fg: #ffffff;
   --color-muted: #c6c6c6;
   --color-faint: #979797;
@@ -83,11 +87,11 @@
   --color-voltage: #fff100; /* micro-accents ONLY */
 
   /* ---- Type families ---- */
-  --font-display: var(--font-anton), "Anton", "Bebas Neue", "Barlow Condensed",
-    sans-serif;
+  --font-display:
+    var(--font-anton), "Anton", "Bebas Neue", "Barlow Condensed", sans-serif;
   --font-sans: var(--font-inter), "Inter", system-ui, -apple-system, sans-serif;
-  --font-mono: var(--font-jetbrains), "JetBrains Mono", "IBM Plex Mono",
-    monospace;
+  --font-mono:
+    var(--font-jetbrains), "JetBrains Mono", "IBM Plex Mono", monospace;
 
   /* ---- Type scale (minor third, 1.2) ----
      Display sizes are fluid: spec targets are the clamp ceilings.
@@ -341,6 +345,16 @@
 }
 .btn-primary:hover {
   background-color: var(--btn-bg-hover);
+}
+
+/* With the sliding block live, `data-slider` is on the grid and the block is
+   the black surface. Without it — reduced motion, no hover-capable pointer, or
+   no JS at all — the hovered card has to paint its own. Same idiom as
+   `.btn-*:not([data-fill]):hover`: the fallback is what CSS does when the
+   script does not take over. Unlayered so it beats the `border-line` utility. */
+.services-grid:not([data-slider]) .service-card:hover {
+  background-color: var(--color-carbon);
+  border-color: var(--color-carbon);
 }
 
 .btn-ghost {

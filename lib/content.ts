@@ -140,7 +140,15 @@ export const stack = {
   groups: [
     {
       title: "Interface",
-      items: ["React", "TypeScript", "Next.js", "Vite", "Tailwind", "GSAP", "Vue"],
+      items: [
+        "React",
+        "TypeScript",
+        "Next.js",
+        "Vite",
+        "Tailwind",
+        "GSAP",
+        "Vue",
+      ],
     },
     {
       title: "Server & data",
@@ -182,6 +190,11 @@ export const services = {
       body: "Ongoing design and development. New pages, tests, and fixes on a monthly retainer with a shipping cadence.",
       meta: "Monthly",
     },
+    {
+      title: "Process automation",
+      body: "The work behind the site: integrations, queues, and scheduled jobs, plus the dashboards to watch them from.",
+      meta: "From 5 weeks",
+    },
   ],
 };
 
@@ -213,6 +226,7 @@ export const footer = {
         { label: "E-commerce", href: "#services" },
         { label: "Brand & identity", href: "#services" },
         { label: "Care & growth", href: "#services" },
+        { label: "Process automation", href: "#services" },
       ],
     },
     {
