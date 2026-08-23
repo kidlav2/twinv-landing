@@ -1,26 +1,357 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ============================================================
+   V&V STUDIO — Design tokens
+   Source: refero "AI for Business" system (brutalist-editorial)
+   Rules: zero shadows. Depth = surface contrast, never elevation.
+   ============================================================ */
+
+/* ---- Tone ----
+   Sections live inside either a light or a dark zone. These roles carry the
+   semantics; `.tone-dark` (set by ScrollPanel) flips them, so a section written
+   with text-fg / text-muted / border-line works in both without knowing which
+   zone it landed in.
+
+   These override the SAME `--color-*` names that `@theme` declares, rather
+   than feeding them through a second variable. A custom property's value is
+   substituted where it is DECLARED: `--color-muted: var(--tone-muted)` sitting
+   on :root would resolve against :root's tone and inherit that fixed colour
+   down, so a later `.tone-dark` override would never be seen. */
+:root,
+.tone-light {
+  --btn-bg: #000000;
+  --btn-fg: #ffffff;
+  --btn-bg-hover: #2f2f2f;
+  --btn-ghost-border: #444444;
+  --btn-ghost-hover-bg: #000000;
+  --btn-ghost-hover-fg: #ffffff;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* A light card sitting inside a dark zone must reset the roles, or its body
+   copy inherits the zone's light-grey muted colour onto a white surface. */
+.tone-light {
+  --color-fg: #000000;
+  --color-muted: #444444;
+  --color-faint: #979797;
+  --color-line: #c6c6c6;
+  color: var(--color-fg);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+.tone-dark {
+  --color-fg: #ffffff;
+  --color-muted: #c6c6c6;
+  --color-faint: #979797;
+  --color-line: #2f2f2f;
+
+  /* A solid black button would vanish here, so the fill inverts. Hover uses
+     ash, not mint — mint is reserved for tags/links only, never a fill. */
+  --btn-bg: #ffffff;
+  --btn-fg: #000000;
+  --btn-bg-hover: #c6c6c6;
+  --btn-ghost-border: #979797;
+  --btn-ghost-hover-bg: #ffffff;
+  --btn-ghost-hover-fg: #000000;
+
+  /* Headings and other unclassed text inherit the zone's foreground. */
+  color: var(--color-fg);
+}
+
+@theme {
+  /* ---- Tone-aware roles (light defaults; flipped by .tone-dark) ---- */
+  --color-fg: #000000;
+  --color-muted: #444444;
+  --color-faint: #979797;
+  --color-line: #c6c6c6;
+
+  /* ---- Color ---- */
+  --color-carbon: #000000; /* primary text, inverted surfaces */
+  --color-paper: #ffffff; /* card surfaces */
+  --color-canvas: #e5e5e5; /* page background — never pure white */
+  --color-mist: #f3f3f3; /* secondary surfaces, nav pill */
+  --color-ash: #c6c6c6; /* hairlines, disabled */
+  --color-smoke: #979797; /* secondary body text, meta */
+  --color-slate: #444444; /* nav labels, subdued headings */
+  --color-graphite: #2f2f2f; /* code blocks, heavy accents */
+  --color-mint: #d1ffca; /* tags + links ONLY */
+  --color-voltage: #fff100; /* micro-accents ONLY */
+
+  /* ---- Type families ---- */
+  --font-display: var(--font-anton), "Anton", "Bebas Neue", "Barlow Condensed",
+    sans-serif;
+  --font-sans: var(--font-inter), "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-jetbrains), "JetBrains Mono", "IBM Plex Mono",
+    monospace;
+
+  /* ---- Type scale (minor third, 1.2) ----
+     Display sizes are fluid: spec targets are the clamp ceilings.
+     Letter-spacing is ONE value shared by every display/heading tier
+     (0.02em) — set once here, not per-component. A title anywhere on the
+     site (hero, section headings, card titles) must track the same, or the
+     type stops reading as one system.
+     Line-height is 1.0, not the spec's 0.9: single short words (Traffic,
+     Gap, Closed) survive 0.9 fine, but any display text that WRAPS to a
+     second line — a full sentence like the headline in Statement or
+     Product — clips a comma or descender into the line below it at 0.9.
+     1.0 is the floor that stays safe for wrapped multi-line display type. */
+  --text-display-xl: clamp(3.75rem, 12.5vw, 10.5rem); /* → 168px */
+  --text-display-xl--line-height: 1;
+  --text-display-xl--letter-spacing: 0.02em;
+
+  --text-display: clamp(3rem, 9vw, 6.5rem); /* → 104px */
+  --text-display--line-height: 1;
+  --text-display--letter-spacing: 0.02em;
+
+  --text-heading-lg: clamp(2rem, 5vw, 3rem); /* → 48px */
+  --text-heading-lg--line-height: 1;
+  --text-heading-lg--letter-spacing: 0.02em;
+
+  --text-heading: clamp(1.75rem, 3.5vw, 2.5rem); /* → 40px */
+  --text-heading--line-height: 1.1;
+  --text-heading--letter-spacing: 0.02em;
+
+  --text-heading-sm: 1.75rem; /* 28px */
+  --text-heading-sm--line-height: 1.3;
+  --text-heading-sm--letter-spacing: 0.02em;
+
+  /* The site's one paragraph size, measured directly off the reference
+     (devtools: font-size 26.6667px). Every block of paragraph-length body
+     copy uses this — not text-body, not text-heading — so "paragraph text"
+     means one specific size everywhere, not whatever a component reached for. */
+  --text-lead: 1.6667rem; /* 26.6667px */
+  --text-lead--line-height: 1.35;
+
+  --text-sub-lg: 1.25rem; /* 20px */
+  --text-sub-lg--line-height: 1.2;
+
+  --text-sub: 1.125rem; /* 18px */
+  --text-sub--line-height: 1.33;
+
+  --text-body: 1rem; /* 16px */
+  --text-body--line-height: 1.25;
+
+  --text-body-sm: 0.875rem; /* 14px */
+  --text-body-sm--line-height: 1.3;
+  --text-body-sm--letter-spacing: -0.011em;
+
+  --text-caption: 0.75rem; /* 12px */
+  --text-caption--line-height: 1.6;
+  --text-caption--letter-spacing: -0.03em;
+
+  /* ---- Radius ---- */
+  --radius-btn: 8px;
+  --radius-btn-sharp: 4px;
+  --radius-card: 32px;
+  --radius-card-sm: 24px;
+  --radius-pill: 48px;
+  --radius-tag: 64px;
+
+  /* ---- Layout ----
+     No max-width cap: sections run edge-to-edge on real monitors, held off
+     the glass only by the gutter. Nav uses a tighter gutter than sections. */
+  --spacing-section: 80px;
+  --spacing-nav: 7.5rem;
+  /* Measured height of the fixed bar. Anchor offsets, the nav-tone trigger in
+     scroll-panel.tsx, and ScrollSmoother's scrollTo all read this ONE value —
+     before, 96px was hard-coded in two places and could drift apart. */
+  --nav-height: 113px;
+  /* 3x / 2.5x the original 32px / 20px gutters, per direct request — but as a
+     fixed px value that math eats the entire viewport on a phone. Both scale
+     down below the 1920px width where the multiplier was measured, and clamp
+     at the floor the original design used. */
+  --shell-padding: clamp(24px, 5vw, 96px);
+  --nav-padding: clamp(20px, 2.6vw, 50px);
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+
+@layer base {
+  /* No `scroll-behavior: smooth` here. It fights ScrollSmoother, and it also
+     degrades ScrollTrigger scrubbing. Smoothing is owned by
+     components/smooth-scroll.tsx; reduced-motion users get instant jumps,
+     which is the correct accessibility outcome. */
+
+  /* Every anchor target used to land underneath the fixed bar. */
+  [id] {
+    scroll-margin-top: calc(var(--nav-height) + 16px);
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-carbon);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Display type is uppercase by contract — never mixed case. */
+  .font-display,
+  h1,
+  h2,
+  h3 {
+    text-transform: uppercase;
+  }
+
+  ::selection {
+    background-color: var(--color-voltage);
+    color: var(--color-carbon);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .shell {
+    width: 100%;
+    padding-inline: var(--shell-padding);
+  }
+}
+
+/* The nav floats above whichever zone is under it. ScrollPanel stamps
+   data-nav-tone on <html> and these variables cascade down, so the flip costs
+   no React re-render.
+
+   The BAR itself is always solid and exactly matches the zone's page
+   background — it never floats as a card with its own shadow or blur, so
+   content scrolling underneath appears to slide behind it rather than past a
+   visible edge. Only the link cluster inside it sits in its own pill, a shade
+   off the bar so it reads as a distinct control.
+
+   The nav carries NO Tailwind colour utilities — every colour below comes from
+   a variable and nothing else declares it. Overriding a utility from here is
+   not reliable (a `[data-nav-tone] .x` rule loses to `.bg-carbon` in the
+   utilities layer), so the fix is to remove the competition, not outrank it. */
+:root {
+  --nav-bar-bg: #e5e5e5; /* = --color-canvas, the page background */
+  --nav-pill-bg: #f3f3f3; /* = --color-mist, its documented role */
+  --nav-brand-fg: #000000;
+  --nav-link-fg: #444444;
+  --nav-link-hover: #000000;
+  --nav-cta-bg: #000000;
+  --nav-cta-fg: #ffffff;
+  --nav-cta-hover: #2f2f2f;
+  --nav-burger-border: #c6c6c6;
+}
+
+[data-nav-tone="dark"] {
+  --nav-bar-bg: #000000; /* = --color-carbon, the dark zone background */
+  --nav-pill-bg: #2f2f2f;
+  --nav-brand-fg: #ffffff;
+  --nav-link-fg: #c6c6c6;
+  --nav-link-hover: #ffffff;
+  --nav-cta-bg: #fff100;
+  --nav-cta-fg: #000000;
+  --nav-cta-hover: #ffffff;
+  --nav-burger-border: #2f2f2f;
+}
+
+.nav-bar {
+  background-color: var(--nav-bar-bg);
+  transition: background-color 0.4s ease;
+}
+.nav-pill {
+  background-color: var(--nav-pill-bg);
+  transition: background-color 0.4s ease;
+}
+.nav-brand {
+  color: var(--nav-brand-fg);
+  transition: color 0.4s ease;
+}
+.nav-link {
+  color: var(--nav-link-fg);
+  opacity: 1;
+  transition:
+    color 0.25s ease,
+    opacity 0.3s ease;
+}
+.nav-link:hover {
+  color: var(--nav-link-hover);
+}
+/* Hovering one link dims its siblings, so the hovered item reads as the
+   sole focus rather than just changing colour on its own. */
+.nav-links:has(.nav-link:hover) .nav-link:not(:hover) {
+  opacity: 0.45;
+}
+.nav-cta {
+  background-color: var(--nav-cta-bg);
+  color: var(--nav-cta-fg);
+  transition:
+    background-color 0.4s ease,
+    color 0.4s ease;
+}
+.nav-cta:hover {
+  background-color: var(--nav-cta-hover);
+}
+.nav-burger {
+  border-color: var(--nav-burger-border);
+  color: var(--nav-brand-fg);
+  transition:
+    border-color 0.4s ease,
+    color 0.4s ease;
+}
+.nav-burger span span {
+  background-color: var(--nav-brand-fg);
+  transition: background-color 0.4s ease;
+}
+
+/* The site had no focus style at all — it relied on the UA outline, which is
+   nearly invisible on the black panel. Tone-aware, so it works in both zones.
+   Unlayered for the same reason as the nav rules: it must beat utilities. */
+:focus-visible {
+  outline: 2px solid var(--color-fg);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+/* Pillar cards animate their visual on hover via GSAP, which is gated behind
+   prefers-reduced-motion. This cue is NOT gated, so reduced-motion users still
+   get a response — without it, removing the old "More details" link would have
+   left them no hover feedback at all. */
+.pillar-link .pillar-title {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 6px;
+  text-decoration-thickness: 2px;
+  transition: text-decoration-color 0.25s ease;
+}
+.pillar-link:hover .pillar-title,
+.pillar-link:focus-visible .pillar-title {
+  text-decoration-color: currentColor;
+}
+
+/* Buttons read their fill from the zone tone — also unlayered, same reason. */
+.btn-primary {
+  background-color: var(--btn-bg);
+  color: var(--btn-fg);
+}
+.btn-primary:hover {
+  background-color: var(--btn-bg-hover);
+}
+
+.btn-ghost {
+  border-color: var(--btn-ghost-border);
+  color: var(--color-fg);
+}
+.btn-ghost:hover {
+  background-color: var(--btn-ghost-hover-bg);
+  color: var(--btn-ghost-hover-fg);
+  border-color: var(--btn-ghost-hover-bg);
+}
+
+@layer utilities {
+  /* `.reveal` intentionally carries NO styles. GSAP applies the hidden state
+     (see components/reveal.tsx) so content stays visible if the bundle never
+     loads, and it sets/clears will-change per tween rather than leaving ~30
+     elements permanently promoted to their own compositor layer. */
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Belt and braces: matchMedia already skips the tweens, this guarantees
+       nothing is left hidden even if a tween somehow ran. */
+    .reveal {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+    html {
+      scroll-behavior: auto;
+    }
+  }
 }

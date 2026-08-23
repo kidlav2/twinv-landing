@@ -1,0 +1,115 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { ScrollSmoother } from "gsap/ScrollSmoother";
+import { nav } from "@/lib/content";
+
+export function Nav() {
+  const [open, setOpen] = useState(false);
+
+  // Don't let the page scroll behind the open mobile sheet.
+  //
+  // Must target documentElement, not body: ScrollSmoother gives body an
+  // explicit pixel height and the document scroller becomes html, so
+  // `body { overflow: hidden }` no longer stops anything. Pausing the smoother
+  // covers the transform-driven scrolling it does on top of that.
+  useEffect(() => {
+    const smoother = ScrollSmoother.get();
+    document.documentElement.style.overflow = open ? "hidden" : "";
+    smoother?.paused(open);
+    return () => {
+      document.documentElement.style.overflow = "";
+      ScrollSmoother.get()?.paused(false);
+    };
+  }, [open]);
+
+  return (
+    <header className="nav-bar fixed inset-x-0 top-0 z-50">
+      <div
+        className="flex items-center justify-between gap-6 py-6"
+        style={{ paddingInline: "var(--nav-padding)" }}
+      >
+        <Link
+          href="#top"
+          className="nav-brand font-display text-heading shrink-0 leading-none"
+          onClick={() => setOpen(false)}
+        >
+          {nav.brand}
+        </Link>
+
+        <nav className="nav-pill rounded-pill hidden items-center gap-10 px-10 py-5 lg:flex">
+          <ul className="nav-links flex items-center gap-10">
+            {nav.links.map((l) => (
+              <li key={l.label}>
+                <Link href={l.href} className="nav-link text-sub-lg font-medium">
+                  {l.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div className="flex items-center gap-3">
+          <Link
+            href={nav.cta.href}
+            className="nav-cta hidden rounded-[14px] px-7 py-4 text-sub-lg font-semibold sm:inline-flex"
+          >
+            {nav.cta.label}
+          </Link>
+
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-expanded={open}
+            aria-label={open ? "Close menu" : "Open menu"}
+            className="nav-burger rounded-btn flex h-12 w-12 items-center justify-center border lg:hidden"
+          >
+            <span className="relative block h-3 w-4">
+              <span
+                className={`absolute left-0 block h-[1.5px] w-full transition-transform duration-200 ${
+                  open ? "top-1/2 rotate-45" : "top-0"
+                }`}
+              />
+              <span
+                className={`absolute left-0 block h-[1.5px] w-full transition-transform duration-200 ${
+                  open ? "top-1/2 -rotate-45" : "top-full"
+                }`}
+              />
+            </span>
+          </button>
+        </div>
+      </div>
+
+      {open && (
+        <div
+          className="nav-pill mx-auto mb-4 overflow-hidden rounded-2xl lg:hidden"
+          style={{ marginInline: "var(--nav-padding)" }}
+        >
+          <ul className="flex flex-col p-4">
+            {nav.links.map((l) => (
+              <li key={l.label}>
+                <Link
+                  href={l.href}
+                  onClick={() => setOpen(false)}
+                  className="nav-link block rounded-btn px-4 py-4 text-heading-sm"
+                >
+                  {l.label}
+                </Link>
+              </li>
+            ))}
+            <li className="mt-2">
+              <Link
+                href={nav.cta.href}
+                onClick={() => setOpen(false)}
+                className="nav-cta block rounded-[14px] px-6 py-4 text-center text-body font-medium"
+              >
+                {nav.cta.label}
+              </Link>
+            </li>
+          </ul>
+        </div>
+      )}
+    </header>
+  );
+}
