@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { product } from "@/lib/content";
-import { ButtonPrimary } from "./ui";
 import { Reveal } from "./reveal";
+import { ProductCopy } from "./product-copy";
 
 export function Product() {
   return (
@@ -16,16 +16,11 @@ export function Product() {
             <h2 className="reveal font-display text-display">
               {product.headline}
             </h2>
-            {product.body.map((p) => (
-              <p key={p} className="reveal text-fg mt-6 text-lead">
-                {p}
-              </p>
-            ))}
-            <div className="reveal mt-10">
-              <ButtonPrimary href={product.cta.href}>
-                {product.cta.label}
-              </ButtonPrimary>
-            </div>
+            {/* The heading keeps `.reveal` — it should be readable the
+                moment the section arrives. The copy and CTA below moved into
+                ProductCopy, which lights them word by word on scroll; they
+                must not also be in the reveal batch. */}
+            <ProductCopy />
           </div>
 
           {/* The PNG itself is genuinely transparent — measured: 53% of the

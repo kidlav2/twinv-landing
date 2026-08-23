@@ -380,6 +380,12 @@
       opacity: 1 !important;
       transform: none !important;
     }
+    /* Same guarantee for the word-by-word scrub in Product. `.pw` is the class
+       SplitText puts on each word span; the words are only ever dimmed by
+       GSAP, so this is the floor if a tween somehow ran anyway. */
+    .pw {
+      opacity: 1 !important;
+    }
     html {
       scroll-behavior: auto;
     }

@@ -16,7 +16,9 @@
  * isn't, callers skip the tween entirely and the natural (final) layout stands.
  */
 export function isDocumentVisible() {
-  return typeof document !== "undefined" && document.visibilityState !== "hidden";
+  return (
+    typeof document !== "undefined" && document.visibilityState !== "hidden"
+  );
 }
 
 /** Entrance/scroll animation is allowed. */
@@ -41,6 +43,19 @@ export const REVEAL = {
   stagger: 0.08,
   start: "top 86%",
 } as const;
+
+/**
+ * The word-by-word scrub in Product is allowed.
+ *
+ * The min-width is not a taste call. On a phone the text column is usually
+ * taller than the viewport, so `end: "bottom 60%"` can resolve above `start`
+ * and the scrub has no range to run over. Worse, ScrollSmoother runs with
+ * `smoothTouch: false` and `ignoreMobileResize: true`, so the viewport change
+ * from a disappearing address bar never triggers a refresh — a re-split would
+ * be left holding stale trigger positions with no way back.
+ */
+export const WORD_SCRUB_OK =
+  "(min-width: 768px) and (prefers-reduced-motion: no-preference)";
 
 /**
  * How far the dark panel's background hangs below its own section, so the light
