@@ -5,26 +5,26 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { isDocumentVisible, MOTION_OK, PANEL_OVERHANG_VH } from "@/lib/motion";
+import { ZoneCursor } from "./zone-cursor";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 /**
  * A full-height zone whose background arrives as a rounded card and widens to
  * full viewport width as it scrolls up — the transition between the light and
- * dark halves of the page. It reaches true edge-to-edge width, but never loses
- * its corner radius, even at rest — that reads as the panel's shape, not an
- * animation-in-progress state.
+ * dark halves of the page.
+ *
+ * Rounding is TOP-ONLY at rest, on both tones. The dark panel's bottom corners
+ * are still declared rounded in the entrance tween, but they're never actually
+ * seen — the panel hangs `PANEL_OVERHANG_VH` past its section and the light
+ * panel paints over that region. The light panel's bottom, by contrast, sits
+ * directly above the Footer with nothing after it — a rounded, bordered edge
+ * there read as the page visibly "ending" before content that's supposed to
+ * just continue. Top-only rounding is the arrival shape; there's no matching
+ * "departure" moment to mirror it with.
  *
  * Only the background layer is animated, never the content: scaling a section
- * that holds text would drag the type along with it. The panel's resting state
- * (full-bleed, rounded corners) is what you see with motion skipped, so nothing
- * here depends on the tween completing.
- *
- * The DARK panel's background hangs `PANEL_OVERHANG_VH` below its own section.
- * That overhang is what makes the LIGHT panel's entrance visible at all: the
- * light panel is canvas-coloured, and so is `body`, so without black behind it
- * its rounded corners and side insets would be canvas-on-canvas — the tween ran
- * perfectly and was simply invisible.
+ * that holds text would drag the type along with it.
  */
 export function ScrollPanel({
   children,
@@ -90,7 +90,9 @@ export function ScrollPanel({
           {
             left: "0%",
             right: "0%",
-            borderRadius: "56px",
+            // Bottom corners square at rest — see the file-level note on why
+            // dark and light differ only in whether that's ever visible.
+            borderRadius: "56px 56px 0px 0px",
             ease: "none",
             scrollTrigger: {
               trigger: scope.current,
@@ -124,17 +126,22 @@ export function ScrollPanel({
       <div
         ref={panel}
         aria-hidden
-        className={`pointer-events-none absolute top-0 left-0 right-0 z-0 origin-top rounded-[56px] ${
+        className={`pointer-events-none absolute top-0 left-0 right-0 z-0 origin-top rounded-t-[56px] ${
           isDark
             ? "bg-carbon"
             : // A hairline gives the light panel a legible silhouette against
               // canvas. On-system: the contract bans shadows, not borders.
-              "bg-canvas border-ash border-[1.5px]"
+              // Top only — see the file-level note.
+              "bg-canvas border-ash border-t-[1.5px]"
         }`}
         style={{
           bottom: isDark ? `-${PANEL_OVERHANG_VH * 100}vh` : 0,
         }}
       />
+      {/* Whole-zone cursor invert — dark only; there's no matching request
+          for the light zone and the effect reads as a "black zone" signature,
+          not a general-purpose one. */}
+      {isDark && <ZoneCursor />}
       <div className="relative z-10">{children}</div>
     </section>
   );

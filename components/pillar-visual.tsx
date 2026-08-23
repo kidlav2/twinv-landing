@@ -42,19 +42,27 @@ function Build() {
   );
 }
 
+/** An actual bar chart — ascending bars off a baseline, tallest picked out in
+ *  voltage. The previous version was a single curved line, which read as
+ *  abstract doodle rather than "growth". Bar heights/positions here are the
+ *  resting (tallest) state; pillar-card.tsx animates each up from the
+ *  baseline using these same attribute values as its targets. */
 function Grow() {
   return (
     <>
-      <polyline
-        className="p-rail"
-        points="30,186 82,150 126,94 188,34"
-        fill="none"
-        stroke={PAPER}
-        strokeWidth="16"
+      <line
+        x1="22"
+        y1="190"
+        x2="198"
+        y2="190"
+        stroke={ASH}
+        strokeWidth="3"
         strokeLinecap="round"
-        strokeLinejoin="round"
       />
-      <circle className="p-head" cx="188" cy="34" r="18" fill={VOLT} />
+      <rect className="p-bar" x="38" y="150" width="30" height="40" rx="5" fill={ASH} />
+      <rect className="p-bar" x="82" y="118" width="30" height="72" rx="5" fill={ASH} />
+      <rect className="p-bar" x="126" y="82" width="30" height="108" rx="5" fill={PAPER} />
+      <rect className="p-bar" x="170" y="40" width="30" height="150" rx="5" fill={VOLT} />
     </>
   );
 }

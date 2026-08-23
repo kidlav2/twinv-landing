@@ -7,15 +7,12 @@ export function Product() {
   return (
     <section className="overflow-x-clip py-section">
       <Reveal className="shell">
-        {/* `lg:relative` makes this the positioning context for the bled
-            image below. It spans the shell's full (viewport) width, so a
-            descendant anchored at `right: -shell-padding` lands exactly flush
-            with the browser edge — not past it, so no horizontal scrollbar.
-            `lg:block` (not grid): the image is `lg:absolute`, out of flow, so
-            a grid's second track would just sit empty and gap the text away
-            from where the image actually bleeds from. */}
-        <div className="grid items-center gap-12 lg:relative lg:block">
-          <div className="lg:max-w-[46ch]">
+        {/* A real 50/50 split via grid-cols-2 — each column is exactly half
+            the row by construction, so the text side's width is never a side
+            effect of how big the image happens to be. The image then breaks
+            its own half open further (below) without touching that math. */}
+        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-0">
+          <div className="lg:pr-12">
             <h2 className="reveal font-display text-display">
               {product.headline}
             </h2>
@@ -31,25 +28,31 @@ export function Product() {
             </div>
           </div>
 
-          {/* The illustration needs a light surface under it. Measured: 53% of
-              the PNG is opaque and that part averages luminance 32.5/255, with
-              only a fifth of it above 60 — on the black panel it read as a dark
-              smudge. A paper card is the design system's own answer ("white is
-              a card surface"), and `tone-light` resets the text roles inside.
+          {/* The PNG itself is genuinely transparent — measured: 53% of the
+              frame is opaque and that part is the dark laptop/illustration
+              (mean luminance 32.5/255), not a baked-in white fill. It sits
+              straight on the panel, no card, no surface of its own.
 
-              On desktop the card breaks out of the grid, and its right ~30%
-              is pushed past the viewport edge on purpose — `overflow-x-clip`
-              on the section is what makes that safe (cuts the overflow
-              instead of adding a horizontal scrollbar to the whole page). */}
-          <div className="reveal tone-light bg-paper rounded-card mt-8 p-6 sm:p-10 lg:absolute lg:inset-y-0 lg:mt-0 lg:flex lg:w-[52vw] lg:items-center lg:[right:calc(-1*var(--shell-padding)-16vw)]">
-            <Image
-              src="/studio-macbook.png"
-              alt="Two people working in a studio — one writing code, one mapping the plan on a whiteboard"
-              width={2752}
-              height={1536}
-              sizes="(min-width: 1024px) 46vw, 100vw"
-              className="h-auto w-full"
-            />
+              `lg:relative` on this cell makes IT the positioning context, so
+              the bleed below is scoped to this half only — the text column's
+              width stays exactly 50%, unaffected by how far the image
+              overflows past its own edge. Sized at ~180% of the column
+              (roughly double the plain-50% baseline, per the ask), anchored
+              to the column's left edge so the overflow runs off the right —
+              `overflow-x-clip` on the section is what makes that safe (cuts
+              the overflow instead of adding a horizontal scrollbar to the
+              whole page). */}
+          <div className="reveal relative">
+            <div className="lg:absolute lg:inset-y-0 lg:left-0 lg:flex lg:w-[180%] lg:items-center">
+              <Image
+                src="/studio-macbook.png"
+                alt="Two people working in a studio — one writing code, one mapping the plan on a whiteboard"
+                width={2752}
+                height={1536}
+                sizes="(min-width: 1024px) 90vw, 100vw"
+                className="h-auto w-full"
+              />
+            </div>
           </div>
         </div>
       </Reveal>

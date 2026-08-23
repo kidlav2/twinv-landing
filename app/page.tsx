@@ -34,8 +34,8 @@ export default function Home() {
           {/* …then the light panel does the same over the black, and the page
             returns to canvas for the proof and the offer. */}
           <ScrollPanel tone="light">
-            <Stack />
             <Cases />
+            <Stack />
             <Services />
             <Banners />
           </ScrollPanel>

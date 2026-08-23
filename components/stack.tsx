@@ -1,5 +1,6 @@
 import { stack } from "@/lib/content";
 import { Reveal } from "./reveal";
+import { StackAccent } from "./stack-accent";
 
 /**
  * Tone-aware (text-muted/border-line), so it needs no surface of its own
@@ -12,7 +13,8 @@ import { Reveal } from "./reveal";
  */
 export function Stack() {
   return (
-    <section id="stack" className="py-32">
+    <section id="stack" className="relative py-32">
+      <StackAccent />
       <Reveal className="shell">
         <div className="mx-auto max-w-[46ch] text-center">
           <h2 className="reveal font-display text-heading-lg">
@@ -27,13 +29,20 @@ export function Stack() {
               key={group.title}
               className="reveal flex flex-col items-center gap-5"
             >
-              <p className="text-faint font-mono text-caption uppercase">
+              {/* Was text-caption (12px) — bumped so the group label reads as
+                  a heading of its own, not a fine-print tag. */}
+              <p className="text-faint font-mono text-body-sm uppercase">
                 {group.title}
               </p>
-              <ul className="flex flex-wrap justify-center gap-3">
+              <ul className="flex flex-wrap justify-center gap-4">
                 {group.items.map((item) => (
                   <li key={item}>
-                    <span className="border-line hover:bg-fg hover:text-canvas hover:border-fg rounded-tag font-mono inline-flex items-center px-5 py-2.5 text-body-sm uppercase transition-colors duration-200">
+                    {/* Bigger and heavier than the sub-copy above (text-sub,
+                        18px) on purpose — was mono/text-body-sm (14px), which
+                        made the actual stack read smaller than its own
+                        description. font-display carries the weight; no
+                        separate font-bold needed. */}
+                    <span className="border-line hover:bg-fg hover:text-canvas hover:border-fg rounded-tag font-display inline-flex items-center px-7 py-3 text-heading-sm transition-colors duration-200">
                       {item}
                     </span>
                   </li>

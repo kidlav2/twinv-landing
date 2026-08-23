@@ -228,7 +228,12 @@
   --nav-link-hover: #000000;
   --nav-cta-bg: #000000;
   --nav-cta-fg: #ffffff;
-  --nav-cta-hover: #2f2f2f;
+  /* Was #2f2f2f — a near-black hover on a near-black button was barely
+     perceptible. Voltage yellow is the system's own micro-accent colour, and
+     mirrors the dark-zone CTA below (which is yellow at rest, white on
+     hover) — the two read as one motif instead of two different hovers. */
+  --nav-cta-hover: #fff100;
+  --nav-cta-hover-fg: #000000;
   --nav-burger-border: #c6c6c6;
 }
 
@@ -241,6 +246,7 @@
   --nav-cta-bg: #fff100;
   --nav-cta-fg: #000000;
   --nav-cta-hover: #ffffff;
+  --nav-cta-hover-fg: #000000;
   --nav-burger-border: #2f2f2f;
 }
 
@@ -280,6 +286,9 @@
 }
 .nav-cta:hover {
   background-color: var(--nav-cta-hover);
+  /* Was unset, so hover only ever changed the fill: in the light zone that
+     left white label text sitting on the new yellow fill — unreadable. */
+  color: var(--nav-cta-hover-fg);
 }
 .nav-burger {
   border-color: var(--nav-burger-border);

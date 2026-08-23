@@ -6,7 +6,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { statement } from "@/lib/content";
 import { isDocumentVisible, MOTION_OK, REVEAL } from "@/lib/motion";
-import { StatementCursor } from "./statement-cursor";
 import { StatementDoodle } from "./statement-doodle";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -52,11 +51,7 @@ export function Statement() {
   );
 
   return (
-    <section ref={scope} className="relative overflow-hidden py-32">
-      {/* Clips at the section edge, not the viewport, so the cursor circle
-          never paints over the nav or neighbouring sections. */}
-      <StatementCursor />
-
+    <section ref={scope} className="py-32">
       <div className="shell">
         <div className="grid gap-12 lg:grid-cols-[1fr_auto] lg:items-start lg:gap-16">
           <div className="flex flex-col items-start text-left">

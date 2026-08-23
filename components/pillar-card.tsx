@@ -5,12 +5,11 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { MorphSVGPlugin } from "gsap/MorphSVGPlugin";
-import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
 import { useGSAP } from "@gsap/react";
 import { isDocumentVisible, MOTION_OK } from "@/lib/motion";
 import { PillarVisual, DESIGN_REST, type PillarVariant } from "./pillar-visual";
 
-gsap.registerPlugin(useGSAP, ScrollTrigger, MorphSVGPlugin, DrawSVGPlugin);
+gsap.registerPlugin(useGSAP, ScrollTrigger, MorphSVGPlugin);
 
 /**
  * Morph targets for the `design` variant — square → circle → blob → square.
@@ -98,32 +97,39 @@ export function PillarCard({
             .from(blocks, {
               y: -170,
               opacity: 0,
-              duration: 0.5,
-              // A small overshoot on landing reads as a settle, not a snap.
-              ease: "back.out(1.6)",
-              stagger: 0.16,
+              // Was 0.5s/stagger 0.16 — read as flashing. Slower drop, more
+              // space between blocks landing, longer hold before it repeats.
+              duration: 0.85,
+              ease: "power2.out",
+              stagger: 0.3,
             })
-            .to(blocks, { duration: 1.1 });
+            .to(blocks, { duration: 1.6 });
         }
 
         if (variant === "grow") {
-          const rail = scope.current?.querySelector(".p-rail");
-          const head = scope.current?.querySelector(".p-head");
-          if (rail) {
-            loop.fromTo(
-              rail,
-              { drawSVG: "0% 0%" },
-              { drawSVG: "0% 100%", duration: 1.6, ease: "power2.inOut" },
-            );
-          }
-          if (head) {
-            loop.fromTo(
-              head,
-              { scale: 0, transformOrigin: "50% 50%" },
-              { scale: 1, duration: 0.4, ease: "back.out(2)" },
-              "-=0.25",
-            );
-            loop.to(head, { duration: 0.9 });
+          const bars = gsap.utils.toArray<SVGElement>(".p-bar");
+          // Read each bar's own resting attributes as the tween's targets,
+          // rather than hard-coding them a second time here.
+          const rest = bars.map((b) => ({
+            y: parseFloat(b.getAttribute("y") ?? "0"),
+            height: parseFloat(b.getAttribute("height") ?? "0"),
+          }));
+          if (bars.length) {
+            loop
+              .fromTo(
+                bars,
+                { attr: { y: 190, height: 0 } },
+                {
+                  attr: {
+                    y: (i: number) => rest[i].y,
+                    height: (i: number) => rest[i].height,
+                  },
+                  duration: 0.7,
+                  ease: "power2.out",
+                  stagger: 0.16,
+                },
+              )
+              .to(bars, { duration: 1.2 });
           }
         }
 

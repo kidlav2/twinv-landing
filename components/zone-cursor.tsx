@@ -10,15 +10,23 @@ gsap.registerPlugin(useGSAP);
 /**
  * A circle that follows the pointer inside its parent section and inverts
  * whatever it sits over via `mix-blend-mode: difference` — white on black
- * becomes black, black on canvas becomes the inverse, headline text under it
- * flips too. One mechanism covers both things asked for: a trailing cursor
- * area, and words contrasting on hover — there's no per-word logic, the blend
- * mode does it for free wherever the circle happens to be.
+ * becomes black, text under it flips too. Started out scoped to the Statement
+ * section only; moved to cover the whole dark zone once it turned out to be
+ * the thing people actually liked.
+ *
+ * Reads its bounds from `dot.current.parentElement` rather than a ref passed
+ * down from ScrollPanel. The passed-ref version silently never attached its
+ * listeners — a ref populated by a PARENT component isn't guaranteed to be
+ * set by the time a CHILD's own effect runs, and no error surfaces when it
+ * isn't; the effect just closes over `null` and does nothing. Reading the
+ * DOM directly off this component's own ref has no such race: by the time
+ * this effect runs, `dot.current` is guaranteed set, and its parentElement is
+ * simply whatever section rendered it.
  *
  * Desktop-only: `HOVER_OK` requires a fine pointer, so touch never sees a
  * circle it can't move independently of a tap.
  */
-export function StatementCursor() {
+export function ZoneCursor() {
   const dot = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {

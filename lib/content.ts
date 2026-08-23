@@ -5,8 +5,10 @@
 
 /**
  * Order MUST match the vertical order sections actually appear in on the page
- * (see app/page.tsx) — Process, then Stack, then Work, then Services, then
- * About. A menu that jumps backwards is worse than no menu.
+ * (see app/page.tsx) — Process, then Work, then Stack, then Services, then
+ * About. A menu that jumps backwards is worse than no menu. This list is
+ * genuinely coupled to app/page.tsx's section order — if you reorder one,
+ * reorder the other.
  *
  * When service pages become real routes (`/services/x`) this scheme changes:
  * an anchor like `#process` only works from the homepage, so cross-page nav
@@ -18,8 +20,8 @@ export const nav = {
   brand: "V&V Studio",
   links: [
     { label: "Process", href: "#process" },
-    { label: "Stack", href: "#stack" },
     { label: "Work", href: "#work" },
+    { label: "Stack", href: "#stack" },
     { label: "Services", href: "#services" },
     { label: "About", href: "#about" },
   ],
@@ -71,7 +73,11 @@ export const product = {
     "Two senior people on your project from the first call to the last deploy — no account layer, no handoff to juniors, no ticket that sits for a week.",
     "We start with the funnel you already have, find where it drops people, and rebuild those screens first. You see working pages in week one, not a slide deck.",
   ],
-  cta: { label: "Book an intro call", href: "#contact" },
+  // This section is about the studio itself, so its CTA points at the About
+  // card (#about) rather than the booking flow — a dedicated /about page
+  // isn't built yet (needs real team bios), so this is the honest interim
+  // target: it's a real, working link to the existing About content.
+  cta: { label: "Meet the studio", href: "#about" },
 };
 
 export const pillars = {
@@ -213,8 +219,8 @@ export const footer = {
       title: "Studio",
       links: [
         { label: "Process", href: "#process" },
-        { label: "Stack", href: "#stack" },
         { label: "Work", href: "#work" },
+        { label: "Stack", href: "#stack" },
         { label: "About", href: "#about" },
       ],
     },
