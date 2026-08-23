@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { cases } from "@/lib/content";
 import { Tag } from "./ui";
 import { Reveal } from "./reveal";
-import { useDragScroll } from "@/lib/use-drag-scroll";
 
 function cardStep(track: HTMLDivElement) {
   const card = track.querySelector<HTMLElement>("[data-card]");
@@ -20,8 +19,6 @@ export function Cases() {
   // to — dots implying otherwise (and a stuck "card 1 active" state) would be
   // dishonest, so they only render once scrolling is actually possible.
   const [scrollable, setScrollable] = useState(false);
-
-  useDragScroll(trackRef);
 
   const sync = useCallback(() => {
     const el = trackRef.current;
@@ -95,7 +92,7 @@ export function Cases() {
             effect, so the native scroll/snap behaviour is unchanged there. */}
         <div
           ref={trackRef}
-          className="mt-12 flex cursor-grab snap-x snap-mandatory gap-6 overflow-x-auto pb-4 select-none [scrollbar-width:none] lg:justify-center [&::-webkit-scrollbar]:hidden"
+          className="mt-12 flex snap-x snap-mandatory gap-6 overflow-x-auto pb-4 [scrollbar-width:none] lg:justify-center [&::-webkit-scrollbar]:hidden"
           style={{
             paddingInlineStart: "var(--shell-padding)",
             paddingInlineEnd: "var(--shell-padding)",

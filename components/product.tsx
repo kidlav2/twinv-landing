@@ -44,13 +44,18 @@ export function Product() {
               whole page). */}
           <div className="reveal relative">
             <div className="lg:absolute lg:inset-y-0 lg:left-0 lg:flex lg:w-[180%] lg:items-center">
+              {/* `draggable={false}` alone is not enough: WebKit ignores it in
+                  some paths and honours the non-standard `-webkit-user-drag`
+                  instead. Deliberately NOT `pointer-events-none` — that would
+                  kill right-click/save and long-press zoom for no benefit. */}
               <Image
                 src="/studio-macbook.png"
                 alt="Two people working in a studio — one writing code, one mapping the plan on a whiteboard"
                 width={2752}
                 height={1536}
                 sizes="(min-width: 1024px) 90vw, 100vw"
-                className="h-auto w-full"
+                draggable={false}
+                className="h-auto w-full select-none [-webkit-user-drag:none]"
               />
             </div>
           </div>

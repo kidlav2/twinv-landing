@@ -23,9 +23,17 @@ export function ButtonPrimary({
   return (
     <Link
       href={href}
-      className={`btn-primary rounded-btn inline-flex items-center justify-center px-6 py-4 text-body font-medium transition-colors duration-200 ${className}`}
+      className={`btn-primary rounded-btn group inline-flex items-center justify-center gap-2 px-6 py-4 text-body font-medium transition-colors duration-200 ${className}`}
     >
       {children}
+      {/* Pure CSS, so it survives reduced-motion and cannot collide with a GSAP
+          transform — nothing GSAP-animates buttons. */}
+      <span
+        aria-hidden
+        className="transition-transform duration-300 group-hover:translate-x-1"
+      >
+        →
+      </span>
     </Link>
   );
 }

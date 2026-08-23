@@ -43,11 +43,18 @@
   --color-faint: #979797;
   --color-line: #2f2f2f;
 
-  /* A solid black button would vanish here, so the fill inverts. Hover uses
-     ash, not mint — mint is reserved for tags/links only, never a fill. */
-  --btn-bg: #ffffff;
+  /* Voltage, not white. A white button on black is legible but reads as just
+     another light rectangle among the white type — it did not announce itself
+     as interactive. Voltage makes the CTA the single saturated object in the
+     whole black zone, which is the strongest affordance available in a system
+     that bans shadows and elevation outright.
+     Still inside the contract: voltage is permitted as a micro-accent, and a
+     button is a micro-surface — the footer email (`bg-voltage`) is the same
+     call. Contrast is 17.4:1. It also matches the dark-zone nav CTA below, so
+     the two read as one motif instead of two unrelated buttons. */
+  --btn-bg: #fff100;
   --btn-fg: #000000;
-  --btn-bg-hover: #c6c6c6;
+  --btn-bg-hover: #ffffff;
   --btn-ghost-border: #979797;
   --btn-ghost-hover-bg: #ffffff;
   --btn-ghost-hover-fg: #000000;
