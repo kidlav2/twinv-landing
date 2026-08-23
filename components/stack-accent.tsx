@@ -9,13 +9,22 @@ import { isDocumentVisible, MOTION_OK } from "@/lib/motion";
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 /**
- * A small corner accent for Stack — the section was reading as "empty", not
+ * A corner accent for Stack — the section was reading as "empty", not
  * "restrained": a centred heading and a few rows of chips with nothing else
  * on a wide screen. This is deliberately minor (a slowly turning cluster,
- * tucked into the corner) rather than a second hero-scale visual — the
- * content here is the chip list, not this.
+ * tucked into a corner) rather than a second hero-scale visual — the content
+ * here is the chip list, not this.
+ *
+ * The two instances are NOT mirrored bookends, and the left one is pinned to
+ * the BOTTOM of the section for a measured reason: the widest thing here is
+ * not the heading (a centred 46ch column) but the chip rows, which fill the
+ * shell. Measured at 1280px, the free gutter beside each row is 131px for
+ * "Interface", 203px for "Server & data" and 436px for the last row — the
+ * accent is 208px wide, so only the last row has room for it. Anchoring to
+ * the bottom puts it beside that row at every width instead of guessing a
+ * vertical offset. `xl:` and up only; below that even the last row is tight.
  */
-export function StackAccent() {
+export function StackAccent({ side = "right" }: { side?: "left" | "right" }) {
   const scope = useRef<HTMLDivElement>(null);
 
   useGSAP(
@@ -32,7 +41,9 @@ export function StackAccent() {
         tl.to(group, {
           rotation: 360,
           svgOrigin: "60 60",
-          duration: 14,
+          // Different periods per side. A matched pair turning in lockstep
+          // reads as a loading spinner, not as decoration.
+          duration: side === "left" ? 18 : 14,
           ease: "none",
         });
 
@@ -57,23 +68,53 @@ export function StackAccent() {
   return (
     <div
       ref={scope}
-      className="pointer-events-none absolute top-10 right-6 hidden opacity-70 sm:block lg:right-12"
+      className={
+        "text-line pointer-events-none absolute hidden opacity-70 " +
+        (side === "left"
+          ? "bottom-6 left-6 xl:block xl:left-12"
+          : "top-10 right-6 md:block lg:right-12")
+      }
       aria-hidden
     >
-      <svg viewBox="0 0 120 120" className="h-24 w-24 lg:h-28 lg:w-28">
+      {/* Mirrored on the <svg>, never on the <g>: Tailwind v4 compiles
+          `scale-x-*` to the standalone `scale:` property while GSAP writes
+          `transform: rotate()` on `.accent-group`. On one element the two
+          would multiply; on parent and child they compose cleanly. */}
+      <svg
+        viewBox="0 0 120 120"
+        className={
+          "h-24 w-24 lg:h-36 lg:w-36 xl:h-52 xl:w-52 " +
+          (side === "left" ? "scale-x-[-1]" : "")
+        }
+      >
         <g className="accent-group">
+          {/* The cluster tops out at 208px instead of 112px, so the two
+              chromatic discs shrink inside the viewBox to compensate (r 10 -> 8
+              and 7 -> 5.5). Mint and voltage are micro-accents; scaling them
+              with the box would turn them into the large chromatic surface the
+              system forbids. The neutral square absorbs the extra size.
+
+              The size ladder is gated on measurement, not taste: the heading
+              fills its 46ch column, so at 768px a 144px cluster overlaps the
+              last glyph by 23px. 96 -> 144 at lg -> 208 at xl each clear the
+              nearest text by 25px or more.
+
+              Same reason the right accent starts at `md:` and not `sm:`: at
+              640px the shell leaves no gutter at all and the 96px cluster ran
+              21px into the headline. That overlap predates this change; it is
+              fixed here because it is the same measurement. */}
           <rect
-            x="18"
-            y="18"
-            width="28"
-            height="28"
-            rx="6"
+            x="12"
+            y="12"
+            width="38"
+            height="38"
+            rx="9"
             fill="none"
-            stroke="#c6c6c6"
+            stroke="currentColor"
             strokeWidth="2"
           />
-          <circle cx="92" cy="30" r="10" fill="#d1ffca" />
-          <circle cx="88" cy="92" r="7" fill="#fff100" />
+          <circle cx="92" cy="30" r="8" fill="#d1ffca" />
+          <circle cx="88" cy="92" r="5.5" fill="#fff100" />
         </g>
       </svg>
     </div>

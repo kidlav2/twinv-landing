@@ -15,8 +15,13 @@ export function Stack() {
   return (
     <section id="stack" className="relative py-32">
       <StackAccent />
+      <StackAccent side="left" />
       <Reveal className="shell">
-        <div className="mx-auto max-w-[46ch] text-center">
+        {/* z-10 on the copy, not on the accents: the accents are tucked into
+            the gutters, but the heading column is centred and its width
+            follows the copy. If that copy ever grows, the text must draw over
+            the decoration rather than under it. */}
+        <div className="relative z-10 mx-auto max-w-[46ch] text-center">
           <h2 className="reveal font-display text-heading-lg">
             {stack.headline}
           </h2>
@@ -27,7 +32,7 @@ export function Stack() {
           {stack.groups.map((group) => (
             <div
               key={group.title}
-              className="reveal flex flex-col items-center gap-5"
+              className="reveal relative z-10 flex flex-col items-center gap-5"
             >
               {/* Was text-caption (12px) — bumped so the group label reads as
                   a heading of its own, not a fine-print tag. */}
