@@ -69,11 +69,17 @@ export function ProductCopy() {
             const tl = (scrub = gsap.timeline({
               scrollTrigger: {
                 trigger: col,
-                start: "top 78%",
-                // Not "+=80vh": the column is only ~500px tall, so a fixed
-                // distance finishes the last word just as the column leaves
-                // the top of the screen — the CTA would light up off-camera.
-                end: "bottom 60%",
+                // Both ends are tied to the column crossing the bottom of the
+                // screen, so the sweep runs while the copy travels one of its
+                // own heights and is FINISHED before the section has fully
+                // arrived. The previous pair ("top 78%" / "bottom 60%") was
+                // measured at 0.505 progress at the moment the whole section
+                // was on screen: half the words still grey and the button not
+                // yet visible under a section that had clearly landed.
+                // Not "+=80vh" either — a fixed distance ignores how tall the
+                // copy actually is and drifts the moment it is edited.
+                start: "top 95%",
+                end: "bottom 95%",
                 scrub: 0.15,
                 invalidateOnRefresh: true,
               },

@@ -15,7 +15,9 @@ gsap.registerPlugin(useGSAP);
  * rather than scan.
  *
  * The cards are transparent with a hairline; only the moving block is a filled
- * surface. That is the same motif as the Stack chips
+ * surface. The hairline is `border-line-strong`, not `border-line`: on the open
+ * canvas the lighter role is the "subtle gray on gray" the design system rules
+ * out, and the cards read as loose text rather than cards. That is the same motif as the Stack chips
  * (`border-line hover:bg-fg`), one size up — and it keeps mint and voltage off
  * a large surface, which the system forbids.
  *
@@ -151,7 +153,7 @@ export function ServicesGrid() {
   return (
     <div
       ref={scope}
-      className="services-grid relative mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+      className="services-grid relative mt-12 grid auto-rows-fr gap-6 sm:grid-cols-2 lg:grid-cols-3"
     >
       {/* Painted before the cards in DOM order, so the cards — which are
           positioned too — stack above it without needing a z-index. */}
@@ -166,28 +168,27 @@ export function ServicesGrid() {
           key={s.title}
           href="#contact"
           data-service-card
-          className="service-card border-line rounded-card group relative flex flex-col border p-7 transition-colors duration-300 sm:p-8"
+          className="service-card border-line-strong rounded-card relative flex flex-col border p-7 transition-colors duration-300 sm:p-8"
         >
           {/* Role utilities only. When the card is marked `tone-dark` every
               one of these flips at once — no per-element `group-hover:` colour
               pairs to keep in sync, and `:focus-visible` turns white by
-              itself. Same trick as the dark card in banners.tsx. */}
+              itself. Same trick as the dark card in banners.tsx.
+
+              There is deliberately no "Learn more →" line. Six identical
+              call-to-action rows under six cards is the generic filler this
+              project already stripped out of Problem/Pillars/Services once
+              (see Restraint in AGENTS.md). The whole card is the link; the
+              title underlines on hover and focus, the same cue the pillar
+              cards use, and `auto-rows-fr` keeps the cards a matched height
+              now that nothing pins their bottoms. */}
           <span className="text-faint font-mono text-caption uppercase">
             {s.meta}
           </span>
-          <h3 className="font-display text-fg mt-4 text-heading-sm">
+          <h3 className="service-title font-display text-fg mt-4 text-heading-sm">
             {s.title}
           </h3>
-          <p className="text-muted mt-3 flex-1 text-body-sm">{s.body}</p>
-          <span className="text-fg mt-6 flex items-center gap-2 font-mono text-caption uppercase">
-            Learn more
-            <span
-              aria-hidden
-              className="transition-transform duration-300 group-hover:translate-x-1"
-            >
-              →
-            </span>
-          </span>
+          <p className="text-muted mt-3 text-body-sm">{s.body}</p>
         </a>
       ))}
     </div>

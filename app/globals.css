@@ -34,6 +34,7 @@
   --color-muted: #444444;
   --color-faint: #979797;
   --color-line: #c6c6c6;
+  --color-line-strong: #979797;
   color: var(--color-fg);
 }
 
@@ -46,6 +47,7 @@
   --color-muted: #c6c6c6;
   --color-faint: #979797;
   --color-line: #2f2f2f;
+  --color-line-strong: #444444;
 
   /* Voltage, not white. A white button on black is legible but reads as just
      another light rectangle among the white type — it did not announce itself
@@ -73,6 +75,12 @@
   --color-muted: #444444;
   --color-faint: #979797;
   --color-line: #c6c6c6;
+  /* A hairline meant to be SEEN. `--color-line` at #c6c6c6 on the #e5e5e5
+     canvas is the "subtle gray border on gray" the design system explicitly
+     rules out; it works as a divider inside a white card and disappears on an
+     open canvas. Cards that carry no surface of their own (the Services grid)
+     need this one instead, or they read as floating text. */
+  --color-line-strong: #979797;
 
   /* ---- Color ---- */
   --color-carbon: #000000; /* primary text, inverted surfaces */
@@ -335,6 +343,22 @@
 }
 .pillar-link:hover .pillar-title,
 .pillar-link:focus-visible .pillar-title {
+  text-decoration-color: currentColor;
+}
+
+/* Service cards reuse the same cue, and for the same reason: the sliding
+   block that answers a hover is gated behind prefers-reduced-motion, so
+   without this a reduced-motion user gets a card that is a link and never
+   says so. This replaced a "Learn more →" row on every card. */
+.service-card .service-title {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 6px;
+  text-decoration-thickness: 2px;
+  transition: text-decoration-color 0.25s ease;
+}
+.service-card:hover .service-title,
+.service-card:focus-visible .service-title {
   text-decoration-color: currentColor;
 }
 

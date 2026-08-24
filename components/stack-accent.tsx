@@ -103,12 +103,20 @@ export function StackAccent({ side = "right" }: { side?: "left" | "right" }) {
               640px the shell leaves no gutter at all and the 96px cluster ran
               21px into the headline. That overlap predates this change; it is
               fixed here because it is the same measurement. */}
+          {/* Geometry is constrained by the ROTATION, not by the resting
+              layout: the group spins about (60,60), so every shape sweeps a
+              circle of radius `distance-from-centre + its own extent`, and
+              anything over 60 leaves the viewBox and gets sliced by the SVG
+              viewport for part of each turn. This square's far corner sits at
+              hypot(40,40) + half the stroke = 57.6. An earlier pass had it at
+              x/y 12 with size 38, which reaches 68.9 — 8.9 outside the frame,
+              which is why a corner kept being clipped mid-rotation. */}
           <rect
-            x="12"
-            y="12"
-            width="38"
-            height="38"
-            rx="9"
+            x="20"
+            y="20"
+            width="34"
+            height="34"
+            rx="8"
             fill="none"
             stroke="currentColor"
             strokeWidth="2"

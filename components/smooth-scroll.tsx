@@ -83,7 +83,29 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
         const target = document.getElementById(href.slice(1));
         if (!target) return;
         e.preventDefault();
-        smoother.scrollTo(target, true, `top ${navOffset()}px`);
+
+        /**
+         * Not `smoother.scrollTo(target, true, …)`. With the smoother running
+         * (i.e. not paused) that call takes the branch that writes the native
+         * scroll position in one go and leaves ScrollSmoother's own lerp to
+         * catch up — which, over a jump of several thousand pixels, arrives as
+         * a lurch rather than a scroll. Tweening the smoother's scrollTop is
+         * the same thing GSAP itself does on its paused branch, and it gives
+         * an easing curve and a duration we control.
+         */
+        const to = smoother.offset(target, `top ${navOffset()}px`);
+        gsap.to(smoother, {
+          scrollTop: to,
+          // Distance-scaled: a jump to the next section should not take as
+          // long as a jump to the footer, and neither should crawl.
+          duration: gsap.utils.clamp(
+            0.6,
+            1.4,
+            Math.abs(to - smoother.scrollTop()) / 2200,
+          ),
+          ease: "power2.inOut",
+          overwrite: true,
+        });
         history.pushState(null, "", href);
       };
 
