@@ -25,7 +25,7 @@ export const nav = {
     { label: "Services", href: "#services" },
     { label: "About", href: "#about" },
   ],
-  cta: { label: "Book a demo", href: "#contact" },
+  cta: { label: "Book a demo", href: "#brief" },
 };
 
 export const hero = {
@@ -203,7 +203,7 @@ export const banners = {
     eyebrow: "Start a project",
     headline: "Tell us what's not working",
     body: "Send the URL and the number you want to move. We'll come back with an honest read on whether we can help — free, no deck.",
-    cta: { label: "Start a project", href: "mailto:hello@vandv.studio" },
+    cta: { label: "Start a project", href: "#brief" },
   },
   secondary: {
     eyebrow: "About us",
@@ -211,6 +211,58 @@ export const banners = {
     body: "V&V Studio is a small design and development practice. We take on a handful of projects at a time so each one gets senior attention.",
     cta: { label: "About us", href: "#about" },
   },
+};
+
+/**
+ * The brief form at the foot of the page.
+ *
+ * `goals[0]` is the default selection; the nav CTA carries
+ * `data-brief-goal="demo"` so arriving from "Book a demo" preselects that one
+ * instead. Goal ids are part of the payload contract — see lib/brief.ts — so
+ * renaming one is a backend-visible change, while `label` is free text.
+ */
+export const brief = {
+  eyebrow: "Start a brief",
+  headline: "Tell us what you need",
+  sub: "Four answers is enough for a first read. We reply with an honest yes or no, and what we would do first.",
+  goalLegend: "What do you need?",
+  goals: [
+    { id: "new-site", label: "New site" },
+    { id: "redesign", label: "Redesign" },
+    { id: "audit", label: "Audit" },
+    { id: "demo", label: "Demo" },
+  ],
+  fields: {
+    site: {
+      label: "Current site",
+      hint: "Optional",
+      placeholder: "vandv.studio",
+    },
+    message: {
+      label: "What is not working?",
+      placeholder:
+        "The number you want to move, and what you think is in the way.",
+    },
+    name: { label: "Name", placeholder: "" },
+    email: { label: "Email", placeholder: "" },
+  },
+  errors: {
+    goal: "Pick one so we know where to start.",
+    message: "A sentence or two is plenty.",
+    name: "We would rather not open with \u201cHi there\u201d.",
+    email: "We need somewhere to reply.",
+    emailFormat: "That address is missing something.",
+    submit: "That did not send. Try again, or email us directly.",
+  },
+  submit: "Send the brief",
+  sending: "Sending\u2026",
+  success: {
+    headline: "Got it",
+    body: "We read every one of these ourselves. Expect a reply within two working days.",
+  },
+  /* Shown under the button. Not a consent checkbox: we are not setting a
+     cookie or subscribing anyone, so a checkbox would be theatre. */
+  note: "We use this to reply. Nothing else, and no list.",
 };
 
 export const footer = {

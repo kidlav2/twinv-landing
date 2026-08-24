@@ -62,8 +62,12 @@ export function Nav() {
         </nav>
 
         <div className="flex items-center gap-3">
+          {/* The brief form reads this attribute on click and preselects the
+              matching option — see components/brief.tsx. The href stays a
+              plain anchor so the smooth-scroll handler still owns the scroll. */}
           <Link
             href={nav.cta.href}
+            data-brief-goal="demo"
             className="nav-cta hidden rounded-[14px] px-7 py-4 text-sub-lg font-semibold sm:inline-flex"
           >
             {nav.cta.label}
