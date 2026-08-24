@@ -172,3 +172,20 @@ separate items with spacing and, where useful, a hover state instead.
   built from CSS surfaces, not images. Swap them for real work screenshots.
 - Contact details (`hello@vandv.studio`, social links) are placeholders in
   `lib/content.ts`.
+
+## Commits
+
+Follow `Conventional Commits.md` in the repo root — `<type>(<scope>): <subject>`,
+imperative mood, lowercase subject, no trailing period, 72 chars max. Types are
+`feat` / `fix` / `docs` / `style` / `refactor` / `perf` / `test` / `chore` /
+`ci` / `revert`. One logical change per commit; don't mix `feat` and `fix`.
+
+Scopes in use here: `services`, `hero`, `nav`, `footer`, `motion`, `tokens`,
+`content`. Omit the scope for repo-wide chores.
+
+**Author identity matters for deploys.** Vercel is on a Hobby plan, which only
+accepts deployments whose commit author has access to the project — the account
+is `kidlav2`. Commits made as `kidlav` (`valdik20032944@gmail.com`) are blocked
+with "the commit author does not have contributing access". This repo therefore
+pins `user.email` to `264042178+kidlav2@users.noreply.github.com` locally; if
+you clone it fresh, set that again before committing.
