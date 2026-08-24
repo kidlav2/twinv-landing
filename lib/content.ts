@@ -190,11 +190,26 @@ export const services = {
       intro:
         "You're describing the business in a deck or a doc, not on the site — or the site was built for a version of the company that no longer exists. We start from the argument the business needs to make, not a template, and build the pages that make it.",
       included: [
-        "Positioning and information architecture before any screen design",
-        "Full-page designs for the pages that carry the argument, not just the homepage",
-        "Production build in Next.js — the same stack this site runs on",
-        "Copy direction and editing, so launch doesn't wait on a separate writer",
-        "Analytics and a staging environment for a real look before it's public",
+        {
+          label: "Positioning & IA",
+          body: "Positioning and information architecture before any screen design.",
+        },
+        {
+          label: "Full-page design",
+          body: "Full-page designs for the pages that carry the argument, not just the homepage.",
+        },
+        {
+          label: "Production build",
+          body: "Production build in Next.js — the same stack this site runs on.",
+        },
+        {
+          label: "Copy direction",
+          body: "Copy direction and editing, so launch doesn't wait on a separate writer.",
+        },
+        {
+          label: "Analytics & staging",
+          body: "Analytics and a staging environment for a real look before it's public.",
+        },
       ],
     },
     {
@@ -205,10 +220,22 @@ export const services = {
       intro:
         "A redesign is not a repaint. We start by finding what the current site is already doing right — the pages that rank, the flows that convert — and rebuild around that, not over it. Nothing that already works gets thrown out for the sake of new.",
       included: [
-        "An audit of current traffic, rankings, and conversion paths before any redesign work",
-        "A redirect and migration plan, so URLs that rank keep ranking",
-        "Section-by-section rebuild, so the site can ship in pieces instead of one long freeze",
-        "Before/after comparison on the metrics that mattered going in",
+        {
+          label: "Traffic audit",
+          body: "An audit of current traffic, rankings, and conversion paths before any redesign work.",
+        },
+        {
+          label: "Migration plan",
+          body: "A redirect and migration plan, so URLs that rank keep ranking.",
+        },
+        {
+          label: "Staged rebuild",
+          body: "Section-by-section rebuild, so the site can ship in pieces instead of one long freeze.",
+        },
+        {
+          label: "Before & after",
+          body: "Before/after comparison on the metrics that mattered going in.",
+        },
       ],
     },
     {
@@ -219,10 +246,22 @@ export const services = {
       intro:
         "Most storefront themes are built for a catalog, not your catalog. We build the front end around how your specific products actually get chosen and bought, on Shopify when that's the right fit or headless when it isn't, with checkout treated as its own design problem.",
       included: [
-        "Custom storefront on Shopify, or a headless front end over the commerce platform you already run",
-        "Checkout and cart flow audited and rebuilt for completion, not just appearance",
-        "Product and collection templates that scale past the handful you'll launch with",
-        "Mobile-first build and testing — most of the traffic arrives on a phone",
+        {
+          label: "Custom storefront",
+          body: "Custom storefront on Shopify, or a headless front end over the commerce platform you already run.",
+        },
+        {
+          label: "Checkout rebuild",
+          body: "Checkout and cart flow audited and rebuilt for completion, not just appearance.",
+        },
+        {
+          label: "Scaling templates",
+          body: "Product and collection templates that scale past the handful you'll launch with.",
+        },
+        {
+          label: "Mobile-first build",
+          body: "Mobile-first build and testing — most of the traffic arrives on a phone.",
+        },
       ],
     },
     {
@@ -233,10 +272,22 @@ export const services = {
       intro:
         "A logo file isn't a brand. We deliver the rules that make the mark, the type, and the color hold together across a website, a deck, and a business card without someone having to guess — a system your team or the next agency can actually use.",
       included: [
-        "Mark, wordmark, and the construction rules that keep them from being redrawn wrong",
-        "Type and color system, with the roles each one plays, not just the values",
-        "A written guide covering the cases people actually get wrong",
-        "Applied to the website itself, not handed off as a theoretical document",
+        {
+          label: "Mark & wordmark",
+          body: "Mark, wordmark, and the construction rules that keep them from being redrawn wrong.",
+        },
+        {
+          label: "Type & color",
+          body: "Type and color system, with the roles each one plays, not just the values.",
+        },
+        {
+          label: "Written guide",
+          body: "A written guide covering the cases people actually get wrong.",
+        },
+        {
+          label: "Applied in build",
+          body: "Applied to the website itself, not handed off as a theoretical document.",
+        },
       ],
     },
     {
@@ -247,10 +298,22 @@ export const services = {
       intro:
         "A site is a product, not a project that ends at launch. This is the retainer for the work that comes after: new landing pages, fixes, small tests, the backlog that never quite gets prioritized on a one-off contract. A fixed cadence, not an open-ended favor.",
       included: [
-        "A monthly block of design and development hours, scoped before the month starts",
-        "A shipping cadence — agreed dates, not a queue that quietly slips",
-        "Priority turnaround on fixes, ahead of new project work",
-        "A running log of what shipped, so the retainer stays accountable to itself",
+        {
+          label: "Monthly hours",
+          body: "A monthly block of design and development hours, scoped before the month starts.",
+        },
+        {
+          label: "Shipping cadence",
+          body: "A shipping cadence — agreed dates, not a queue that quietly slips.",
+        },
+        {
+          label: "Priority fixes",
+          body: "Priority turnaround on fixes, ahead of new project work.",
+        },
+        {
+          label: "Shipped log",
+          body: "A running log of what shipped, so the retainer stays accountable to itself.",
+        },
       ],
     },
     {
@@ -261,10 +324,22 @@ export const services = {
       intro:
         "The site is the part visitors see. This is the part that keeps it running: the integrations between your tools, the scheduled jobs that used to be a person's Tuesday morning, and a dashboard so the work is visible instead of trusted blindly.",
       included: [
-        "Integrations between the tools your team already uses — CRM, billing, support",
-        "Scheduled jobs and queues for work that shouldn't depend on someone remembering",
-        "A dashboard to see what ran, what failed, and why",
-        "Built on infrastructure your team can read and maintain, not a black box",
+        {
+          label: "Tool integrations",
+          body: "Integrations between the tools your team already uses — CRM, billing, support.",
+        },
+        {
+          label: "Jobs & queues",
+          body: "Scheduled jobs and queues for work that shouldn't depend on someone remembering.",
+        },
+        {
+          label: "Ops dashboard",
+          body: "A dashboard to see what ran, what failed, and why.",
+        },
+        {
+          label: "Own the infra",
+          body: "Built on infrastructure your team can read and maintain, not a black box.",
+        },
       ],
     },
   ],
