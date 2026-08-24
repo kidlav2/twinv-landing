@@ -9,6 +9,7 @@ requires-python = ">=3.13,<3.15"
 dependencies = [
     "fastapi>=0.141.1",
     "pydantic-settings>=2.15.0",
+    "sqlalchemy>=2.0.48",
     "uvicorn>=0.52.4",
 ]
 
@@ -49,3 +50,6 @@ known-first-party = ["twinv_landing"]
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

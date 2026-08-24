@@ -1,29 +1,22 @@
 import type { BriefPayload } from "@/lib/brief";
 
 /**
- * Receives a brief and hands it on.
+ * Same-origin proxy: the browser posts here, this route forwards to FastAPI.
+ * The backend URL never ships in the client bundle, so no CORS from the form.
  *
- * ─── For whoever owns the backend ───────────────────────────────────────────
- * This is a thin proxy, not a destination. It exists so the browser only ever
- * talks to its own origin: no CORS preflight, and no backend URL shipped in
- * the client bundle. Two ways to finish it:
- *
- *   1. Point `BRIEF_FORWARD_URL` at the FastAPI route and change nothing else.
- *      Example: BRIEF_FORWARD_URL=http://127.0.0.1:8000/api/brief
- *   2. Or replace the forward below with a direct write/send.
- *
- * The body is `BriefPayload` from lib/brief.ts — that type is the contract:
+ * Body contract is `BriefPayload` in lib/brief.ts:
  *   { goal: "new-site" | "redesign" | "audit" | "demo",
  *     site?: string, message: string, name: string, email: string }
  *
- * Note the FastAPI app currently allows CORS for http://localhost:5173 only.
- * That does not matter while this proxy is in front of it (the call is
- * server-to-server), but it will matter the moment anything calls it from the
- * browser directly.
- * ────────────────────────────────────────────────────────────────────────────
+ * Override with BRIEF_FORWARD_URL. In development the FastAPI default is used
+ * so `npm run dev` talks to uvicorn on :8000 without extra env.
  */
 
-const FORWARD_URL = process.env.BRIEF_FORWARD_URL;
+const DEFAULT_FORWARD_URL = "http://127.0.0.1:8000/api/brief";
+
+const FORWARD_URL =
+  process.env.BRIEF_FORWARD_URL ??
+  (process.env.NODE_ENV === "development" ? DEFAULT_FORWARD_URL : undefined);
 
 function isValid(body: unknown): body is BriefPayload {
   if (typeof body !== "object" || body === null) return false;

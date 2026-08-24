@@ -40,6 +40,10 @@ htmlcov/
 
 # uv.lock is committed on purpose — do not ignore it.
 
+# Local SQLite files created at runtime.
+backend/data/
+*.db
+
 # ===== Env =====
 # Nothing carrying secrets, either side of the repo.
 .env
