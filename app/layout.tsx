@@ -49,6 +49,20 @@ export const metadata: Metadata = {
     description:
       "A web design studio building and rebuilding sites that convert.",
   },
+  manifest: "/favicon/site.webmanifest",
+  /* `app/favicon.ico` is served at /favicon.ico by App Router's file
+     convention and wins over anything declared here, so it now holds the real
+     icon's bytes rather than the create-next-app default. It has to stay a
+     file: browsers request /favicon.ico unprompted, and deleting it would
+     turn that into a 404. It also cannot be moved to `public/favicon.ico` —
+     Next refuses to build with both. */
+  icons: {
+    icon: [
+      { url: "/favicon/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: "/favicon/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

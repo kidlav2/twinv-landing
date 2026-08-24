@@ -69,6 +69,19 @@
   color: var(--color-fg);
 }
 
+/* The two step-ups for --nav-height (see the note in @theme). Kept adjacent to
+   the base value so the ladder reads as one decision. */
+@media (min-width: 40rem) {
+  :root {
+    --nav-height: 104px;
+  }
+}
+@media (min-width: 64rem) {
+  :root {
+    --nav-height: 113px;
+  }
+}
+
 @theme {
   /* ---- Tone-aware roles (light defaults; flipped by .tone-dark) ---- */
   --color-fg: #000000;
@@ -171,8 +184,16 @@
   --spacing-nav: 7.5rem;
   /* Measured height of the fixed bar. Anchor offsets, the nav-tone trigger in
      scroll-panel.tsx, and ScrollSmoother's scrollTo all read this ONE value —
-     before, 96px was hard-coded in two places and could drift apart. */
-  --nav-height: 113px;
+     before, 96px was hard-coded in two places and could drift apart.
+
+     It is a ladder because the bar genuinely has three heights: the tallest
+     child changes at Tailwind's own breakpoints. Below sm only the burger is
+     there (48px), from sm the CTA appears (56px), from lg the link pill
+     (65px); plus 48px of py-6 each time. Measured 96 / 104 / 113 against
+     exactly those. A single value was wrong by 17px on a phone, which is an
+     anchor that lands under the bar. Redefined below, not here, so this stays
+     the only place the number is written. */
+  --nav-height: 96px;
   /* 3x / 2.5x the original 32px / 20px gutters, per direct request — but as a
      fixed px value that math eats the entire viewport on a phone. Both scale
      down below the 1920px width where the multiplier was measured, and clamp
@@ -277,6 +298,29 @@
   background-color: var(--nav-pill-bg);
   transition: background-color 0.4s ease;
 }
+/* The wordmark is painted, not embedded: the SVG is a mask and the colour is
+   whatever `currentColor` resolves to on the element. One file serves both
+   tones, there is no second request on the tone flip, and it inherits the
+   existing `.nav-brand` colour transition for free.
+
+   A mask keys off the alpha channel, so the eleven near-black fills inside the
+   file (#010101 through #0B0B0B) are irrelevant — which is also why the light
+   variant of the file is not needed. That one traced worse anyway: it carries
+   #929292/#A7A7A7/#C7C7C7 speckles that read as dirt at 44px. */
+.brand-mark {
+  display: block;
+  aspect-ratio: 831 / 301;
+  background-color: currentColor;
+  mask-image: url("/logo/wordmark.svg");
+  -webkit-mask-image: url("/logo/wordmark.svg");
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  mask-position: center;
+  -webkit-mask-position: center;
+}
+
 .nav-brand {
   color: var(--nav-brand-fg);
   transition: color 0.4s ease;

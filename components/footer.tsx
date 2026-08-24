@@ -7,9 +7,13 @@ export function Footer() {
       <div className="shell">
         <div className="border-ash grid gap-12 border-t pt-12 lg:grid-cols-[1.5fr_repeat(3,1fr)]">
           <div>
-            <p className="font-display text-heading leading-none">
-              {nav.brand}
-            </p>
+            {/* Same mask as the nav, painted `text-carbon` because the footer
+                sits in the light zone. */}
+            <span
+              className="brand-mark text-carbon h-12"
+              role="img"
+              aria-label={nav.brand}
+            />
             <p className="text-slate mt-5 max-w-[32ch] text-body-sm">
               {footer.blurb}
             </p>
@@ -49,7 +53,10 @@ export function Footer() {
           <ul className="flex gap-6">
             {footer.legal.map((l) => (
               <li key={l.label}>
-                <Link href={l.href} className="hover:text-carbon transition-colors">
+                <Link
+                  href={l.href}
+                  className="hover:text-carbon transition-colors"
+                >
                   {l.label}
                 </Link>
               </li>

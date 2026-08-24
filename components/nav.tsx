@@ -30,19 +30,30 @@ export function Nav() {
         className="flex items-center justify-between gap-6 py-6"
         style={{ paddingInline: "var(--nav-padding)" }}
       >
+        {/* Height is capped deliberately. `--nav-height` is the single source
+            for the bar height and is read by smooth-scroll.tsx (anchor offset),
+            scroll-panel.tsx (nav-tone trigger) and globals.css
+            (scroll-margin-top). The bar is as tall as its tallest child, which
+            is the link pill at ~64px — keeping the mark under that means the
+            token does not move. Measured after this change: bar 113px against
+            a token of 113px. */}
         <Link
           href="#top"
-          className="nav-brand font-display text-heading shrink-0 leading-none"
+          aria-label={nav.brand}
+          className="nav-brand inline-flex shrink-0 items-center"
           onClick={() => setOpen(false)}
         >
-          {nav.brand}
+          <span className="brand-mark h-9 sm:h-11" aria-hidden />
         </Link>
 
         <nav className="nav-pill rounded-pill hidden items-center gap-10 px-10 py-5 lg:flex">
           <ul className="nav-links flex items-center gap-10">
             {nav.links.map((l) => (
               <li key={l.label}>
-                <Link href={l.href} className="nav-link text-sub-lg font-medium">
+                <Link
+                  href={l.href}
+                  className="nav-link text-sub-lg font-medium"
+                >
                   {l.label}
                 </Link>
               </li>
