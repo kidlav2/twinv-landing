@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { about } from "@/lib/content";
 import { isDocumentVisible, MACBOOK_SCRUB_OK } from "@/lib/motion";
+import { MacbookBody, MacbookLip } from "./macbook-body";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -13,56 +14,77 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
  * The page's one set piece: a laptop whose lid opens and whose screen then
  * grows until it IS the page's dark zone.
  *
- * The point of doing it this way rather than dropping in a stock scroll-mock
- * is that the thing which expands is the same DOM node the whole way through
- * — a real element holding real text, not a screenshot that gets swapped for
- * content afterwards. That is what makes it read as walking into the screen.
+ * What makes it worth the code is that the thing which expands is the same
+ * DOM node the whole way through — a real element holding real text, not a
+ * screenshot swapped for content afterwards. That is what reads as walking
+ * into the screen.
  *
  * It also earns its complexity by replacing three separate effects with one:
  * the laptop, the arrival of the black zone (which is why this page uses no
- * ScrollPanel), and the "there is more below" peek — which comes free, since
- * the closed lid is what shows above the fold while the masthead is still on
- * screen.
+ * ScrollPanel), and the "there is more below" cue.
  *
- * `data-nav-tone` — a single global slot on <html>, and the one thing on this
- * page allowed to write it. That is why ScrollPanel is deliberately absent
- * here: two components writing that attribute is the exact bug AGENTS.md
+ * `data-nav-tone` — a single global slot on <html>, and this is the one thing
+ * on this page allowed to write it. That is why ScrollPanel is deliberately
+ * absent: two components writing that attribute is the exact bug AGENTS.md
  * documents, where whichever cleanup ran last wipes a value it never set.
- *
- * Geometry note: every size below is in viewport units, and the claim's
- * wrapper is sized in `vw` rather than as a percentage of the screen it sits
- * in. That is load-bearing. A percentage width would be relative to the
- * growing screen, so the text would re-wrap on every scroll tick; in `vw` the
- * layout is fixed and only the transform changes, which is also the only way
- * this stays cheap enough to scrub.
  */
 
-/** Where the closed lid sits, as insets on the pinned viewport. */
-const SCREEN_CLOSED = {
-  left: "32%",
-  right: "32%",
-  top: "20%",
-  bottom: "36%",
-  borderRadius: "20px",
-};
+/* ---- Geometry -------------------------------------------------------------
+   The laptop is a FIXED pixel object, not a percentage of the viewport. That
+   is what lets the keyboard exist at all: proportional sizing would have to
+   scale ~70 keycaps and their legends per viewport width, and the legends
+   would stop being legible at the small end.
+
+   Everything below is derived from these four numbers, in both the CSS that
+   places the parts and the tween that grows the screen, so the two cannot
+   drift apart. The screen's end state is 0/0/viewport, so every value the
+   tween touches is px → px: no unit conversion anywhere in the scrub. */
+const LID_W = 560;
+const LID_H = 350;
+const BASE_H = 300;
+const TOTAL_H = LID_H + BASE_H;
+
+/** Left edge of the whole machine, and the top of the lid, as CSS calc. */
+const COL_LEFT = `calc(50% - ${LID_W / 2}px)`;
+const LID_TOP = `calc(50% - ${TOTAL_H / 2}px)`;
+const BASE_TOP = `calc(50% - ${TOTAL_H / 2 - LID_H}px)`;
+const LIP_TOP = `calc(50% - ${TOTAL_H / 2 - LID_H - BASE_H}px)`;
 
 /**
- * The claim's resting scale — small enough to sit inside the lid.
+ * The claim's box is a fixed width for the same reason the laptop is: as a
+ * flex child of a box whose width is being animated, a relative width would
+ * re-wrap the text on every scroll tick. Fixed, only the transform moves.
+ */
+const CLAIM_W = 1120;
+
+/**
+ * Fixed, and deliberately NOT the `text-display-xl` token.
  *
- * Both widths are in `vw` (76 for the text, 36 for the screen), so the ratio
- * holds at every viewport width and never needs measuring: 36 * 0.8 / 76 ≈
- * 0.38. This is applied as an inline transform rather than only as the
- * timeline's from-value, because the from-value alone is not applied at all
- * when the scripted path bails — a background tab, or no JS — and the laptop
- * would then show the claim at full size, clipped to a fragment by the lid.
- * As a resting CSS value it degrades to a plain open laptop with readable
- * text on screen.
+ * That token is a viewport clamp, meant for type laid out at viewport width.
+ * This block is laid out at a fixed width and then scaled as one unit, so a
+ * fluid size on top applies the responsiveness twice — and worse, it changes
+ * the LINE COUNT across the range. Measured: at 1440 the claim set in three
+ * lines and filled 56% of the screen; at 1024 it fell to two lines and 26%,
+ * so the same moment landed completely differently on two normal laptops.
+ * Fixed size in a fixed box means the line count is decided once, and the
+ * scale below is the only thing that responds.
+ */
+const CLAIM_FONT = 160;
+
+/**
+ * Its resting scale — the size that fits inside the closed lid.
+ *
+ * Applied as an inline transform rather than only as the timeline's from
+ * value, because from values are not applied at all when the scripted path
+ * bails (background tab, or no JS), and the laptop would then show the claim
+ * at full size with the lid cropping it to a fragment. As a resting CSS value
+ * it degrades to a plain open laptop with readable text on screen.
  *
  * It must be a `transform`, never Tailwind's `scale-*` utility: that compiles
  * to the standalone `scale:` property, which multiplies with the `transform`
  * GSAP writes instead of replacing it.
  */
-const CLAIM_CLOSED_SCALE = 0.38;
+const CLAIM_REST_SCALE = 0.42;
 
 export function AboutStage() {
   const scope = useRef<HTMLDivElement>(null);
@@ -94,8 +116,7 @@ export function AboutStage() {
         // First line, above any gsap.set — the standing rule for anything
         // that hides or displaces content. A scrub only advances on scroll,
         // which a background tab never sends, so applying the closed-lid
-        // state here and then freezing would leave a permanently shut laptop
-        // with the claim scaled down inside it.
+        // state here and then freezing would leave a shut laptop forever.
         if (!isDocumentVisible()) return;
 
         const screen = root.querySelector<HTMLElement>("[data-screen]");
@@ -107,7 +128,7 @@ export function AboutStage() {
           scrollTrigger: {
             trigger: root,
             start: "top top",
-            end: "+=150%",
+            end: "+=170%",
             pin: true,
             // Low, for the reason scroll-panel.tsx gives: ScrollSmoother
             // already adds about a second of lag and the two compound.
@@ -124,44 +145,61 @@ export function AboutStage() {
           },
         });
 
-        // 1. The lid comes up. transformOrigin bottom is what makes this read
-        //    as a hinge rather than a card flipping in space.
+        // 1. The lid comes up. transformOrigin bottom is what makes this a
+        //    hinge rather than a card flipping in space, and it is why the
+        //    deck below has to sit exactly LID_H down from the lid's top.
         tl.fromTo(
           screen,
-          { rotateX: -78, ...SCREEN_CLOSED },
-          { rotateX: 0, ease: "none", duration: 0.3 },
+          { rotateX: -80 },
+          { rotateX: 0, ease: "power1.out", duration: 0.34 },
           0,
         );
-        // 2. The body goes. Once the screen starts growing past it, a laptop
-        //    base sticking out from behind a full-bleed panel is just debris.
-        tl.to(chrome, { opacity: 0, ease: "none", duration: 0.2 }, 0.32);
 
-        // 3. The screen becomes the viewport. Insets and radius, never scale:
-        //    a non-uniform scale would squash the corner radius into an
-        //    ellipse — the same reason scroll-panel.tsx animates left/right.
-        tl.to(
+        // 2. The machine goes. Once the screen grows past it, a deck sticking
+        //    out from behind a full-bleed panel is just debris.
+        tl.to(chrome, { opacity: 0, ease: "none", duration: 0.18 }, 0.36);
+
+        // 3. The screen becomes the viewport. Insets and size, never scale: a
+        //    non-uniform scale would squash the corner radius into an ellipse
+        //    and drag the type with it — the same reason scroll-panel.tsx
+        //    animates left/right rather than scaling.
+        tl.fromTo(
           screen,
           {
-            left: "0%",
-            right: "0%",
-            top: "0%",
-            bottom: "0%",
-            borderRadius: "0px",
-            ease: "none",
-            duration: 0.6,
+            left: () => (window.innerWidth - LID_W) / 2,
+            top: () => (window.innerHeight - TOTAL_H) / 2,
+            width: LID_W,
+            height: LID_H,
+            borderRadius: 14,
           },
-          0.36,
+          {
+            left: 0,
+            top: 0,
+            width: () => window.innerWidth,
+            height: () => window.innerHeight,
+            borderRadius: 0,
+            ease: "none",
+            duration: 0.58,
+          },
+          0.4,
         );
+
         // Uniform scale, so type is safe here — and it keeps the claim one
-        // continuous object instead of a small one being swapped for a big
-        // one at the handover. `fromTo` rather than `to`, so the scrub is
-        // anchored to the same value the inline style rests at instead of
-        // whatever the element happens to hold when the trigger refreshes.
+        // continuous object rather than a small one swapped for a big one at
+        // the handover. The end scale targets a constant share of the
+        // viewport width, which is what makes the final frame land the same
+        // way on a 1024 laptop as on a 1920 monitor. The upper bound only
+        // stops a very wide screen from setting this at ~250px.
         tl.fromTo(
           claim,
-          { scale: CLAIM_CLOSED_SCALE },
-          { scale: 1, ease: "none", duration: 0.6 },
-          0.36,
+          { scale: CLAIM_REST_SCALE },
+          {
+            scale: () =>
+              Math.min(1.35, (window.innerWidth * 0.86) / CLAIM_W),
+            ease: "none",
+            duration: 0.58,
+          },
+          0.4,
         );
 
         // Fonts arrive through next/font with display: swap, which changes
@@ -176,38 +214,35 @@ export function AboutStage() {
         };
       });
 
-      mm.add(
-        "(max-width: 63.99rem), (prefers-reduced-motion: reduce)",
-        () => {
-          // No laptop on this path — `.macbook-only` has already taken it out
-          // of the document — so this wrapper collapses to nothing and its
-          // bottom edge is exactly where the dark zone starts. Triggering off
-          // that edge means no coupling to the section below by id.
-          //
-          // Deliberately NOT inside a motion check: recolouring the nav is an
-          // attribute write, not an animation, and it has to happen for
-          // reduced-motion users too. ScrollPanel keeps the same separation.
-          const navPx =
-            parseInt(
-              getComputedStyle(document.documentElement).getPropertyValue(
-                "--nav-height",
-              ),
-              10,
-            ) || 113;
+      mm.add("(max-width: 63.99rem), (prefers-reduced-motion: reduce)", () => {
+        // No laptop on this path — `.macbook-only` has already taken it out
+        // of the document — so this wrapper collapses to nothing and its
+        // bottom edge is exactly where the dark zone starts. Triggering off
+        // that edge means no coupling to the section below by id.
+        //
+        // Deliberately NOT behind a motion check: recolouring the nav is an
+        // attribute write, not an animation, and it has to happen for
+        // reduced-motion users too. ScrollPanel keeps the same separation.
+        const navPx =
+          parseInt(
+            getComputedStyle(document.documentElement).getPropertyValue(
+              "--nav-height",
+            ),
+            10,
+          ) || 113;
 
-          const trigger = ScrollTrigger.create({
-            trigger: root,
-            start: `bottom ${navPx}px`,
-            end: "max",
-            onToggle: ({ isActive }) => setTone(isActive),
-          });
+        const trigger = ScrollTrigger.create({
+          trigger: root,
+          start: `bottom ${navPx}px`,
+          end: "max",
+          onToggle: ({ isActive }) => setTone(isActive),
+        });
 
-          return () => {
-            trigger.kill();
-            setTone(false);
-          };
-        },
-      );
+        return () => {
+          trigger.kill();
+          setTone(false);
+        };
+      });
 
       return () => {
         mm.revert();
@@ -224,41 +259,49 @@ export function AboutStage() {
          motion; the claim is rendered instead by the dark zone's
          `macbook-fallback` copy. `perspective` has to live on the parent of
          the rotating element for the hinge to have any depth at all. */
-      className="macbook-only bg-canvas relative h-screen overflow-hidden [perspective:1400px]"
+      className="macbook-only bg-canvas relative h-screen overflow-hidden [perspective:1600px]"
     >
-      {/* The base. Two flat bars — a deck and the lip below it — and nothing
-          else: no keycaps, no speaker grilles, no gradients. The system's
-          depth comes from surface contrast, and a photoreal laptop would be
-          the one skeuomorphic object on an otherwise flat site. */}
-      <div
-        data-chrome
-        className="bg-carbon absolute top-[64%] left-[30%] h-[2.2%] w-[40%] rounded-[4px]"
+      <MacbookBody
+        style={{ left: COL_LEFT, top: BASE_TOP, width: LID_W, height: BASE_H }}
       />
-      <div
-        data-chrome
-        className="bg-graphite absolute top-[66.2%] left-[34%] h-[1%] w-[32%] rounded-b-[10px]"
+      <MacbookLip
+        style={{
+          left: `calc(50% - ${LID_W * 0.09}px)`,
+          top: LIP_TOP,
+          width: LID_W * 0.18,
+        }}
       />
 
-      {/* The screen. Starts as the closed lid, ends as the whole viewport —
-          so this single element is both the object and the page's dark zone.
-          GSAP owns every transform on it; nothing here writes one, which is
-          what keeps Tailwind's standalone `scale:`/`rotate:` properties from
-          multiplying with GSAP's `transform`. */}
+      {/* The lid. Starts as the closed screen, ends as the whole viewport —
+          one element that is both the object and the page's dark zone. GSAP
+          owns every transform on it; nothing here writes one, which keeps
+          Tailwind's standalone `scale:`/`rotate:` properties from multiplying
+          with GSAP's `transform`. */}
       <div
         data-screen
         className="bg-carbon absolute overflow-hidden [transform-origin:bottom] [transform-style:preserve-3d]"
-        style={SCREEN_CLOSED}
+        style={{
+          left: COL_LEFT,
+          top: LID_TOP,
+          width: LID_W,
+          height: LID_H,
+          borderRadius: 14,
+        }}
       >
         <div className="absolute inset-0 flex items-center justify-center">
-          {/* `shrink-0` is load-bearing: as a flex item this would otherwise
-              be squeezed to the lid's width, re-wrapping the claim into a
-              tall narrow column — and then re-wrapping it again on every
-              scroll tick as the lid grows. Fixed at 76vw it only ever
-              re-wraps on resize, and the scrub is a pure transform. */}
+          {/* `shrink-0` is load-bearing: as a flex child of a box whose width
+              is animated, this would otherwise be squeezed to the lid and
+              re-wrap on every scroll tick. Fixed, the scrub is pure
+              transform. */}
           <p
             data-claim
-            className="font-display w-[76vw] shrink-0 text-center text-display-xl text-paper"
-            style={{ transform: `scale(${CLAIM_CLOSED_SCALE})` }}
+            className="font-display text-paper shrink-0 text-center"
+            style={{
+              width: CLAIM_W,
+              fontSize: CLAIM_FONT,
+              lineHeight: 0.95,
+              transform: `scale(${CLAIM_REST_SCALE})`,
+            }}
           >
             {about.claim}
           </p>
