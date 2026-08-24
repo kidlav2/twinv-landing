@@ -390,6 +390,41 @@
   transition: background-color 0.4s ease;
 }
 
+/* Back-to-top. Reuses the nav CTA's own colour variables rather than a fifth
+   accent — it flips light/dark with `data-nav-tone` for free, and reads as
+   the same affordance instead of a new one.
+   `[data-visible]` is written by a ScrollTrigger in components/back-to-top.tsx,
+   not React state — see that file for why. The fade is short and CSS-owned,
+   the same category as the nav-link/nav-cta hover transitions above, so it
+   isn't gated behind prefers-reduced-motion (only the "reduce" branch below
+   removes it, same belt-and-braces as the rest of the sheet). */
+.back-to-top {
+  background-color: var(--nav-cta-bg);
+  color: var(--nav-cta-fg);
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease,
+    background-color 0.4s ease,
+    color 0.4s ease;
+}
+.back-to-top[data-visible="true"] {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.back-to-top:hover {
+  background-color: var(--nav-cta-hover);
+  color: var(--nav-cta-hover-fg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .back-to-top {
+    transition: none;
+  }
+}
+
 /* The site had no focus style at all — it relied on the UA outline, which is
    nearly invisible on the black panel. Tone-aware, so it works in both zones.
    Unlayered for the same reason as the nav rules: it must beat utilities. */

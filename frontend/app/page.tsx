@@ -1,4 +1,5 @@
 import { Nav } from "@/components/nav";
+import { BackToTop } from "@/components/back-to-top";
 import { Hero } from "@/components/hero";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { ScrollPanel } from "@/components/scroll-panel";
@@ -15,9 +16,11 @@ import { Footer } from "@/components/footer";
 export default function Home() {
   return (
     <>
-      {/* Nav is deliberately OUTSIDE SmoothScroll — see the note in
-          components/smooth-scroll.tsx. Inside, it would stop being fixed. */}
+      {/* Nav (and BackToTop, same reason) is deliberately OUTSIDE
+          SmoothScroll — see the note in components/smooth-scroll.tsx.
+          Inside, it would stop being fixed. */}
       <Nav />
+      <BackToTop />
       <SmoothScroll>
         <main>
           <Hero />

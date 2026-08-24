@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Nav } from "./nav";
+import { BackToTop } from "./back-to-top";
 import { SmoothScroll } from "./smooth-scroll";
 import { Footer } from "./footer";
 
@@ -42,6 +43,7 @@ export function PageShell({
   return (
     <>
       <Nav />
+      <BackToTop />
       <SmoothScroll>
         <main>{children}</main>
         <div className={dark ? "tone-dark bg-carbon" : ""}>
