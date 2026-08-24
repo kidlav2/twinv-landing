@@ -498,6 +498,47 @@
   border-color: var(--color-carbon);
 }
 
+/* The About page's laptop and its stand-in are exact complements of
+   MACBOOK_SCRUB_OK in lib/motion.ts — read the three together, and change
+   them together. Exactly one of the two is ever displayed, so the claim
+   appears once in the accessibility tree either way, and neither path needs
+   JavaScript to decide which.
+
+   Unlayered on purpose: these have to beat Tailwind's own display utilities,
+   which live in @layer utilities and would otherwise win on source order at
+   equal specificity. Same reason `.services-grid:not([data-slider])` sits out
+   here rather than inside a layer. */
+@media (max-width: 63.99rem), (prefers-reduced-motion: reduce) {
+  .macbook-only {
+    display: none;
+  }
+}
+@media (min-width: 64rem) and (prefers-reduced-motion: no-preference) {
+  .macbook-fallback {
+    display: none;
+  }
+}
+
+/* Third instance of the same idiom, for CardSwap. The cards are all pinned to
+   one point by `absolute top-1/2 left-1/2`, and it is the script that deals
+   them into their slots — so with reduced motion, or in a background tab, or
+   with no JS at all, three cards would sit exactly on top of each other. The
+   offsets below are the same first three slots the script would have placed
+   them in (DIST_X 56 / DIST_Y 64 in card-swap.tsx), just held still.
+   `data-swap` is written only when the scripted path is live. */
+.card-swap:not([data-swap]) .card-swap-card {
+  transform: translate(-50%, -50%) skewY(6deg);
+  z-index: 3;
+}
+.card-swap:not([data-swap]) .card-swap-card:nth-child(2) {
+  transform: translate(calc(-50% + 56px), calc(-50% - 64px)) skewY(6deg);
+  z-index: 2;
+}
+.card-swap:not([data-swap]) .card-swap-card:nth-child(3) {
+  transform: translate(calc(-50% + 112px), calc(-50% - 128px)) skewY(6deg);
+  z-index: 1;
+}
+
 .btn-ghost {
   border-color: var(--btn-ghost-border);
   color: var(--color-fg);

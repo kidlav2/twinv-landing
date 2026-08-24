@@ -349,6 +349,23 @@ export const services = {
 export const about = {
   eyebrow: "About us",
   headline: "Two people, a lot of shipped sites",
+  /**
+   * The line the laptop's screen holds, and the only copy on the site set at
+   * full display scale on its own. ASCII only and short on purpose: Anton has
+   * a limited glyph set, and this is read at ~100px where every extra word
+   * costs a line.
+   */
+  claim: "We kept the studio small on purpose.",
+  /**
+   * The page's own contents. Deliberately not numbered — these are three
+   * places to land, not three steps in a sequence, and index badges are the
+   * template pattern AGENTS.md rules out.
+   */
+  toc: [
+    { label: "The studio", href: "#about-studio" },
+    { label: "How we work", href: "#about-work" },
+    { label: "The two of us", href: "#about-us" },
+  ],
   intro:
     "Twin V Studio is a small design and development practice. We take on a handful of projects at a time so each one gets senior attention — the same two people from the first call to the last deploy, not an account manager handing you off to whoever is free.",
   body: "That's a deliberate ceiling, not a stage we're passing through. A studio that stays small stays close to the work: no bench of juniors to keep billable, no layer of process between what you ask for and what ships.",
@@ -366,6 +383,22 @@ export const about = {
       body: "We turn down work rather than stretch thin. If we take the call, you get real attention on a real timeline.",
     },
   ],
+  /**
+   * The closing section. `cards` are explicit placeholders — real photographs
+   * of the two of us go here, and inventing stand-in "studio photography"
+   * would be the same false claim as the invented metrics PLAN.md flags.
+   * Captions describe what each slot is for so the swap is unambiguous.
+   */
+  founders: {
+    eyebrow: "The two of us",
+    headline: "Who you actually get",
+    body: "Two senior people, both hands-on. One leads design and front-end, the other back-end and infrastructure — and on a project this size that split is a conversation, not a handoff. You talk to both of us, for the whole engagement.",
+    cards: [
+      { caption: "Design and front-end — photo to come" },
+      { caption: "Back-end and infrastructure — photo to come" },
+      { caption: "Both of us — photo to come" },
+    ],
+  },
   cta: { label: "Start a project", href: "/#contact" },
 };
 

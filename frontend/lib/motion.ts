@@ -58,6 +58,21 @@ export const WORD_SCRUB_OK =
   "(min-width: 768px) and (prefers-reduced-motion: no-preference)";
 
 /**
+ * The About page's laptop, which opens and grows its screen into the page's
+ * dark zone, is allowed.
+ *
+ * Same shape of reasoning as WORD_SCRUB_OK. Two independent reasons for the
+ * min-width: below it the laptop body is too small to read as an object at
+ * all (it becomes a black rectangle with a line through it), and pinning a
+ * short viewport through a multi-stage scrub is the interaction that behaves
+ * worst on a phone — ScrollSmoother runs with `smoothTouch: false` and
+ * `ignoreMobileResize: true`, so the address bar collapsing mid-pin never
+ * triggers the refresh that would fix the now-stale pin geometry.
+ */
+export const MACBOOK_SCRUB_OK =
+  "(min-width: 1024px) and (prefers-reduced-motion: no-preference)";
+
+/**
  * How far the dark panel's background hangs below its own section, so the light
  * panel that follows has something other than canvas to arrive over. Shared
  * because ScrollPanel's nav-tone trigger must end this much later than the
