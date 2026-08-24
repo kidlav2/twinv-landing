@@ -365,6 +365,20 @@
 .nav-links:has(.nav-link:hover) .nav-link:not(:hover) {
   opacity: 0.45;
 }
+/* "You are here." Full-strength colour AND a rule, because colour alone is
+   not an acceptable way to carry state — and because at rest the link would
+   otherwise be indistinguishable from a hovered sibling. `currentColor` so it
+   inherits the tone flip along with the text. */
+.nav-link[aria-current="page"] {
+  color: var(--nav-link-hover);
+}
+.nav-link[aria-current="page"]::after {
+  content: "";
+  display: block;
+  height: 1.5px;
+  margin-top: 3px;
+  background-color: currentColor;
+}
 .nav-cta {
   background-color: var(--nav-cta-bg);
   color: var(--nav-cta-fg);
@@ -513,6 +527,41 @@
     display: none;
   }
 }
+
+/* The laptop is drawn at one fixed design size (see macbook-body.tsx) and
+   scaled to fit, because a full-size machine is 895px tall and does not fit a
+   768px laptop screen. Scaling the whole deck rather than re-proportioning it
+   is what lets the keycaps stay ~40px with legible legends at every size.
+   Steps, not a fluid clamp: `scale()` needs a unitless number and a viewport
+   ratio in CSS can only be produced in px. about-stage.tsx reads this same
+   variable, so the lid's geometry and the deck can never disagree. */
+.macbook-only {
+  --machine-k: 0.68;
+}
+@media (min-height: 820px) {
+  .macbook-only {
+    --machine-k: 0.82;
+  }
+}
+@media (min-height: 1000px) {
+  .macbook-only {
+    --machine-k: 1;
+  }
+}
+
+/* Backlit keyboard. Light emitted by a depicted object, which is imagery and
+   therefore outside the no-shadow rule that governs UI surfaces — the same
+   reasoning that lets the laptop be a laptop at all. Alpha values rather than
+   tokens because this is a light falloff, not a fill. */
+.kbd-key {
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.16);
+}
+.kbd-legend {
+  color: var(--color-paper);
+  text-shadow:
+    0 0 5px rgba(255, 255, 255, 0.75),
+    0 0 12px rgba(255, 255, 255, 0.4);
+}
 @media (min-width: 64rem) and (prefers-reduced-motion: no-preference) {
   .macbook-fallback {
     display: none;
@@ -531,11 +580,11 @@
   z-index: 3;
 }
 .card-swap:not([data-swap]) .card-swap-card:nth-child(2) {
-  transform: translate(calc(-50% + 56px), calc(-50% - 64px)) skewY(6deg);
+  transform: translate(calc(-50% + 64px), calc(-50% - 76px)) skewY(6deg);
   z-index: 2;
 }
 .card-swap:not([data-swap]) .card-swap-card:nth-child(3) {
-  transform: translate(calc(-50% + 112px), calc(-50% - 128px)) skewY(6deg);
+  transform: translate(calc(-50% + 128px), calc(-50% - 152px)) skewY(6deg);
   z-index: 1;
 }
 

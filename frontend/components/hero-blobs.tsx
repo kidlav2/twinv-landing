@@ -7,6 +7,7 @@ import { MorphSVGPlugin } from "gsap/MorphSVGPlugin";
 import { useGSAP } from "@gsap/react";
 import { isDocumentVisible, MOTION_OK } from "@/lib/motion";
 import { blobPath } from "@/lib/blob";
+import { pointerField } from "@/lib/pointer-field";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, MorphSVGPlugin);
 
@@ -128,6 +129,8 @@ export function HeroBlobs() {
           loops.push(tl);
         });
 
+        let releasePointer: (() => void) | null = null;
+
         gsap.from(scope.current?.querySelectorAll("path") ?? [], {
           scale: 0.88,
           opacity: 0,
@@ -137,7 +140,28 @@ export function HeroBlobs() {
           stagger: 0.08,
           // Behind the headline's own timeline (delay 0.15) so type still leads.
           delay: 0.35,
-          onComplete: () => loops.forEach((t) => t.play()),
+          onComplete: () => {
+            loops.forEach((t) => t.play());
+
+            // Only now. The entrance above animates `scale` on these very
+            // paths, and the pointer lean writes `x`/`y` to the same transform
+            // matrix — starting it early would have the two overwrite each
+            // other mid-flight and leave a blob parked at 0.88.
+            //
+            // Depth per blob, largest moving least: a composition where
+            // everything slides by the same amount reads as one flat sheet
+            // being dragged, not as shapes at different distances. Signs are
+            // mixed on purpose so the group opens and closes around the
+            // cursor instead of marching with it.
+            releasePointer = pointerField(
+              scope.current!,
+              BLOBS.map((b, i) => ({
+                el: scope.current!.querySelector(`#${b.id}`)!,
+                depth: [0.35, -0.7, 0.85, -0.95, 1][i] ?? 0.5,
+              })),
+              { max: 22, duration: 1.1 },
+            );
+          },
         });
 
         // Don't burn rAF on a morph nobody can see.
@@ -152,6 +176,8 @@ export function HeroBlobs() {
         return () => {
           st.kill();
           loops.forEach((t) => t.kill());
+          // May still be null if the entrance never completed.
+          releasePointer?.();
         };
       });
 

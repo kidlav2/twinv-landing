@@ -1,12 +1,22 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { nav } from "@/lib/content";
 
 export function Nav() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+
+  /**
+   * Only real routes can be "current". The other four links are homepage
+   * anchors (`/#process`), and a section scrolled into view is not a page you
+   * are on — marking one would put two current items in the bar at once.
+   * Compared against the path only, so a trailing hash never breaks the match.
+   */
+  const isCurrent = (href: string) => !href.includes("#") && href === pathname;
 
   // Don't let the page scroll behind the open mobile sheet.
   //
@@ -55,6 +65,7 @@ export function Nav() {
               <li key={l.label}>
                 <Link
                   href={l.href}
+                  aria-current={isCurrent(l.href) ? "page" : undefined}
                   className="nav-link text-sub-lg font-medium"
                 >
                   {l.label}
@@ -110,6 +121,7 @@ export function Nav() {
                 <Link
                   href={l.href}
                   onClick={() => setOpen(false)}
+                  aria-current={isCurrent(l.href) ? "page" : undefined}
                   className="nav-link block rounded-btn px-4 py-4 text-heading-sm"
                 >
                   {l.label}

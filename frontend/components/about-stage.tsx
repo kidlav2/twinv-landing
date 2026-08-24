@@ -6,7 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { about } from "@/lib/content";
 import { isDocumentVisible, MACBOOK_SCRUB_OK } from "@/lib/motion";
-import { MacbookBody, MacbookLip } from "./macbook-body";
+import { MacbookBody, LID_W, LID_H, TOTAL_H } from "./macbook-body";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -30,25 +30,34 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
  */
 
 /* ---- Geometry -------------------------------------------------------------
-   The laptop is a FIXED pixel object, not a percentage of the viewport. That
-   is what lets the keyboard exist at all: proportional sizing would have to
-   scale ~70 keycaps and their legends per viewport width, and the legends
-   would stop being legible at the small end.
+   The laptop is a FIXED pixel object (dimensions live in macbook-body.tsx,
+   imported above) uniformly scaled by `--machine-k`. It is not sized as a
+   percentage of the viewport, because proportional sizing would have to
+   re-proportion ~79 keycaps and their legends per viewport width, and the
+   legends would stop being legible at the small end.
 
-   Everything below is derived from these four numbers, in both the CSS that
-   places the parts and the tween that grows the screen, so the two cannot
-   drift apart. The screen's end state is 0/0/viewport, so every value the
-   tween touches is px → px: no unit conversion anywhere in the scrub. */
-const LID_W = 560;
-const LID_H = 350;
-const BASE_H = 300;
-const TOTAL_H = LID_H + BASE_H;
+   Every position below is CSS calc built from those same constants times the
+   same variable, so the deck and the lid cannot drift apart, and the scrub
+   reads the variable back for its from-values. The screen's end state is
+   0/0/viewport, so every value the tween touches is px → px: no unit
+   conversion anywhere in the scrub. */
+const k = (px: number) => `${px}px * var(--machine-k)`;
 
-/** Left edge of the whole machine, and the top of the lid, as CSS calc. */
-const COL_LEFT = `calc(50% - ${LID_W / 2}px)`;
-const LID_TOP = `calc(50% - ${TOTAL_H / 2}px)`;
-const BASE_TOP = `calc(50% - ${TOTAL_H / 2 - LID_H}px)`;
-const LIP_TOP = `calc(50% - ${TOTAL_H / 2 - LID_H - BASE_H}px)`;
+const COL_LEFT = `calc(50% - ${k(LID_W / 2)})`;
+const LID_TOP = `calc(50% - ${k(TOTAL_H / 2)})`;
+const BASE_TOP = `calc(50% - ${k(TOTAL_H / 2 - LID_H)})`;
+
+/**
+ * The vanishing point, parked on the middle of the lid rather than the middle
+ * of the section.
+ *
+ * This was the "crooked" laptop: `perspective` resolves its origin against the
+ * element that declares it, so with the default `50% 50%` the vanishing point
+ * sat at the centre of a full-height section — well below the lid — and the
+ * hinge rotation came out keystoned, wider at the top than the bottom. Putting
+ * the eye level at the lid's own centre makes the rotation symmetrical.
+ */
+const EYE_LEVEL = `calc(50% - ${k(TOTAL_H / 2 - LID_H / 2)})`;
 
 /**
  * The claim's box is a fixed width for the same reason the laptop is: as a
@@ -84,7 +93,7 @@ const CLAIM_FONT = 160;
  * to the standalone `scale:` property, which multiplies with the `transform`
  * GSAP writes instead of replacing it.
  */
-const CLAIM_REST_SCALE = 0.42;
+const CLAIM_REST_SCALE = 0.56;
 
 export function AboutStage() {
   const scope = useRef<HTMLDivElement>(null);
@@ -124,11 +133,42 @@ export function AboutStage() {
         const chrome = root.querySelectorAll<HTMLElement>("[data-chrome]");
         if (!screen || !claim) return;
 
+        /** Current scale factor, read back from the CSS that sets it. */
+        const mk = () =>
+          parseFloat(getComputedStyle(root).getPropertyValue("--machine-k")) ||
+          1;
+
+        /**
+         * The lid opens on the way IN, before anything is pinned.
+         *
+         * It used to be the first third of the pinned timeline, which meant
+         * you scrolled the section to the top of the screen, it locked, and
+         * only then did the machine start to move — the reported "it opens
+         * once you are already past the middle". Tying it to the section's
+         * approach instead means the laptop opens as it rises into view and
+         * is fully open exactly when the pin takes over, so the pin only ever
+         * does one thing: grow the screen.
+         */
+        const openTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: root,
+            start: "top 88%",
+            end: "top top",
+            scrub: 0.3,
+            invalidateOnRefresh: true,
+          },
+        });
+        openTl.fromTo(
+          screen,
+          { rotateX: -76 },
+          { rotateX: 0, ease: "power2.out", duration: 1 },
+        );
+
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: root,
             start: "top top",
-            end: "+=170%",
+            end: "+=150%",
             pin: true,
             // Low, for the reason scroll-panel.tsx gives: ScrollSmoother
             // already adds about a second of lag and the two compound.
@@ -145,32 +185,22 @@ export function AboutStage() {
           },
         });
 
-        // 1. The lid comes up. transformOrigin bottom is what makes this a
-        //    hinge rather than a card flipping in space, and it is why the
-        //    deck below has to sit exactly LID_H down from the lid's top.
-        tl.fromTo(
-          screen,
-          { rotateX: -80 },
-          { rotateX: 0, ease: "power1.out", duration: 0.34 },
-          0,
-        );
-
-        // 2. The machine goes. Once the screen grows past it, a deck sticking
+        // 1. The machine goes. Once the screen grows past it, a deck sticking
         //    out from behind a full-bleed panel is just debris.
-        tl.to(chrome, { opacity: 0, ease: "none", duration: 0.18 }, 0.36);
+        tl.to(chrome, { opacity: 0, ease: "none", duration: 0.16 }, 0.06);
 
-        // 3. The screen becomes the viewport. Insets and size, never scale: a
+        // 2. The screen becomes the viewport. Insets and size, never scale: a
         //    non-uniform scale would squash the corner radius into an ellipse
         //    and drag the type with it — the same reason scroll-panel.tsx
         //    animates left/right rather than scaling.
         tl.fromTo(
           screen,
           {
-            left: () => (window.innerWidth - LID_W) / 2,
-            top: () => (window.innerHeight - TOTAL_H) / 2,
-            width: LID_W,
-            height: LID_H,
-            borderRadius: 14,
+            left: () => (window.innerWidth - LID_W * mk()) / 2,
+            top: () => (window.innerHeight - TOTAL_H * mk()) / 2,
+            width: () => LID_W * mk(),
+            height: () => LID_H * mk(),
+            borderRadius: 16,
           },
           {
             left: 0,
@@ -179,9 +209,9 @@ export function AboutStage() {
             height: () => window.innerHeight,
             borderRadius: 0,
             ease: "none",
-            duration: 0.58,
+            duration: 0.72,
           },
-          0.4,
+          0.1,
         );
 
         // Uniform scale, so type is safe here — and it keeps the claim one
@@ -192,14 +222,13 @@ export function AboutStage() {
         // stops a very wide screen from setting this at ~250px.
         tl.fromTo(
           claim,
-          { scale: CLAIM_REST_SCALE },
+          { scale: () => CLAIM_REST_SCALE * mk() },
           {
-            scale: () =>
-              Math.min(1.35, (window.innerWidth * 0.86) / CLAIM_W),
+            scale: () => Math.min(1.35, (window.innerWidth * 0.86) / CLAIM_W),
             ease: "none",
-            duration: 0.58,
+            duration: 0.72,
           },
-          0.4,
+          0.1,
         );
 
         // Fonts arrive through next/font with display: swap, which changes
@@ -210,6 +239,10 @@ export function AboutStage() {
 
         return () => {
           cancelAnimationFrame(raf);
+          // The open timeline owns its own trigger, so matchMedia's revert
+          // does not reach it the way it reaches `tl`'s.
+          openTl.scrollTrigger?.kill();
+          openTl.kill();
           setTone(false);
         };
       });
@@ -259,16 +292,23 @@ export function AboutStage() {
          motion; the claim is rendered instead by the dark zone's
          `macbook-fallback` copy. `perspective` has to live on the parent of
          the rotating element for the hinge to have any depth at all. */
-      className="macbook-only bg-canvas relative h-screen overflow-hidden [perspective:1600px]"
+      className="macbook-only bg-canvas relative h-screen overflow-hidden"
+      style={{
+        perspective: "1900px",
+        perspectiveOrigin: `50% ${EYE_LEVEL}`,
+      }}
     >
+      {/* Drawn at design size and scaled from its own top-left corner, so the
+          rendered box is exactly LID_W×BASE_H times the factor — which is what
+          the lid's position calc assumes. GSAP only ever writes `opacity`
+          here, never a transform, so this CSS scale is not the multiplying
+          conflict AGENTS.md warns about. */}
       <MacbookBody
-        style={{ left: COL_LEFT, top: BASE_TOP, width: LID_W, height: BASE_H }}
-      />
-      <MacbookLip
         style={{
-          left: `calc(50% - ${LID_W * 0.09}px)`,
-          top: LIP_TOP,
-          width: LID_W * 0.18,
+          left: COL_LEFT,
+          top: BASE_TOP,
+          transform: "scale(var(--machine-k))",
+          transformOrigin: "top left",
         }}
       />
 
@@ -279,13 +319,13 @@ export function AboutStage() {
           with GSAP's `transform`. */}
       <div
         data-screen
-        className="bg-carbon absolute overflow-hidden [transform-origin:bottom] [transform-style:preserve-3d]"
+        className="bg-carbon absolute overflow-hidden [transform-origin:bottom]"
         style={{
           left: COL_LEFT,
           top: LID_TOP,
-          width: LID_W,
-          height: LID_H,
-          borderRadius: 14,
+          width: `calc(${k(LID_W)})`,
+          height: `calc(${k(LID_H)})`,
+          borderRadius: 16,
         }}
       >
         <div className="absolute inset-0 flex items-center justify-center">
@@ -300,7 +340,8 @@ export function AboutStage() {
               width: CLAIM_W,
               fontSize: CLAIM_FONT,
               lineHeight: 0.95,
-              transform: `scale(${CLAIM_REST_SCALE})`,
+              // Times the machine scale, so it fits the lid at every step.
+              transform: `scale(calc(${CLAIM_REST_SCALE} * var(--machine-k)))`,
             }}
           >
             {about.claim}

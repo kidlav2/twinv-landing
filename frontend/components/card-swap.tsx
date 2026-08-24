@@ -12,7 +12,7 @@ gsap.registerPlugin(useGSAP);
  * forward, and the dropped one returns to the back.
  *
  * Adapted from React Bits' <CardSwap /> (already GSAP-only, so no second
- * animation library came with it). Two things changed from the original:
+ * animation library came with it), with three changes:
  *
  *  - Cards are found by querying `[data-swap-card]` rather than through an
  *    array of React refs. That is how every other animated component here
@@ -21,16 +21,17 @@ gsap.registerPlugin(useGSAP);
  *  - The original starts its `setInterval` unconditionally in a bare
  *    `useEffect`. Here the whole scripted path lives behind `MOTION_OK` and
  *    the background-tab guard, like the rest of the site's motion.
+ *  - The root is a real `<button>`. Clicking advances the stack, so this is a
+ *    control and has to be one: that buys the keyboard path and a focus ring
+ *    for free, instead of a div with a click handler nobody can reach by Tab.
  *
- * Not interactive: the cards are photographs, they lead nowhere, and giving
- * them a click target or a focus stop would promise an interaction that does
- * not exist. Hover pauses the cycle — that is a control (WCAG 2.2.2, moving
- * content that starts on its own must be pausable), not a decorative hover.
+ * Hover pauses the cycle. That is not a decorative hover — content that moves
+ * on its own for more than five seconds has to be pausable (WCAG 2.2.2).
  */
 
 const SKEW = 6;
-const DIST_X = 56;
-const DIST_Y = 64;
+const DIST_X = 64;
+const DIST_Y = 76;
 const DELAY = 4200;
 
 const EASE = "elastic.out(0.6,0.9)";
@@ -55,7 +56,9 @@ export function CardSwap({
   children: ReactNode;
   className?: string;
 }) {
-  const scope = useRef<HTMLDivElement>(null);
+  const scope = useRef<HTMLButtonElement>(null);
+  /** Set by the scripted path; the click handler calls it. */
+  const advance = useRef<(() => void) | null>(null);
 
   useGSAP(
     () => {
@@ -68,11 +71,11 @@ export function CardSwap({
       const mm = gsap.matchMedia();
 
       mm.add(MOTION_OK, () => {
-        // First line, as everywhere else that hides or displaces something.
-        // GSAP advances on requestAnimationFrame, which a background tab
-        // never fires: placing the cards into their slots here and then
-        // freezing would leave three cards stacked in one spot with no way
-        // out. Bail, and the CSS fallback below stands instead.
+        // First line, as everywhere else that displaces something. GSAP
+        // advances on requestAnimationFrame, which a background tab never
+        // fires: dealing the cards into their slots here and then freezing
+        // would leave the whole stack in one spot with no way out. Bail, and
+        // the CSS fallback in globals.css stands instead.
         if (!isDocumentVisible()) return;
 
         const total = cards.length;
@@ -81,9 +84,8 @@ export function CardSwap({
         let timer = 0;
 
         cards.forEach((card, i) => {
-          const s = slot(i, total);
           gsap.set(card, {
-            ...s,
+            ...slot(i, total),
             xPercent: -50,
             yPercent: -50,
             skewY: SKEW,
@@ -92,8 +94,8 @@ export function CardSwap({
           });
         });
 
-        // Written only now that the scripted path is actually live. It is the
-        // switch the CSS fallback keys off, and it MUST be removed by hand in
+        // Written only now that the scripted path is live. It is the switch
+        // the CSS fallback keys off, and it MUST be removed by hand in
         // cleanup — mm.revert() reverts tweens, not attribute writes. Same
         // contract as `[data-fill]` on buttons and `[data-slider]` on the
         // services grid.
@@ -102,9 +104,12 @@ export function CardSwap({
         const swap = () => {
           const [front, ...rest] = order;
           const elFront = cards[front];
+          // Overwrite rather than queue: a click landing mid-flight should
+          // take over the motion, not wait its turn behind it.
+          tl?.kill();
           tl = gsap.timeline();
 
-          tl.to(elFront, { y: "+=420", duration: DUR, ease: EASE });
+          tl.to(elFront, { y: "+=520", duration: DUR, ease: EASE });
 
           tl.addLabel("promote", `-=${DUR * PROMOTE_OVERLAP}`);
           rest.forEach((idx, i) => {
@@ -139,6 +144,13 @@ export function CardSwap({
           timer = window.setInterval(swap, DELAY);
         };
 
+        // A click advances AND restarts the clock, so the next automatic turn
+        // is a full interval away rather than whatever was left of the old one.
+        advance.current = () => {
+          swap();
+          start();
+        };
+
         swap();
         start();
 
@@ -157,15 +169,21 @@ export function CardSwap({
           };
           root.addEventListener("pointerenter", pause);
           root.addEventListener("pointerleave", resume);
+          // Keyboard focus deserves the same hold as a hovering cursor.
+          root.addEventListener("focus", pause);
+          root.addEventListener("blur", resume);
           return () => {
             root.removeEventListener("pointerenter", pause);
             root.removeEventListener("pointerleave", resume);
+            root.removeEventListener("focus", pause);
+            root.removeEventListener("blur", resume);
           };
         });
 
         return () => {
           clearInterval(timer);
           hover.revert();
+          advance.current = null;
           delete root.dataset.swap;
         };
       });
@@ -176,20 +194,24 @@ export function CardSwap({
   );
 
   return (
-    <div
+    <button
       ref={scope}
-      /* The stack is dealt down-right from a single anchor point, so its
-         visual centre sits half the total drift away from that anchor
-         (DIST_X * (n-1) / 2 across, DIST_Y * (n-1) / 2 up). Without this
-         correction the whole group hangs to the right — measured at 375px,
-         the back card's edge landed exactly on the viewport edge. The
-         constants are the drift, not a nudge, and they hold at every card
-         size because the slot offsets are fixed.
-         Safe as a container transform: GSAP only ever writes to the cards. */
-      className={`card-swap relative translate-x-[-56px] translate-y-[64px] [perspective:900px] ${className}`}
+      type="button"
+      aria-label="Show the next photo"
+      onClick={() => advance.current?.()}
+      /* The stack is dealt down-right from one anchor, so its visual centre
+         sits half the total drift away from it. Correcting by that amount is
+         what keeps the group optically centred on its box rather than hanging
+         below and to the right of it. Safe as a container transform: GSAP
+         only ever writes to the cards inside. */
+      /* `w-full` is not cosmetic. A <button> shrink-wraps its content even at
+         `display: block`, and every card inside is absolutely positioned — so
+         the box measured zero wide, and the percentage translate that pushes
+         the stack off-screen resolved against zero and did nothing. */
+      className={`card-swap relative block w-full translate-y-[76px] cursor-pointer appearance-none [perspective:1200px] ${className}`}
     >
       {children}
-    </div>
+    </button>
   );
 }
 
@@ -211,14 +233,14 @@ export function SwapCard({
       data-swap-card
       className={`card-swap-card tone-light bg-paper rounded-card absolute top-1/2 left-1/2 flex flex-col overflow-hidden [backface-visibility:hidden] [transform-style:preserve-3d] ${className}`}
     >
-      {/* The placeholder itself. A flat mist panel, no icon, no dashed
-          "upload" affordance — this is a slot waiting for a photograph, not
-          a control. The caption says which photograph. */}
+      {/* The placeholder itself. A flat mist panel — no icon, no dashed
+          "upload" affordance — because this is a slot waiting for a
+          photograph, not a control. The caption says which photograph. */}
       <div className="bg-mist flex-1" />
       {/* `text-muted`, not the `text-faint` the site's decorative mono labels
           use: on this white surface faint (#979797) lands at 2.8:1, and this
           caption is the only thing saying which photograph belongs here. */}
-      <figcaption className="text-muted font-mono border-line border-t px-5 py-4 text-caption uppercase">
+      <figcaption className="text-muted font-mono border-line border-t px-6 py-5 text-caption uppercase">
         {caption}
       </figcaption>
     </figure>
