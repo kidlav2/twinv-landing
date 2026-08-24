@@ -37,8 +37,11 @@ export function Nav() {
             is the link pill at ~64px — keeping the mark under that means the
             token does not move. Measured after this change: bar 113px against
             a token of 113px. */}
+        {/* "/#top" not "#top" — same reason nav.links moved to /#id in
+            content.ts: the nav renders on every route, and a bare hash only
+            resolves against whatever page is currently mounted. */}
         <Link
-          href="#top"
+          href="/#top"
           aria-label={nav.brand}
           className="nav-brand inline-flex shrink-0 items-center"
           onClick={() => setOpen(false)}
@@ -62,8 +65,12 @@ export function Nav() {
         </nav>
 
         <div className="flex items-center gap-3">
+          {/* The brief form reads this attribute on click and preselects the
+              matching option — see components/brief.tsx. The href stays a
+              plain anchor so the smooth-scroll handler still owns the scroll. */}
           <Link
             href={nav.cta.href}
+            data-brief-goal="demo"
             className="nav-cta hidden rounded-[14px] px-7 py-4 text-sub-lg font-semibold sm:inline-flex"
           >
             {nav.cta.label}

@@ -29,10 +29,32 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 export function ScrollPanel({
   children,
   tone,
+  terminal = false,
+  cursor = true,
   className = "",
 }: {
   children: ReactNode;
   tone: "dark" | "light";
+  /**
+   * This panel is the last zone on the page — nothing of a different tone
+   * follows it. Two things change together, and they MUST stay together (see
+   * the overhang note in AGENTS.md):
+   *
+   *  - No overhang. The overhang exists so the NEXT panel has something to
+   *    arrive over; with nothing after it, 38vh of black would just hang off
+   *    the end of the document.
+   *  - The nav-tone trigger runs to `max` instead of to the overhang. The
+   *    zone owns the tone all the way to the bottom of the page, so the nav
+   *    must not flip light over it — the same invariant, expressed for a zone
+   *    whose end is the document's end.
+   */
+  terminal?: boolean;
+  /**
+   * The whole-zone cursor invert. On by default for a dark zone, where it is
+   * the homepage's signature; off where the zone already carries its own
+   * interactive visual and a second pointer effect would just be noise.
+   */
+  cursor?: boolean;
   className?: string;
 }) {
   const scope = useRef<HTMLElement>(null);
@@ -64,8 +86,10 @@ export function ScrollPanel({
         ? ScrollTrigger.create({
             trigger: scope.current,
             start: `top ${navPx}px`,
-            end: () =>
-              `bottom+=${window.innerHeight * PANEL_OVERHANG_VH} ${navPx}px`,
+            end: terminal
+              ? "max"
+              : () =>
+                  `bottom+=${window.innerHeight * PANEL_OVERHANG_VH} ${navPx}px`,
             onToggle: ({ isActive }) => {
               if (isActive) {
                 document.documentElement.dataset.navTone = "dark";
@@ -115,7 +139,7 @@ export function ScrollPanel({
         if (isDark) delete document.documentElement.dataset.navTone;
       };
     },
-    { scope, dependencies: [tone] },
+    { scope, dependencies: [tone, terminal] },
   );
 
   return (
@@ -135,13 +159,13 @@ export function ScrollPanel({
               "bg-canvas border-ash border-t-[1.5px]"
         }`}
         style={{
-          bottom: isDark ? `-${PANEL_OVERHANG_VH * 100}vh` : 0,
+          bottom: isDark && !terminal ? `-${PANEL_OVERHANG_VH * 100}vh` : 0,
         }}
       />
       {/* Whole-zone cursor invert — dark only; there's no matching request
           for the light zone and the effect reads as a "black zone" signature,
           not a general-purpose one. */}
-      {isDark && <ZoneCursor />}
+      {isDark && cursor && <ZoneCursor />}
       <div className="relative z-10">{children}</div>
     </section>
   );

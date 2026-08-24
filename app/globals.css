@@ -21,10 +21,21 @@
 .tone-light {
   --btn-bg: #000000;
   --btn-fg: #ffffff;
-  --btn-bg-hover: #2f2f2f;
+  /* Voltage, not #2f2f2f. The near-black hover was invisible against a
+     near-black button, and it also made the page's primary button the ONE
+     primary action on the site that did not hover yellow — the nav CTA
+     already does (`--nav-cta-hover`), and the dark-zone button is yellow at
+     rest. Three buttons, one motif. */
+  --btn-bg-hover: #fff100;
+  --btn-fg-hover: #000000;
   --btn-ghost-border: #444444;
   --btn-ghost-hover-bg: #000000;
   --btn-ghost-hover-fg: #ffffff;
+  /* Pager tiles invert to the opposite tone on hover. Declared per tone for
+     the same reason the buttons are: inside `.tone-dark`, `hover:bg-carbon`
+     would paint black on black. */
+  --pager-hover-bg: #000000;
+  --pager-hover-fg: #ffffff;
 }
 
 /* A light card sitting inside a dark zone must reset the roles, or its body
@@ -61,9 +72,12 @@
   --btn-bg: #fff100;
   --btn-fg: #000000;
   --btn-bg-hover: #ffffff;
+  --btn-fg-hover: #000000;
   --btn-ghost-border: #979797;
   --btn-ghost-hover-bg: #ffffff;
   --btn-ghost-hover-fg: #000000;
+  --pager-hover-bg: #ffffff;
+  --pager-hover-fg: #000000;
 
   /* Headings and other unclassed text inherit the zone's foreground. */
   color: var(--color-fg);
@@ -179,8 +193,19 @@
 
   /* ---- Layout ----
      No max-width cap: sections run edge-to-edge on real monitors, held off
-     the glass only by the gutter. Nav uses a tighter gutter than sections. */
-  --spacing-section: 80px;
+     the glass only by the gutter. Nav uses a tighter gutter than sections.
+
+     Both section-gap tokens are clamps, same idiom as --shell-padding below:
+     a fixed px value is a desktop measurement wearing a phone's clothes. At
+     375px a flat 80px top+bottom around a short section (Stack's chip rows
+     measured 128px of "empty" padding alone) reads as broken layout, not
+     restraint. Each clamp keeps its CURRENT value as the ceiling, so nothing
+     above roughly tablet width moves — only the floor is new. */
+  --spacing-section: clamp(48px, 9vw, 80px);
+  /* The larger gap used by sections whose content is short relative to their
+     visual weight (a two-line statement, a handful of stat rows) — Problem,
+     Statement, Pillars, Stack. */
+  --spacing-section-lg: clamp(64px, 16vw, 128px);
   --spacing-nav: 7.5rem;
   /* Measured height of the fixed bar. Anchor offsets, the nav-tone trigger in
      scroll-panel.tsx, and ScrollSmoother's scrollTo all read this ONE value —
@@ -413,6 +438,19 @@
 }
 .btn-primary:hover {
   background-color: var(--btn-bg-hover);
+  /* Was unset, so hover changed only the fill — which left white label text
+     on the new yellow. Exactly the bug the nav CTA already had and fixed. */
+  color: var(--btn-fg-hover);
+}
+
+/* Pager tiles (service pages). Unlayered so they beat the utilities that
+   would otherwise win, same reasoning as the nav and button rules above. */
+.pager-tile:hover {
+  background-color: var(--pager-hover-bg);
+}
+.pager-tile:hover .pager-label,
+.pager-tile:hover .pager-title {
+  color: var(--pager-hover-fg);
 }
 
 /* With the sliding block live, `data-slider` is on the grid and the block is

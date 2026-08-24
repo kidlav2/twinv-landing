@@ -166,14 +166,15 @@ export function ServicesGrid() {
       {services.items.map((s) => (
         <a
           key={s.title}
-          href="#contact"
+          href={`/services/${s.slug}`}
           data-service-card
           className="service-card border-line-strong rounded-card relative flex flex-col border p-7 transition-colors duration-300 sm:p-8"
         >
           {/* Role utilities only. When the card is marked `tone-dark` every
               one of these flips at once — no per-element `group-hover:` colour
               pairs to keep in sync, and `:focus-visible` turns white by
-              itself. Same trick as the dark card in banners.tsx.
+              itself — the same mechanism ScrollPanel uses for a whole zone,
+              scoped here to one card at a time.
 
               There is deliberately no "Learn more →" line. Six identical
               call-to-action rows under six cards is the generic filler this

@@ -48,3 +48,39 @@ export function blobPath(
 
   return `${d}Z`;
 }
+
+/**
+ * Deterministic radii for one blob variant.
+ *
+ * The hero's five blobs carry their sequences by hand, which is fine for five.
+ * The service pages need six distinct arrangements of five blobs at three
+ * shapes each — ninety hand-written arrays, every one a chance to typo a
+ * number and get a shape that spikes outside its viewBox. Seeding them keeps
+ * the same guarantees for free: same seed, same numbers, on the server and on
+ * the client, so the inline `d` never trips a hydration mismatch.
+ *
+ * Range 0.74–1.28 matches the hand-authored set. A narrower swing reads as a
+ * rounded octagon rather than a drop, and the upper bound is what keeps a
+ * blob inside `base * 1.3` — the figure every layout below is measured
+ * against.
+ */
+export function blobRadii(seed: number, count = 8): number[] {
+  // mulberry32 — small, fast, and stable across engines, which matters more
+  // here than statistical quality.
+  let s = seed >>> 0;
+  const rand = () => {
+    s = (s + 0x6d2b79f5) >>> 0;
+    let t = s;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+
+  const out: number[] = [];
+  for (let i = 0; i < count; i++) {
+    // Rounded to match blobPath's own 2-decimal output — no point carrying
+    // precision the path string throws away.
+    out.push(Number((0.74 + rand() * 0.54).toFixed(2)));
+  }
+  return out;
+}

@@ -17,15 +17,22 @@
  * there are no subpages yet to design against.
  */
 export const nav = {
-  brand: "V&V Studio",
+  brand: "Twin V Studio",
+  /* `/#id`, not `#id`: the nav renders on every route via PageShell (see
+     components/page-shell.tsx), so a bare hash — which the smooth-scroll
+     click handler only resolves against the CURRENT page — would append
+     harmlessly to /about or /services/x and scroll nowhere. The homepage's
+     own components (Pillars, ServicesGrid, Brief…) can still use bare `#id`,
+     because they only ever render on `/`. /about is a real route now that
+     the page exists. */
   links: [
-    { label: "Process", href: "#process" },
-    { label: "Work", href: "#work" },
-    { label: "Stack", href: "#stack" },
-    { label: "Services", href: "#services" },
-    { label: "About", href: "#about" },
+    { label: "Process", href: "/#process" },
+    { label: "Work", href: "/#work" },
+    { label: "Stack", href: "/#stack" },
+    { label: "Services", href: "/#services" },
+    { label: "About", href: "/about" },
   ],
-  cta: { label: "Book a demo", href: "#contact" },
+  cta: { label: "Book a demo", href: "/#contact" },
 };
 
 export const hero = {
@@ -73,11 +80,10 @@ export const product = {
     "Two senior people on your project from the first call to the last deploy — no account layer, no handoff to juniors, no ticket that sits for a week.",
     "We start with the funnel you already have, find where it drops people, and rebuild those screens first. You see working pages in week one, not a slide deck.",
   ],
-  // This section is about the studio itself, so its CTA points at the About
-  // card (#about) rather than the booking flow — a dedicated /about page
-  // isn't built yet (needs real team bios), so this is the honest interim
-  // target: it's a real, working link to the existing About content.
-  cta: { label: "Meet the studio", href: "#about" },
+  // Pointed at the About card until that card was removed. /about is the real
+  // destination once it exists (stage 3); until then the closing form is the
+  // only honest place to send someone who wants to talk to the studio.
+  cta: { label: "Meet the studio", href: "/about" },
 };
 
 export const pillars = {
@@ -161,81 +167,349 @@ export const stack = {
   ],
 };
 
+/**
+ * `slug` is the routing key for /services/[slug] (app/services/[slug]/page.tsx)
+ * and the thing footer.columns' Services links and the homepage cards both
+ * point at — one id, three call sites, so renaming a service means changing
+ * it in exactly one place.
+ *
+ * `intro` and `included` only render on the detail page; the card on the
+ * homepage grid keeps using `body`. No `approach`/step-by-step process here —
+ * that already exists once, as `pillars`, and restating it per-service would
+ * just be the same three paragraphs six times.
+ */
 export const services = {
   headline: "Services",
   sub: "Pick the one that matches where you are.",
   items: [
     {
+      slug: "website-design",
       title: "Website design",
       body: "A new site from strategy through launch, for companies with something to say and nowhere good to say it.",
       meta: "From 4 weeks",
+      intro:
+        "You're describing the business in a deck or a doc, not on the site — or the site was built for a version of the company that no longer exists. We start from the argument the business needs to make, not a template, and build the pages that make it.",
+      included: [
+        {
+          label: "Positioning & IA",
+          body: "Positioning and information architecture before any screen design.",
+        },
+        {
+          label: "Full-page design",
+          body: "Full-page designs for the pages that carry the argument, not just the homepage.",
+        },
+        {
+          label: "Production build",
+          body: "Production build in Next.js — the same stack this site runs on.",
+        },
+        {
+          label: "Copy direction",
+          body: "Copy direction and editing, so launch doesn't wait on a separate writer.",
+        },
+        {
+          label: "Analytics & staging",
+          body: "Analytics and a staging environment for a real look before it's public.",
+        },
+      ],
     },
     {
+      slug: "redesign",
       title: "Redesign",
       body: "Your site works but underperforms. We keep what converts, rebuild what doesn't, and migrate without losing rankings.",
       meta: "From 3 weeks",
+      intro:
+        "A redesign is not a repaint. We start by finding what the current site is already doing right — the pages that rank, the flows that convert — and rebuild around that, not over it. Nothing that already works gets thrown out for the sake of new.",
+      included: [
+        {
+          label: "Traffic audit",
+          body: "An audit of current traffic, rankings, and conversion paths before any redesign work.",
+        },
+        {
+          label: "Migration plan",
+          body: "A redirect and migration plan, so URLs that rank keep ranking.",
+        },
+        {
+          label: "Staged rebuild",
+          body: "Section-by-section rebuild, so the site can ship in pieces instead of one long freeze.",
+        },
+        {
+          label: "Before & after",
+          body: "Before/after comparison on the metrics that mattered going in.",
+        },
+      ],
     },
     {
+      slug: "ecommerce",
       title: "E-commerce",
       body: "Storefronts built for speed and checkout completion. Custom fronts on Shopify or headless, tuned to mobile.",
       meta: "From 6 weeks",
+      intro:
+        "Most storefront themes are built for a catalog, not your catalog. We build the front end around how your specific products actually get chosen and bought, on Shopify when that's the right fit or headless when it isn't, with checkout treated as its own design problem.",
+      included: [
+        {
+          label: "Custom storefront",
+          body: "Custom storefront on Shopify, or a headless front end over the commerce platform you already run.",
+        },
+        {
+          label: "Checkout rebuild",
+          body: "Checkout and cart flow audited and rebuilt for completion, not just appearance.",
+        },
+        {
+          label: "Scaling templates",
+          body: "Product and collection templates that scale past the handful you'll launch with.",
+        },
+        {
+          label: "Mobile-first build",
+          body: "Mobile-first build and testing — most of the traffic arrives on a phone.",
+        },
+      ],
     },
     {
+      slug: "brand-identity",
       title: "Brand & identity",
       body: "Logo, type, color, and the rules that keep it consistent — delivered as a system, not a folder of files.",
       meta: "From 3 weeks",
+      intro:
+        "A logo file isn't a brand. We deliver the rules that make the mark, the type, and the color hold together across a website, a deck, and a business card without someone having to guess — a system your team or the next agency can actually use.",
+      included: [
+        {
+          label: "Mark & wordmark",
+          body: "Mark, wordmark, and the construction rules that keep them from being redrawn wrong.",
+        },
+        {
+          label: "Type & color",
+          body: "Type and color system, with the roles each one plays, not just the values.",
+        },
+        {
+          label: "Written guide",
+          body: "A written guide covering the cases people actually get wrong.",
+        },
+        {
+          label: "Applied in build",
+          body: "Applied to the website itself, not handed off as a theoretical document.",
+        },
+      ],
     },
     {
+      slug: "care-growth",
       title: "Care & growth",
       body: "Ongoing design and development. New pages, tests, and fixes on a monthly retainer with a shipping cadence.",
       meta: "Monthly",
+      intro:
+        "A site is a product, not a project that ends at launch. This is the retainer for the work that comes after: new landing pages, fixes, small tests, the backlog that never quite gets prioritized on a one-off contract. A fixed cadence, not an open-ended favor.",
+      included: [
+        {
+          label: "Monthly hours",
+          body: "A monthly block of design and development hours, scoped before the month starts.",
+        },
+        {
+          label: "Shipping cadence",
+          body: "A shipping cadence — agreed dates, not a queue that quietly slips.",
+        },
+        {
+          label: "Priority fixes",
+          body: "Priority turnaround on fixes, ahead of new project work.",
+        },
+        {
+          label: "Shipped log",
+          body: "A running log of what shipped, so the retainer stays accountable to itself.",
+        },
+      ],
     },
     {
+      slug: "process-automation",
       title: "Process automation",
       body: "The work behind the site: integrations, queues, and scheduled jobs, plus the dashboards to watch them from.",
       meta: "From 5 weeks",
+      intro:
+        "The site is the part visitors see. This is the part that keeps it running: the integrations between your tools, the scheduled jobs that used to be a person's Tuesday morning, and a dashboard so the work is visible instead of trusted blindly.",
+      included: [
+        {
+          label: "Tool integrations",
+          body: "Integrations between the tools your team already uses — CRM, billing, support.",
+        },
+        {
+          label: "Jobs & queues",
+          body: "Scheduled jobs and queues for work that shouldn't depend on someone remembering.",
+        },
+        {
+          label: "Ops dashboard",
+          body: "A dashboard to see what ran, what failed, and why.",
+        },
+        {
+          label: "Own the infra",
+          body: "Built on infrastructure your team can read and maintain, not a black box.",
+        },
+      ],
     },
   ],
 };
 
-export const banners = {
-  primary: {
-    eyebrow: "Start a project",
-    headline: "Tell us what's not working",
-    body: "Send the URL and the number you want to move. We'll come back with an honest read on whether we can help — free, no deck.",
-    cta: { label: "Start a project", href: "mailto:hello@vandv.studio" },
+/** Renders at /about (app/about/page.tsx). */
+export const about = {
+  eyebrow: "About us",
+  headline: "Two people, a lot of shipped sites",
+  intro:
+    "Twin V Studio is a small design and development practice. We take on a handful of projects at a time so each one gets senior attention — the same two people from the first call to the last deploy, not an account manager handing you off to whoever is free.",
+  body: "That's a deliberate ceiling, not a stage we're passing through. A studio that stays small stays close to the work: no bench of juniors to keep billable, no layer of process between what you ask for and what ships.",
+  points: [
+    {
+      title: "Senior on every project",
+      body: "No junior does the first pass and a senior the review. The people who scope the work are the people who build it.",
+    },
+    {
+      title: "Production code, not a prototype",
+      body: "What ships in week one is the real stack — Next.js, deployed on your infrastructure — not a Figma file waiting for a second contract.",
+    },
+    {
+      title: "A handful of projects at a time",
+      body: "We turn down work rather than stretch thin. If we take the call, you get real attention on a real timeline.",
+    },
+  ],
+  cta: { label: "Start a project", href: "/#contact" },
+};
+
+export const legal = {
+  updated: "23 August 2026",
+  terms: {
+    title: "Terms of Service",
+    intro:
+      "These terms cover the use of vandv.studio and any brief you submit through it. They don't cover a signed client contract or statement of work — where one exists, its terms govern.",
+    sections: [
+      {
+        title: "Using this site",
+        body: "This site is informational and exists to describe Twin V Studio's work and to receive project briefs through the form at the bottom of the homepage. Don't use it to submit anything unlawful, anything you don't have the right to send, or anything intended to disrupt the site or the people running it.",
+      },
+      {
+        title: "The brief form",
+        body: "Submitting a brief is a request for a conversation, not an order, invoice, or binding commitment on either side. We reply to every brief we receive; a reply isn't an acceptance of work. Actual engagements are agreed separately, in writing, before any work starts.",
+      },
+      {
+        title: "Content and ownership",
+        body: "The design, copy, and code of this site belong to Twin V Studio unless credited otherwise. Case studies and names shown here are used with permission. Deliverables from a paid engagement are covered by that engagement's own agreement, not by these terms.",
+      },
+      {
+        title: "No warranty",
+        body: "This site is provided as-is. We've tried to keep it accurate and working, but we don't promise it will be uninterrupted, error-free, or fit for a particular purpose beyond what it plainly does.",
+      },
+      {
+        title: "Changes",
+        body: "We may update these terms as the site or the studio's practices change. The date at the top of this page reflects the last revision.",
+      },
+      {
+        title: "Contact",
+        body: "Questions about these terms can go to hello@vandv.studio.",
+      },
+    ],
   },
-  secondary: {
-    eyebrow: "About us",
-    headline: "Two people, a lot of shipped sites",
-    body: "V&V Studio is a small design and development practice. We take on a handful of projects at a time so each one gets senior attention.",
-    cta: { label: "About us", href: "#about" },
+  privacy: {
+    title: "Privacy Statement",
+    intro:
+      "This is a short statement because there isn't much to disclose: this site doesn't run analytics, doesn't set tracking cookies, and doesn't share anything with an ad network. The only data it collects is what you type into the brief form, and the only reason we keep it is to reply to you.",
+    sections: [
+      {
+        title: "What we collect",
+        body: "The brief form asks for your name, email address, what you need, and optionally your current site's URL. That's the whole set — see the form itself for the exact fields. We don't collect anything passively: no cookies, no analytics pixels, no third-party scripts on this site.",
+      },
+      {
+        title: "How we use it",
+        body: "To read your brief and reply to the email address you gave us. Nothing is added to a marketing list, and nothing is sold or shared with a third party.",
+      },
+      {
+        title: "How long we keep it",
+        body: "Brief submissions are kept as long as they're useful to the conversation they started — typically the length of an active discussion or engagement — and deleted when they're not.",
+      },
+      {
+        title: "Your rights",
+        body: "You can ask what we hold about you, ask us to correct it, or ask us to delete it, at any time, by writing to hello@vandv.studio.",
+      },
+      {
+        title: "Changes",
+        body: "If this statement changes in a way that matters — for example, if the no-cookies, no-analytics line above stops being true — the date at the top of this page will move and we'll say what changed.",
+      },
+    ],
   },
+};
+
+/**
+ * The brief form at the foot of the page.
+ *
+ * `goals[0]` is the default selection; the nav CTA carries
+ * `data-brief-goal="demo"` so arriving from "Book a demo" preselects that one
+ * instead. Goal ids are part of the payload contract — see lib/brief.ts — so
+ * renaming one is a backend-visible change, while `label` is free text.
+ */
+export const brief = {
+  /* "Start a project" and "Start a brief" were two names for one action, on
+     two adjacent cards. One name now, and it matches every button that leads
+     here. */
+  eyebrow: "Start a project",
+  headline: "Tell us what you need",
+  sub: "Send the URL and the number you want to move. We'll come back with an honest read on whether we can help — free, no deck.",
+  goalLegend: "What do you need?",
+  goals: [
+    { id: "new-site", label: "New site" },
+    { id: "redesign", label: "Redesign" },
+    { id: "audit", label: "Audit" },
+    { id: "demo", label: "Demo" },
+  ],
+  fields: {
+    site: {
+      label: "Current site",
+      hint: "Optional",
+      placeholder: "vandv.studio",
+    },
+    message: {
+      label: "What is not working?",
+      placeholder:
+        "The number you want to move, and what you think is in the way.",
+    },
+    name: { label: "Name", placeholder: "" },
+    email: { label: "Email", placeholder: "" },
+  },
+  errors: {
+    goal: "Pick one so we know where to start.",
+    message: "A sentence or two is plenty.",
+    name: "We would rather not open with \u201cHi there\u201d.",
+    email: "We need somewhere to reply.",
+    emailFormat: "That address is missing something.",
+    submit: "That did not send. Try again, or email us directly.",
+  },
+  submit: "Send the brief",
+  sending: "Sending\u2026",
+  success: {
+    headline: "Got it",
+    body: "We read every one of these ourselves. Expect a reply within two working days.",
+  },
+  /* Shown under the button. Not a consent checkbox: we are not setting a
+     cookie or subscribing anyone, so a checkbox would be theatre. */
+  note: "We use this to reply. Nothing else, and no list.",
 };
 
 export const footer = {
   email: "hello@vandv.studio",
   blurb:
     "A web design and development studio building sites that carry their weight.",
+  /* The Services links used to be six identical `#services` anchors — every
+     one of them scrolled to the same spot on the homepage. Now that
+     /services/[slug] pages exist (see the `slug` field above), each link
+     goes to its own page. `services.items` is the single source for both;
+     nothing here restates a title or href by hand. */
   columns: [
     {
       title: "Services",
-      links: [
-        { label: "Website design", href: "#services" },
-        { label: "Redesign", href: "#services" },
-        { label: "E-commerce", href: "#services" },
-        { label: "Brand & identity", href: "#services" },
-        { label: "Care & growth", href: "#services" },
-        { label: "Process automation", href: "#services" },
-      ],
+      links: services.items.map((s) => ({
+        label: s.title,
+        href: `/services/${s.slug}`,
+      })),
     },
     {
       title: "Studio",
       links: [
-        { label: "Process", href: "#process" },
-        { label: "Work", href: "#work" },
-        { label: "Stack", href: "#stack" },
-        { label: "About", href: "#about" },
+        { label: "Process", href: "/#process" },
+        { label: "Work", href: "/#work" },
+        { label: "Stack", href: "/#stack" },
+        { label: "About", href: "/about" },
       ],
     },
     {
@@ -249,7 +523,7 @@ export const footer = {
     },
   ],
   legal: [
-    { label: "Terms of Service", href: "#" },
-    { label: "Privacy Statement", href: "#" },
+    { label: "Terms of Service", href: "/terms" },
+    { label: "Privacy Statement", href: "/privacy" },
   ],
 };

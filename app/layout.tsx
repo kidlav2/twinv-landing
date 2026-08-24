@@ -30,22 +30,22 @@ const SITE = "https://vandv.studio";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   title: {
-    default: "V&V Studio — Websites that carry their weight",
-    template: "%s | V&V Studio",
+    default: "Twin V Studio — Websites that carry their weight",
+    template: "%s | Twin V Studio",
   },
   description:
     "A web design studio building and rebuilding sites that convert. Design, build, and growth for companies that outgrew their template.",
   openGraph: {
-    title: "V&V Studio — Websites that carry their weight",
+    title: "Twin V Studio — Websites that carry their weight",
     description:
       "A web design studio building and rebuilding sites that convert.",
     url: SITE,
-    siteName: "V&V Studio",
+    siteName: "Twin V Studio",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "V&V Studio — Websites that carry their weight",
+    title: "Twin V Studio — Websites that carry their weight",
     description:
       "A web design studio building and rebuilding sites that convert.",
   },
