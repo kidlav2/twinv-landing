@@ -57,7 +57,11 @@ export function PillarCard({
       mm.add(MOTION_OK, () => {
         if (!isDocumentVisible()) return;
 
-        const loop = gsap.timeline({ repeat: -1, repeatDelay: 0.5, paused: true });
+        const loop = gsap.timeline({
+          repeat: -1,
+          repeatDelay: 0.5,
+          paused: true,
+        });
 
         if (variant === "design") {
           const target = scope.current?.querySelector(".p-morph");
@@ -79,15 +83,19 @@ export function PillarCard({
             // That's the "some of these aren't even visible" bug. Scaling in
             // place carries the same "still alive while the shape works" idea
             // with zero risk of leaving the box.
-            loop.to(dot, {
-              scale: 1.6,
-              transformOrigin: "50% 50%",
-              svgOrigin: "192 28",
-              duration: 0.75,
-              ease: "sine.inOut",
-              yoyo: true,
-              repeat: 5,
-            }, 0);
+            loop.to(
+              dot,
+              {
+                scale: 1.6,
+                transformOrigin: "50% 50%",
+                svgOrigin: "192 28",
+                duration: 0.75,
+                ease: "sine.inOut",
+                yoyo: true,
+                repeat: 5,
+              },
+              0,
+            );
           }
         }
 
@@ -176,7 +184,10 @@ export function PillarCard({
   );
 
   return (
-    <article ref={scope} className="reveal flex flex-col items-center text-center">
+    <article
+      ref={scope}
+      className="reveal flex flex-col items-center text-center"
+    >
       <Link
         href={href}
         aria-label={title}
@@ -188,7 +199,9 @@ export function PillarCard({
           </div>
         </div>
 
-        <h3 className="pillar-title font-display mt-10 text-heading">{title}</h3>
+        <h3 className="pillar-title font-display mt-10 text-heading">
+          {title}
+        </h3>
       </Link>
 
       <p className="text-muted mt-4 max-w-[34ch] text-body">{body}</p>

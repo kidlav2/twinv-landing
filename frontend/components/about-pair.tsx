@@ -33,18 +33,33 @@ gsap.registerPlugin(useGSAP, MorphSVGPlugin);
  * as the hero puts carbon/paper/ash on its big blobs. The single voltage dot
  * is the one accent, and a micro-accent is the only role that colour has.
  */
+/**
+ * Landscape, and the shapes fill it.
+ *
+ * It was a square box at the full width of its column, which made the row it
+ * sits in as tall as that column is wide — and with the row centred, a short
+ * paragraph beside it floated in the middle of a 555px void. A wide box keeps
+ * the row short, and letting the blobs run to the edges of it is what makes
+ * them read large instead of like a small drawing in a big frame.
+ *
+ * `base * 1.28` is the furthest a radius can push (see lib/blob.ts), so that
+ * is the figure the bounds below are checked against.
+ */
+const VB_W = 620;
+const VB_H = 420;
+
 const A = {
   seed: 0x2f61,
-  cx: 168,
-  cy: 168,
-  base: 104,
+  cx: 236,
+  cy: 210,
+  base: 150,
   fill: "var(--color-carbon)",
 };
 const B = {
   seed: 0x91c3,
-  cx: 250,
-  cy: 214,
-  base: 78,
+  cx: 428,
+  cy: 248,
+  base: 116,
   fill: "var(--color-ash)",
 };
 
@@ -53,7 +68,7 @@ const SHAPES = {
   b: [blobRadii(B.seed), blobRadii(B.seed + 1), blobRadii(B.seed + 2)],
 };
 
-export function AboutPair() {
+export function AboutPair({ className = "" }: { className?: string }) {
   const scope = useRef<HTMLDivElement>(null);
 
   useGSAP(
@@ -116,9 +131,16 @@ export function AboutPair() {
   );
 
   return (
-    <div ref={scope} className="w-full">
+    <div ref={scope} className={className || "w-full"}>
+      {/* `w-auto` off the height, not `w-full`: told to fill both, the SVG
+          letterboxes its viewBox inside the box and the shapes end up sitting
+          in the middle of a band of empty space. */}
       {/* Abstract shapes carry nothing a screen reader needs. */}
-      <svg viewBox="0 0 380 380" className="h-auto w-full" aria-hidden>
+      <svg
+        viewBox={`0 0 ${VB_W} ${VB_H}`}
+        className="h-full w-auto max-w-full"
+        aria-hidden
+      >
         <path
           id="pair-a"
           d={blobPath(SHAPES.a[0], A.cx, A.cy, A.base)}
@@ -133,9 +155,9 @@ export function AboutPair() {
             pair keeps a visible join as they separate. */}
         <circle
           id="pair-dot"
-          cx="214"
-          cy="196"
-          r="9"
+          cx="342"
+          cy="236"
+          r="14"
           fill="var(--color-voltage)"
         />
       </svg>

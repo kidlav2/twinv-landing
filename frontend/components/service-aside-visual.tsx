@@ -91,8 +91,17 @@ export function ServiceAsideVisual() {
       // Pointer proximity. HOVER_OK, not MOTION_OK: on a touch screen
       // `pointermove` fires once on tap and the swell would stick.
       mm.add(HOVER_OK, () => {
-        const setters = dots.map((d) =>
+        const scaleTo = dots.map((d) =>
           gsap.quickTo(d, "scale", { duration: 0.45, ease: "power3.out" }),
+        );
+        // Displacement rides on x/y while the swell owns `scale` and the idle
+        // loop owns `opacity` — three effects, three properties, so none of
+        // them can strand a dot where another one abandoned it.
+        const xTo = dots.map((d) =>
+          gsap.quickTo(d, "x", { duration: 0.6, ease: "power3.out" }),
+        );
+        const yTo = dots.map((d) =>
+          gsap.quickTo(d, "y", { duration: 0.6, ease: "power3.out" }),
         );
 
         const onMove = (e: PointerEvent) => {
@@ -103,15 +112,29 @@ export function ServiceAsideVisual() {
           const py = ((e.clientY - box.top) / box.height) * SIZE;
 
           DOTS.forEach((dot, i) => {
-            const d = Math.hypot(dot.x - px, dot.y - py);
+            const dx = dot.x - px;
+            const dy = dot.y - py;
+            const d = Math.hypot(dx, dy);
             // Falls off over roughly two grid steps, so a few neighbours move
             // together and it reads as a field rather than one dot lighting up.
             const k = Math.max(0, 1 - d / (STEP * 2));
-            setters[i](1 + k * 1.4);
+            scaleTo[i](1 + k * 1.4);
+
+            // Pushed away along the line from the cursor, but never further
+            // than most of one grid step: the field should flinch, not come
+            // apart. `d || 1` keeps a dot sitting exactly under the pointer
+            // from dividing by zero and flying off.
+            const push = (k * k * STEP * 0.7) / (d || 1);
+            xTo[i](dx * push);
+            yTo[i](dy * push);
           });
         };
 
-        const onLeave = () => setters.forEach((s) => s(1));
+        const onLeave = () => {
+          scaleTo.forEach((s) => s(1));
+          xTo.forEach((s) => s(0));
+          yTo.forEach((s) => s(0));
+        };
 
         svg.addEventListener("pointermove", onMove);
         svg.addEventListener("pointerleave", onLeave);

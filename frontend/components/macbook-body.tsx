@@ -1,6 +1,6 @@
 /**
- * The laptop's base: deck, speaker grilles, backlit keyboard, trackpad, and
- * the finger recess in the front edge.
+ * The laptop's base: deck, speaker grilles, keyboard, trackpad, and the
+ * finger recess in the front edge.
  *
  * Purely presentational and `aria-hidden` — it is a drawing of an object, so
  * a screen reader has no business walking 79 key legends. Only the lid's
@@ -11,9 +11,9 @@
  * surface contrast. This is not a surface, it is imagery, and DESIGN.md's own
  * imagery direction is "photorealistic 3D renders of physical objects… the
  * material/tactile treatment contrasts with the flat typographic UI". So the
- * laptop is allowed to look like a laptop, and the keyboard is allowed to be
- * lit — that glow is light coming out of a depicted object, not elevation
- * faked on a control.
+ * laptop is allowed to look like a laptop. It is NOT lit, though: a backlight
+ * glow was tried and removed, because it was the only thing on the page
+ * emitting light and read as the object glowing rather than sitting there.
  *
  * Everything is drawn at a fixed design size and scaled by `--machine-k`
  * (set in globals.css against viewport height, since a full-size machine
@@ -123,7 +123,7 @@ function Keycap({ k }: { k: Key }) {
   return (
     <div
       style={{ flexGrow: k.w ?? 1, flexBasis: 0 }}
-      className="kbd-key bg-graphite flex h-9 items-center justify-center rounded-[5px]"
+      className="bg-graphite flex h-9 items-center justify-center rounded-[5px]"
     >
       {k.l ? (
         <span className="kbd-legend font-mono text-[11px] leading-none">
@@ -166,8 +166,7 @@ export function MacbookBody({ style }: { style?: React.CSSProperties }) {
         </div>
 
         {/* The keyboard well. Keys sit a shade lighter than the well they are
-            recessed into — that contrast is the structural depth cue; the
-            backlight on top of it is the object's own light. */}
+            recessed into — surface contrast is the only depth cue here. */}
         <div className="bg-carbon flex flex-1 flex-col gap-[3px] rounded-[6px] p-1">
           {ROWS.map((row, i) => (
             <div key={i} className="flex gap-[3px]">
@@ -187,11 +186,11 @@ export function MacbookBody({ style }: { style?: React.CSSProperties }) {
               style={{ flexGrow: 3, flexBasis: 0 }}
               className="flex flex-col gap-[3px]"
             >
-              <div className="kbd-key bg-graphite mx-auto h-[16.5px] w-1/3 rounded-[5px]" />
+              <div className="bg-graphite mx-auto h-[16.5px] w-1/3 rounded-[5px]" />
               <div className="flex gap-[3px]">
-                <div className="kbd-key bg-graphite h-[16.5px] flex-1 rounded-[5px]" />
-                <div className="kbd-key bg-graphite h-[16.5px] flex-1 rounded-[5px]" />
-                <div className="kbd-key bg-graphite h-[16.5px] flex-1 rounded-[5px]" />
+                <div className="bg-graphite h-[16.5px] flex-1 rounded-[5px]" />
+                <div className="bg-graphite h-[16.5px] flex-1 rounded-[5px]" />
+                <div className="bg-graphite h-[16.5px] flex-1 rounded-[5px]" />
               </div>
             </div>
           </div>

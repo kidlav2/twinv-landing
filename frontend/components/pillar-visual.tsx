@@ -35,9 +35,33 @@ function Build() {
   return (
     <>
       {/* Bottom-up: the loop drops these in from above and restacks. */}
-      <rect className="p-block" x="24" y="146" width="172" height="46" rx="10" fill={ASH} />
-      <rect className="p-block" x="24" y="92" width="172" height="46" rx="10" fill={PAPER} />
-      <rect className="p-block" x="24" y="38" width="172" height="46" rx="10" fill={VOLT} />
+      <rect
+        className="p-block"
+        x="24"
+        y="146"
+        width="172"
+        height="46"
+        rx="10"
+        fill={ASH}
+      />
+      <rect
+        className="p-block"
+        x="24"
+        y="92"
+        width="172"
+        height="46"
+        rx="10"
+        fill={PAPER}
+      />
+      <rect
+        className="p-block"
+        x="24"
+        y="38"
+        width="172"
+        height="46"
+        rx="10"
+        fill={VOLT}
+      />
     </>
   );
 }
@@ -59,10 +83,42 @@ function Grow() {
         strokeWidth="3"
         strokeLinecap="round"
       />
-      <rect className="p-bar" x="38" y="150" width="30" height="40" rx="5" fill={ASH} />
-      <rect className="p-bar" x="82" y="118" width="30" height="72" rx="5" fill={ASH} />
-      <rect className="p-bar" x="126" y="82" width="30" height="108" rx="5" fill={PAPER} />
-      <rect className="p-bar" x="170" y="40" width="30" height="150" rx="5" fill={VOLT} />
+      <rect
+        className="p-bar"
+        x="38"
+        y="150"
+        width="30"
+        height="40"
+        rx="5"
+        fill={ASH}
+      />
+      <rect
+        className="p-bar"
+        x="82"
+        y="118"
+        width="30"
+        height="72"
+        rx="5"
+        fill={ASH}
+      />
+      <rect
+        className="p-bar"
+        x="126"
+        y="82"
+        width="30"
+        height="108"
+        rx="5"
+        fill={PAPER}
+      />
+      <rect
+        className="p-bar"
+        x="170"
+        y="40"
+        width="30"
+        height="150"
+        rx="5"
+        fill={VOLT}
+      />
     </>
   );
 }

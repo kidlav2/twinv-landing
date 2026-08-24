@@ -233,16 +233,21 @@ export function SwapCard({
       data-swap-card
       className={`card-swap-card tone-light bg-paper rounded-card absolute top-1/2 left-1/2 flex flex-col overflow-hidden [backface-visibility:hidden] [transform-style:preserve-3d] ${className}`}
     >
-      {/* The placeholder itself. A flat mist panel — no icon, no dashed
-          "upload" affordance — because this is a slot waiting for a
-          photograph, not a control. The caption says which photograph. */}
-      <div className="bg-mist flex-1" />
-      {/* `text-muted`, not the `text-faint` the site's decorative mono labels
+      {/* Caption on top, reading as the card's tab — with the stack dealt
+          up-and-right, the top edge is the part of every card that stays
+          visible behind the one in front, so that is where a label can
+          actually be read. At the bottom it was hidden under the next card.
+
+          `text-muted`, not the `text-faint` the site's decorative mono labels
           use: on this white surface faint (#979797) lands at 2.8:1, and this
           caption is the only thing saying which photograph belongs here. */}
-      <figcaption className="text-muted font-mono border-line border-t px-6 py-5 text-caption uppercase">
+      <figcaption className="text-muted font-mono border-line border-b px-6 py-5 text-caption uppercase">
         {caption}
       </figcaption>
+      {/* The placeholder itself. A flat mist panel — no icon, no dashed
+          "upload" affordance — because this is a slot waiting for a
+          photograph, not a control. */}
+      <div className="bg-mist flex-1" />
     </figure>
   );
 }

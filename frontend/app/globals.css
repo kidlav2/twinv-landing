@@ -549,18 +549,12 @@
   }
 }
 
-/* Backlit keyboard. Light emitted by a depicted object, which is imagery and
-   therefore outside the no-shadow rule that governs UI surfaces — the same
-   reasoning that lets the laptop be a laptop at all. Alpha values rather than
-   tokens because this is a light falloff, not a fill. */
-.kbd-key {
-  box-shadow: 0 0 6px rgba(255, 255, 255, 0.16);
-}
+/* Unlit keycaps. A backlight glow was tried here and pulled back out: it was
+   the one place on the page emitting light, and next to a system that gets all
+   its depth from flat surface contrast it read as the object being lit from
+   inside rather than sitting on the page. Legends are simply printed on. */
 .kbd-legend {
-  color: var(--color-paper);
-  text-shadow:
-    0 0 5px rgba(255, 255, 255, 0.75),
-    0 0 12px rgba(255, 255, 255, 0.4);
+  color: var(--color-smoke);
 }
 @media (min-width: 64rem) and (prefers-reduced-motion: no-preference) {
   .macbook-fallback {

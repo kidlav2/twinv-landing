@@ -113,10 +113,7 @@ export function Footer({ flush = false }: { flush?: boolean }) {
           <ul className="flex gap-6">
             {footer.legal.map((l) => (
               <li key={l.label}>
-                <Link
-                  href={l.href}
-                  className="hover:text-fg transition-colors"
-                >
+                <Link href={l.href} className="hover:text-fg transition-colors">
                   {l.label}
                 </Link>
               </li>

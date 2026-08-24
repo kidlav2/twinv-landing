@@ -6,6 +6,7 @@ import { AboutPair } from "@/components/about-pair";
 import { AboutStage } from "@/components/about-stage";
 import { CardSwap, SwapCard } from "@/components/card-swap";
 import { ServiceAsideVisual } from "@/components/service-aside-visual";
+import { ScrollCue } from "@/components/scroll-cue";
 import { ButtonPrimary } from "@/components/ui";
 
 export const metadata: Metadata = {
@@ -26,9 +27,13 @@ export default function AboutPage() {
   return (
     <PageShell flushFooter footerTone="dark">
       {/* ---------- Masthead: the contents spread ---------- */}
+      {/* Tuned to land inside one screen rather than on the section-spacing
+          tokens: measured at 1440x900 the token version ran 106px past the
+          fold, which put the scroll cue — the one element whose whole job is
+          to be seen at the bottom of the first screen — below it. */}
       <section
         id="about-studio"
-        className="pt-[calc(var(--spacing-nav)+24px)] pb-section"
+        className="pt-[calc(var(--spacing-nav)+8px)] pb-6"
       >
         <Reveal className="shell">
           {/* No "About us" eyebrow. It was labelling the page from inside the
@@ -48,22 +53,32 @@ export default function AboutPage() {
               laptop's peek off the first screen entirely. Across the full
               width it sets in two, which is what leaves room for the row
               below it. */}
-          <h1 className="reveal font-display text-display-xl">
+          {/* `text-wrap: balance` evens the two lines out. Left to itself the
+              headline filled the first line and dropped two words onto the
+              second, which changed the shape of the block at every width and
+              left a long ragged gap down the right. */}
+          <h1 className="reveal font-display text-display-xl text-balance">
             {about.headline}
           </h1>
 
-          <div className="mt-12 grid items-center gap-x-8 gap-y-10 lg:grid-cols-12">
-            <p className="reveal text-fg max-w-[46ch] text-lead lg:col-span-6">
+          <div className="mt-10 grid items-center gap-x-8 gap-y-10 lg:grid-cols-12">
+            <p className="reveal text-fg max-w-[46ch] text-lead lg:col-span-5">
               {about.intro}
             </p>
 
-            {/* Decorative, so it is simply absent below `lg` — the columns it
-                fills only exist on a wide screen. Same call as the service
-                pages' aside. */}
-            <div className="reveal hidden lg:col-span-4 lg:col-start-9 lg:block">
-              <AboutPair />
+            {/* Sized by viewport HEIGHT, not by its column. Width-driven, the
+                square box grew as tall as the column was wide and the whole
+                masthead stopped fitting on one screen — the big empty band
+                between the title and the copy was that box's height with a
+                short paragraph centred in it. Decorative, so simply absent
+                below `lg`, same call as the service pages' aside. */}
+            <div className="reveal hidden lg:col-span-6 lg:col-start-7 lg:block">
+              <AboutPair className="flex h-[30vh] justify-end" />
             </div>
           </div>
+
+          {/* Sits at the bottom of the first screen, pointing at the laptop. */}
+          <ScrollCue className="reveal mt-9 hidden lg:block" />
         </Reveal>
       </section>
 
@@ -114,8 +129,18 @@ export default function AboutPage() {
                   key={point.title}
                   className="reveal grid gap-4 lg:grid-cols-12 lg:gap-8"
                 >
+                  {/* Marked the way a mouse selection marks text: voltage
+                      behind, carbon on top. That is the documented role for
+                      this colour — DESIGN.md's "Voltage Highlight … #fff100
+                      background … on select elements" — and it is the one
+                      thing in the dark zone that is neither white type nor
+                      black ground. `inline` + `box-decoration-break: clone`
+                      so a title that wraps gets a properly padded band on
+                      every line instead of one box behind the lot. */}
                   <h3 className="font-display text-heading lg:col-span-5">
-                    {point.title}
+                    <span className="bg-voltage text-carbon box-decoration-clone px-3 py-1">
+                      {point.title}
+                    </span>
                   </h3>
                   <p className="text-muted max-w-[52ch] text-sub lg:col-span-6 lg:col-start-7">
                     {point.body}
@@ -133,7 +158,7 @@ export default function AboutPage() {
         <section id="about-us" className="overflow-x-clip pb-section-lg">
           <Reveal className="shell">
             <div className="grid items-center gap-16 lg:grid-cols-12 lg:gap-8">
-              <div className="lg:col-span-5">
+              <div className="lg:col-span-6">
                 <p className="reveal text-faint font-mono text-caption uppercase">
                   {about.founders.eyebrow}
                 </p>
@@ -157,12 +182,12 @@ export default function AboutPage() {
                 so the cards read as continuing off-frame rather than being
                 politely contained. */}
               <div className="reveal lg:col-span-6 lg:col-start-7">
-                <CardSwap className="h-[440px] sm:h-[560px] lg:translate-x-[44%] xl:translate-x-[52%]">
+                <CardSwap className="h-[440px] sm:h-[560px] lg:h-[600px] lg:translate-x-[24%] xl:h-[680px] xl:translate-x-[28%]">
                   {about.founders.cards.map((card) => (
                     <SwapCard
                       key={card.caption}
                       caption={card.caption}
-                      className="h-[340px] w-[260px] sm:h-[480px] sm:w-[360px] lg:h-[540px] lg:w-[420px]"
+                      className="h-[340px] w-[260px] sm:h-[480px] sm:w-[360px] lg:h-[560px] lg:w-[440px] xl:h-[640px] xl:w-[520px]"
                     />
                   ))}
                 </CardSwap>

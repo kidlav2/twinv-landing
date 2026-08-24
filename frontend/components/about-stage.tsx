@@ -6,7 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { about } from "@/lib/content";
 import { isDocumentVisible, MACBOOK_SCRUB_OK } from "@/lib/motion";
-import { MacbookBody, LID_W, LID_H, TOTAL_H } from "./macbook-body";
+import { MacbookBody, LID_W, LID_H } from "./macbook-body";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -43,21 +43,32 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
    conversion anywhere in the scrub. */
 const k = (px: number) => `${px}px * var(--machine-k)`;
 
+/**
+ * The LID is what gets centred, not the whole machine.
+ *
+ * Centring the machine put the screen's middle well above the viewport's, so
+ * the expansion started from a point above centre and appeared to unfold
+ * upward over everything. With the lid centred, the growth starts exactly at
+ * the middle of the screen. The deck then runs off the bottom edge on shorter
+ * viewports, which is a crop rather than a bug — a product shot of a laptop
+ * whose front edge leaves the frame.
+ */
 const COL_LEFT = `calc(50% - ${k(LID_W / 2)})`;
-const LID_TOP = `calc(50% - ${k(TOTAL_H / 2)})`;
-const BASE_TOP = `calc(50% - ${k(TOTAL_H / 2 - LID_H)})`;
+const LID_TOP = `calc(50% - ${k(LID_H / 2)})`;
+const BASE_TOP = `calc(50% + ${k(LID_H / 2)})`;
 
 /**
  * The vanishing point, parked on the middle of the lid rather than the middle
  * of the section.
  *
- * This was the "crooked" laptop: `perspective` resolves its origin against the
- * element that declares it, so with the default `50% 50%` the vanishing point
- * sat at the centre of a full-height section — well below the lid — and the
- * hinge rotation came out keystoned, wider at the top than the bottom. Putting
- * the eye level at the lid's own centre makes the rotation symmetrical.
+ * `perspective` resolves its origin against the element that declares it, so
+ * with the default `50% 50%` the vanishing point sat at the centre of a
+ * full-height section rather than on the panel, and the hinge rotation came
+ * out keystoned. Now that the lid is centred, eye level and the section's
+ * middle coincide — but this stays written out, because it has to follow the
+ * lid if the lid ever moves again.
  */
-const EYE_LEVEL = `calc(50% - ${k(TOTAL_H / 2 - LID_H / 2)})`;
+const EYE_LEVEL = "50%";
 
 /**
  * The claim's box is a fixed width for the same reason the laptop is: as a
@@ -193,11 +204,17 @@ export function AboutStage() {
         //    non-uniform scale would squash the corner radius into an ellipse
         //    and drag the type with it — the same reason scroll-panel.tsx
         //    animates left/right rather than scaling.
+        //    Measured against the CONTAINER, never `window.innerWidth`. The
+        //    two differ by the scrollbar, and the CSS that places the lid
+        //    centres it on the container — so using the window width here
+        //    shifted the panel a few pixels right the instant the tween took
+        //    over (the reported "the display sits crooked"), and overshot the
+        //    right edge at the end by the same amount.
         tl.fromTo(
           screen,
           {
-            left: () => (window.innerWidth - LID_W * mk()) / 2,
-            top: () => (window.innerHeight - TOTAL_H * mk()) / 2,
+            left: () => (root.clientWidth - LID_W * mk()) / 2,
+            top: () => (root.clientHeight - LID_H * mk()) / 2,
             width: () => LID_W * mk(),
             height: () => LID_H * mk(),
             borderRadius: 16,
@@ -205,8 +222,8 @@ export function AboutStage() {
           {
             left: 0,
             top: 0,
-            width: () => window.innerWidth,
-            height: () => window.innerHeight,
+            width: () => root.clientWidth,
+            height: () => root.clientHeight,
             borderRadius: 0,
             ease: "none",
             duration: 0.72,
@@ -224,7 +241,7 @@ export function AboutStage() {
           claim,
           { scale: () => CLAIM_REST_SCALE * mk() },
           {
-            scale: () => Math.min(1.35, (window.innerWidth * 0.86) / CLAIM_W),
+            scale: () => Math.min(1.35, (root.clientWidth * 0.86) / CLAIM_W),
             ease: "none",
             duration: 0.72,
           },
@@ -292,7 +309,14 @@ export function AboutStage() {
          motion; the claim is rendered instead by the dark zone's
          `macbook-fallback` copy. `perspective` has to live on the parent of
          the rotating element for the hinge to have any depth at all. */
-      className="macbook-only bg-canvas relative h-screen overflow-hidden"
+      /* `-mb-px` closes the last seam. At the end of the scrub the expanded
+         screen fills this section exactly, and the black zone starts on the
+         very next pixel row — two independently rounded boxes on a
+         sub-pixel-offset scroller, which is what left a flickering hairline
+         right where the pinned animation hands over to the static section.
+         One pixel of overlap has nothing to show through, and because the
+         section is `display: none` below `lg` the margin disappears with it. */
+      className="macbook-only bg-canvas relative -mb-px h-screen overflow-hidden"
       style={{
         perspective: "1900px",
         perspectiveOrigin: `50% ${EYE_LEVEL}`,
