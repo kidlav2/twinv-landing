@@ -23,9 +23,12 @@ export const nav = {
     { label: "Work", href: "#work" },
     { label: "Stack", href: "#stack" },
     { label: "Services", href: "#services" },
-    { label: "About", href: "#about" },
+    /* "About" lived here while an About CARD existed at #about. That card is
+       gone (the closing section is the form now), and a menu item that scrolls
+       nowhere is worse than a missing one. It comes back pointing at /about
+       when that page is built — see PLAN.md, stage 3. */
   ],
-  cta: { label: "Book a demo", href: "#brief" },
+  cta: { label: "Book a demo", href: "#contact" },
 };
 
 export const hero = {
@@ -73,11 +76,10 @@ export const product = {
     "Two senior people on your project from the first call to the last deploy — no account layer, no handoff to juniors, no ticket that sits for a week.",
     "We start with the funnel you already have, find where it drops people, and rebuild those screens first. You see working pages in week one, not a slide deck.",
   ],
-  // This section is about the studio itself, so its CTA points at the About
-  // card (#about) rather than the booking flow — a dedicated /about page
-  // isn't built yet (needs real team bios), so this is the honest interim
-  // target: it's a real, working link to the existing About content.
-  cta: { label: "Meet the studio", href: "#about" },
+  // Pointed at the About card until that card was removed. /about is the real
+  // destination once it exists (stage 3); until then the closing form is the
+  // only honest place to send someone who wants to talk to the studio.
+  cta: { label: "Meet the studio", href: "#contact" },
 };
 
 export const pillars = {
@@ -198,19 +200,16 @@ export const services = {
   ],
 };
 
-export const banners = {
-  primary: {
-    eyebrow: "Start a project",
-    headline: "Tell us what's not working",
-    body: "Send the URL and the number you want to move. We'll come back with an honest read on whether we can help — free, no deck.",
-    cta: { label: "Start a project", href: "#brief" },
-  },
-  secondary: {
-    eyebrow: "About us",
-    headline: "Two people, a lot of shipped sites",
-    body: "V&V Studio is a small design and development practice. We take on a handful of projects at a time so each one gets senior attention.",
-    cta: { label: "About us", href: "#about" },
-  },
+/**
+ * Not rendered. This was the "About us" card beside the old contact banner;
+ * the card was removed when the closing section became the form. The words are
+ * kept because /about (stage 3) needs them — same reason `hero.stats` is still
+ * here. Don't render it without being asked.
+ */
+export const about = {
+  eyebrow: "About us",
+  headline: "Two people, a lot of shipped sites",
+  body: "V&V Studio is a small design and development practice. We take on a handful of projects at a time so each one gets senior attention.",
 };
 
 /**
@@ -222,9 +221,12 @@ export const banners = {
  * renaming one is a backend-visible change, while `label` is free text.
  */
 export const brief = {
-  eyebrow: "Start a brief",
+  /* "Start a project" and "Start a brief" were two names for one action, on
+     two adjacent cards. One name now, and it matches every button that leads
+     here. */
+  eyebrow: "Start a project",
   headline: "Tell us what you need",
-  sub: "Four answers is enough for a first read. We reply with an honest yes or no, and what we would do first.",
+  sub: "Send the URL and the number you want to move. We'll come back with an honest read on whether we can help — free, no deck.",
   goalLegend: "What do you need?",
   goals: [
     { id: "new-site", label: "New site" },
@@ -287,7 +289,6 @@ export const footer = {
         { label: "Process", href: "#process" },
         { label: "Work", href: "#work" },
         { label: "Stack", href: "#stack" },
-        { label: "About", href: "#about" },
       ],
     },
     {

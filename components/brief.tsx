@@ -4,12 +4,19 @@ import { useEffect, useRef, useState } from "react";
 import { brief } from "@/lib/content";
 import { isEmail, submitBrief, type BriefGoal } from "@/lib/brief";
 import { Reveal } from "./reveal";
+import { BriefShapes } from "./brief-shapes";
 
 type FieldName = "goal" | "message" | "name" | "email";
 type Errors = Partial<Record<FieldName, string>>;
 
 /**
- * The closing brief form.
+ * The closing section: artwork on the left, the brief form on the right.
+ *
+ * It carries `id="contact"` because it IS the contact section now. It replaced
+ * a pair of cards — "Start a project" and "About us" — that sat here before.
+ * The first was a button that led to this very form, so the page asked twice
+ * for the same thing; the second has moved out to a future /about page. Every
+ * "start a project" / "book a demo" / pillar / service link lands here.
  *
  * Knows nothing about transport — `submitBrief` in lib/brief.ts owns that, and
  * `app/api/brief/route.ts` owns where it lands. This file is UX only: what is
@@ -111,187 +118,207 @@ export function Brief() {
   const label = "text-faint font-mono text-caption uppercase";
 
   return (
-    <section id="brief" className="py-section">
+    <section id="contact" className="py-section">
       <Reveal className="shell">
-        <div className="reveal max-w-[46ch]">
-          <p className={label}>{brief.eyebrow}</p>
-          <h2 className="font-display mt-6 text-heading-lg">
-            {brief.headline}
-          </h2>
-          <p className="text-muted mt-5 text-sub">{brief.sub}</p>
-        </div>
-
-        {state === "sent" ? (
-          <div className="reveal mt-12 max-w-[46ch]">
-            <p
-              ref={doneRef}
-              tabIndex={-1}
-              role="status"
-              className="font-display text-heading"
-            >
-              {brief.success.headline}
-            </p>
-            <p className="text-muted mt-4 text-sub">{brief.success.body}</p>
+        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+          {/* Art first in the DOM so it sits left without order utilities. It
+              is aria-hidden and holds nothing focusable, so reading order and
+              tab order are unaffected. Hidden below lg: at the foot of a phone
+              screen the form should be the whole section, not a decoration
+              the reader has to scroll past. */}
+          <div className="reveal hidden lg:block">
+            <BriefShapes />
           </div>
-        ) : (
-          <form
-            ref={formRef}
-            noValidate
-            onSubmit={onSubmit}
-            className="reveal mt-12 flex max-w-[70ch] flex-col gap-8"
-          >
-            <fieldset>
-              <legend className={label}>{brief.goalLegend}</legend>
-              <div className="mt-5 flex flex-wrap gap-3">
-                {brief.goals.map((g, i) => (
-                  <label key={g.id} className="cursor-pointer">
-                    <input
-                      type="radio"
-                      name="goal"
-                      value={g.id}
-                      checked={goal === g.id}
-                      data-field={i === 0 ? "goal" : undefined}
-                      onChange={() => setGoal(g.id as BriefGoal)}
-                      className="peer sr-only"
-                    />
-                    {/* Same chip motif as Stack, one job further on: hairline
+
+          <div>
+            <div className="reveal max-w-[46ch]">
+              <p className={label}>{brief.eyebrow}</p>
+              <h2 className="font-display mt-6 text-heading-lg">
+                {brief.headline}
+              </h2>
+              <p className="text-muted mt-5 text-sub">{brief.sub}</p>
+            </div>
+
+            {state === "sent" ? (
+              <div className="reveal mt-10 max-w-[46ch]">
+                <p
+                  ref={doneRef}
+                  tabIndex={-1}
+                  role="status"
+                  className="font-display text-heading"
+                >
+                  {brief.success.headline}
+                </p>
+                <p className="text-muted mt-4 text-sub">{brief.success.body}</p>
+              </div>
+            ) : (
+              <form
+                ref={formRef}
+                noValidate
+                onSubmit={onSubmit}
+                className="reveal mt-10 flex flex-col gap-8"
+              >
+                <fieldset>
+                  <legend className={label}>{brief.goalLegend}</legend>
+                  <div className="mt-5 flex flex-wrap gap-3">
+                    {brief.goals.map((g, i) => (
+                      <label key={g.id} className="cursor-pointer">
+                        <input
+                          type="radio"
+                          name="goal"
+                          value={g.id}
+                          checked={goal === g.id}
+                          data-field={i === 0 ? "goal" : undefined}
+                          onChange={() => setGoal(g.id as BriefGoal)}
+                          className="peer sr-only"
+                        />
+                        {/* Same chip motif as Stack, one job further on: hairline
                         at rest, filled when chosen. */}
-                    <span className="border-line-strong rounded-tag peer-checked:bg-fg peer-checked:text-canvas peer-checked:border-fg peer-focus-visible:outline-2 peer-focus-visible:outline-offset-4 inline-flex items-center border px-6 py-3 text-body font-medium transition-colors duration-200">
-                      {g.label}
+                        <span className="border-line-strong rounded-tag peer-checked:bg-fg peer-checked:text-canvas peer-checked:border-fg peer-focus-visible:outline-2 peer-focus-visible:outline-offset-4 inline-flex items-center border px-6 py-3 text-body font-medium transition-colors duration-200">
+                          {g.label}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+
+                <div>
+                  <label htmlFor="brief-site" className={label}>
+                    {brief.fields.site.label}{" "}
+                    <span className="text-faint normal-case">
+                      ({brief.fields.site.hint})
                     </span>
                   </label>
-                ))}
-              </div>
-            </fieldset>
+                  <input
+                    id="brief-site"
+                    type="text"
+                    inputMode="url"
+                    autoComplete="url"
+                    value={site}
+                    onChange={(e) => setSite(e.target.value)}
+                    placeholder={brief.fields.site.placeholder}
+                    className={`mt-3 ${field}`}
+                  />
+                </div>
 
-            <div>
-              <label htmlFor="brief-site" className={label}>
-                {brief.fields.site.label}{" "}
-                <span className="text-faint normal-case">
-                  ({brief.fields.site.hint})
-                </span>
-              </label>
-              <input
-                id="brief-site"
-                type="text"
-                inputMode="url"
-                autoComplete="url"
-                value={site}
-                onChange={(e) => setSite(e.target.value)}
-                placeholder={brief.fields.site.placeholder}
-                className={`mt-3 ${field}`}
-              />
-            </div>
+                <div>
+                  <label htmlFor="brief-message" className={label}>
+                    {brief.fields.message.label}
+                  </label>
+                  <textarea
+                    id="brief-message"
+                    data-field="message"
+                    rows={4}
+                    value={message}
+                    onChange={(e) => {
+                      setMessage(e.target.value);
+                      clearIfFixed("message", !!e.target.value.trim());
+                    }}
+                    placeholder={brief.fields.message.placeholder}
+                    aria-invalid={!!errors.message}
+                    aria-describedby={
+                      errors.message ? "brief-message-e" : undefined
+                    }
+                    className={`mt-3 resize-y ${field}`}
+                  />
+                  {errors.message && (
+                    <p
+                      id="brief-message-e"
+                      role="alert"
+                      className="mt-2 text-body-sm text-muted"
+                    >
+                      {errors.message}
+                    </p>
+                  )}
+                </div>
 
-            <div>
-              <label htmlFor="brief-message" className={label}>
-                {brief.fields.message.label}
-              </label>
-              <textarea
-                id="brief-message"
-                data-field="message"
-                rows={4}
-                value={message}
-                onChange={(e) => {
-                  setMessage(e.target.value);
-                  clearIfFixed("message", !!e.target.value.trim());
-                }}
-                placeholder={brief.fields.message.placeholder}
-                aria-invalid={!!errors.message}
-                aria-describedby={
-                  errors.message ? "brief-message-e" : undefined
-                }
-                className={`mt-3 resize-y ${field}`}
-              />
-              {errors.message && (
-                <p
-                  id="brief-message-e"
-                  role="alert"
-                  className="mt-2 text-body-sm text-muted"
-                >
-                  {errors.message}
-                </p>
-              )}
-            </div>
+                {/* Two-up on a full-width tablet, back to one at lg where this
+                column is only half the shell, two-up again at xl once it is
+                wide enough to hold them. */}
+                <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+                  <div>
+                    <label htmlFor="brief-name" className={label}>
+                      {brief.fields.name.label}
+                    </label>
+                    <input
+                      id="brief-name"
+                      data-field="name"
+                      type="text"
+                      autoComplete="name"
+                      value={name}
+                      onChange={(e) => {
+                        setName(e.target.value);
+                        clearIfFixed("name", !!e.target.value.trim());
+                      }}
+                      aria-invalid={!!errors.name}
+                      aria-describedby={
+                        errors.name ? "brief-name-e" : undefined
+                      }
+                      className={`mt-3 ${field}`}
+                    />
+                    {errors.name && (
+                      <p
+                        id="brief-name-e"
+                        role="alert"
+                        className="mt-2 text-body-sm text-muted"
+                      >
+                        {errors.name}
+                      </p>
+                    )}
+                  </div>
 
-            <div className="grid gap-8 sm:grid-cols-2">
-              <div>
-                <label htmlFor="brief-name" className={label}>
-                  {brief.fields.name.label}
-                </label>
-                <input
-                  id="brief-name"
-                  data-field="name"
-                  type="text"
-                  autoComplete="name"
-                  value={name}
-                  onChange={(e) => {
-                    setName(e.target.value);
-                    clearIfFixed("name", !!e.target.value.trim());
-                  }}
-                  aria-invalid={!!errors.name}
-                  aria-describedby={errors.name ? "brief-name-e" : undefined}
-                  className={`mt-3 ${field}`}
-                />
-                {errors.name && (
-                  <p
-                    id="brief-name-e"
-                    role="alert"
-                    className="mt-2 text-body-sm text-muted"
+                  <div>
+                    <label htmlFor="brief-email" className={label}>
+                      {brief.fields.email.label}
+                    </label>
+                    <input
+                      id="brief-email"
+                      data-field="email"
+                      type="email"
+                      autoComplete="email"
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        clearIfFixed("email", isEmail(e.target.value));
+                      }}
+                      aria-invalid={!!errors.email}
+                      aria-describedby={
+                        errors.email ? "brief-email-e" : undefined
+                      }
+                      className={`mt-3 ${field}`}
+                    />
+                    {errors.email && (
+                      <p
+                        id="brief-email-e"
+                        role="alert"
+                        className="mt-2 text-body-sm text-muted"
+                      >
+                        {errors.email}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-5">
+                  <button
+                    type="submit"
+                    disabled={state === "sending"}
+                    className="btn-primary rounded-btn inline-flex items-center justify-center px-6 py-4 text-body font-medium transition-colors duration-200 disabled:opacity-60"
                   >
-                    {errors.name}
+                    {state === "sending" ? brief.sending : brief.submit}
+                  </button>
+                  <p className="text-faint text-body-sm">{brief.note}</p>
+                </div>
+
+                {state === "failed" && (
+                  <p role="alert" className="text-body-sm text-fg">
+                    {brief.errors.submit}
                   </p>
                 )}
-              </div>
-
-              <div>
-                <label htmlFor="brief-email" className={label}>
-                  {brief.fields.email.label}
-                </label>
-                <input
-                  id="brief-email"
-                  data-field="email"
-                  type="email"
-                  autoComplete="email"
-                  value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                    clearIfFixed("email", isEmail(e.target.value));
-                  }}
-                  aria-invalid={!!errors.email}
-                  aria-describedby={errors.email ? "brief-email-e" : undefined}
-                  className={`mt-3 ${field}`}
-                />
-                {errors.email && (
-                  <p
-                    id="brief-email-e"
-                    role="alert"
-                    className="mt-2 text-body-sm text-muted"
-                  >
-                    {errors.email}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-5">
-              <button
-                type="submit"
-                disabled={state === "sending"}
-                className="btn-primary rounded-btn inline-flex items-center justify-center px-6 py-4 text-body font-medium transition-colors duration-200 disabled:opacity-60"
-              >
-                {state === "sending" ? brief.sending : brief.submit}
-              </button>
-              <p className="text-faint text-body-sm">{brief.note}</p>
-            </div>
-
-            {state === "failed" && (
-              <p role="alert" className="text-body-sm text-fg">
-                {brief.errors.submit}
-              </p>
+              </form>
             )}
-          </form>
-        )}
+          </div>
+        </div>
       </Reveal>
     </section>
   );

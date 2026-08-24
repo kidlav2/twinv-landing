@@ -9,7 +9,6 @@ import { Pillars } from "@/components/pillars";
 import { Cases } from "@/components/cases";
 import { Stack } from "@/components/stack";
 import { Services } from "@/components/services";
-import { Banners } from "@/components/banners";
 import { Brief } from "@/components/brief";
 import { Footer } from "@/components/footer";
 
@@ -38,7 +37,6 @@ export default function Home() {
             <Cases />
             <Stack />
             <Services />
-            <Banners />
             <Brief />
           </ScrollPanel>
         </main>
