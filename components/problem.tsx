@@ -3,7 +3,7 @@ import { Reveal } from "./reveal";
 
 export function Problem() {
   return (
-    <section id="process" className="py-32">
+    <section id="process" className="py-section-lg">
       <Reveal className="shell">
         <div className="grid gap-12 md:grid-cols-3 md:gap-10">
           {problem.items.map((item) => (

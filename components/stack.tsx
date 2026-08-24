@@ -13,7 +13,7 @@ import { StackAccent } from "./stack-accent";
  */
 export function Stack() {
   return (
-    <section id="stack" className="relative py-32">
+    <section id="stack" className="relative py-section-lg">
       <StackAccent />
       <StackAccent side="left" />
       <Reveal className="shell">

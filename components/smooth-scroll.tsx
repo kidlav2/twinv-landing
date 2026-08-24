@@ -78,9 +78,27 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
         }
         const a = (e.target as Element | null)?.closest?.("a");
         const href = a?.getAttribute("href");
-        if (!href || href.length < 2 || href[0] !== "#") return;
+        if (!href) return;
+
+        /**
+         * Two shapes reach here: a bare `#id` (every in-page control — nav,
+         * CTAs, pillar/service cards) and `/#id` (footer links, which have to
+         * work from a subpage too, so they carry a real path). Off the
+         * homepage `/#id` must fall through to an ordinary Next navigation —
+         * there's no `#id` element on `/about` or `/services/x` to jump to,
+         * only one to land on after routing back to `/`. On the homepage the
+         * two shapes are the same click and get the same smooth scroll.
+         */
+        const onHome = location.pathname === "/";
+        const hash =
+          href[0] === "#"
+            ? href
+            : onHome && href.startsWith("/#")
+              ? href.slice(1)
+              : null;
+        if (!hash || hash.length < 2) return;
         // getElementById sidesteps CSS.escape concerns with odd ids.
-        const target = document.getElementById(href.slice(1));
+        const target = document.getElementById(hash.slice(1));
         if (!target) return;
         e.preventDefault();
 

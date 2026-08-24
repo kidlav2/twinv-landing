@@ -11,7 +11,7 @@ const VARIANTS: PillarVariant[] = ["design", "build", "grow"];
  */
 export function Pillars() {
   return (
-    <section className="py-32">
+    <section className="py-section-lg">
       <Reveal className="shell">
         <h2 className="reveal font-display text-heading-lg max-w-[14ch]">
           {pillars.headline}

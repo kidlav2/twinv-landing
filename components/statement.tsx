@@ -32,7 +32,11 @@ export function Statement() {
           clipPath: "inset(0 0% 0 0)",
           duration: 1,
           ease: REVEAL.ease,
-          scrollTrigger: { trigger: scope.current, start: "top 75%", once: true },
+          scrollTrigger: {
+            trigger: scope.current,
+            start: "top 75%",
+            once: true,
+          },
         });
 
         gsap.from(".statement-fact", {
@@ -41,7 +45,11 @@ export function Statement() {
           duration: REVEAL.duration,
           ease: REVEAL.ease,
           stagger: REVEAL.stagger,
-          scrollTrigger: { trigger: scope.current, start: "top 60%", once: true },
+          scrollTrigger: {
+            trigger: scope.current,
+            start: "top 60%",
+            once: true,
+          },
         });
       });
 
@@ -51,7 +59,7 @@ export function Statement() {
   );
 
   return (
-    <section ref={scope} className="py-32">
+    <section ref={scope} className="py-section-lg">
       <div className="shell">
         <div className="grid gap-12 lg:grid-cols-[1fr_auto] lg:items-start lg:gap-16">
           <div className="flex flex-col items-start text-left">

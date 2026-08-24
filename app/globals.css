@@ -179,8 +179,19 @@
 
   /* ---- Layout ----
      No max-width cap: sections run edge-to-edge on real monitors, held off
-     the glass only by the gutter. Nav uses a tighter gutter than sections. */
-  --spacing-section: 80px;
+     the glass only by the gutter. Nav uses a tighter gutter than sections.
+
+     Both section-gap tokens are clamps, same idiom as --shell-padding below:
+     a fixed px value is a desktop measurement wearing a phone's clothes. At
+     375px a flat 80px top+bottom around a short section (Stack's chip rows
+     measured 128px of "empty" padding alone) reads as broken layout, not
+     restraint. Each clamp keeps its CURRENT value as the ceiling, so nothing
+     above roughly tablet width moves — only the floor is new. */
+  --spacing-section: clamp(48px, 9vw, 80px);
+  /* The larger gap used by sections whose content is short relative to their
+     visual weight (a two-line statement, a handful of stat rows) — Problem,
+     Statement, Pillars, Stack. */
+  --spacing-section-lg: clamp(64px, 16vw, 128px);
   --spacing-nav: 7.5rem;
   /* Measured height of the fixed bar. Anchor offsets, the nav-tone trigger in
      scroll-panel.tsx, and ScrollSmoother's scrollTo all read this ONE value —
