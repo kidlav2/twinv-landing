@@ -17,7 +17,7 @@
  * there are no subpages yet to design against.
  */
 export const nav = {
-  brand: "V&V Studio",
+  brand: "Twin V Studio",
   /* `/#id`, not `#id`: the nav renders on every route via PageShell (see
      components/page-shell.tsx), so a bare hash — which the smooth-scroll
      click handler only resolves against the CURRENT page — would append
@@ -83,7 +83,7 @@ export const product = {
   // Pointed at the About card until that card was removed. /about is the real
   // destination once it exists (stage 3); until then the closing form is the
   // only honest place to send someone who wants to talk to the studio.
-  cta: { label: "Meet the studio", href: "#contact" },
+  cta: { label: "Meet the studio", href: "/about" },
 };
 
 export const pillars = {
@@ -275,7 +275,7 @@ export const about = {
   eyebrow: "About us",
   headline: "Two people, a lot of shipped sites",
   intro:
-    "V&V Studio is a small design and development practice. We take on a handful of projects at a time so each one gets senior attention — the same two people from the first call to the last deploy, not an account manager handing you off to whoever is free.",
+    "Twin V Studio is a small design and development practice. We take on a handful of projects at a time so each one gets senior attention — the same two people from the first call to the last deploy, not an account manager handing you off to whoever is free.",
   body: "That's a deliberate ceiling, not a stage we're passing through. A studio that stays small stays close to the work: no bench of juniors to keep billable, no layer of process between what you ask for and what ships.",
   points: [
     {
@@ -303,7 +303,7 @@ export const legal = {
     sections: [
       {
         title: "Using this site",
-        body: "This site is informational and exists to describe V&V Studio's work and to receive project briefs through the form at the bottom of the homepage. Don't use it to submit anything unlawful, anything you don't have the right to send, or anything intended to disrupt the site or the people running it.",
+        body: "This site is informational and exists to describe Twin V Studio's work and to receive project briefs through the form at the bottom of the homepage. Don't use it to submit anything unlawful, anything you don't have the right to send, or anything intended to disrupt the site or the people running it.",
       },
       {
         title: "The brief form",
@@ -311,7 +311,7 @@ export const legal = {
       },
       {
         title: "Content and ownership",
-        body: "The design, copy, and code of this site belong to V&V Studio unless credited otherwise. Case studies and names shown here are used with permission. Deliverables from a paid engagement are covered by that engagement's own agreement, not by these terms.",
+        body: "The design, copy, and code of this site belong to Twin V Studio unless credited otherwise. Case studies and names shown here are used with permission. Deliverables from a paid engagement are covered by that engagement's own agreement, not by these terms.",
       },
       {
         title: "No warranty",

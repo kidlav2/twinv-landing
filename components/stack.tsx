@@ -28,7 +28,7 @@ export function Stack() {
           <p className="reveal text-muted mt-6 text-sub">{stack.sub}</p>
         </div>
 
-        <div className="mt-20 flex flex-col gap-12">
+        <div className="mt-12 flex flex-col gap-8 sm:mt-20 sm:gap-12">
           {stack.groups.map((group) => (
             <div
               key={group.title}
@@ -39,15 +39,24 @@ export function Stack() {
               <p className="text-faint font-mono text-body-sm uppercase">
                 {group.title}
               </p>
-              <ul className="flex flex-wrap justify-center gap-4">
+              <ul className="flex flex-wrap justify-center gap-2 sm:gap-4">
                 {group.items.map((item) => (
                   <li key={item}>
                     {/* Bigger and heavier than the sub-copy above (text-sub,
                         18px) on purpose — was mono/text-body-sm (14px), which
                         made the actual stack read smaller than its own
                         description. font-display carries the weight; no
-                        separate font-bold needed. */}
-                    <span className="border-line hover:bg-fg hover:text-canvas hover:border-fg rounded-tag font-display inline-flex items-center px-7 py-3 text-heading-sm transition-colors duration-200">
+                        separate font-bold needed.
+
+                        Measured at 375px before the sm: step-up existed: 28px
+                        type with 28px/12px padding put a chip like
+                        "PostgreSQL" at 122px wide, wrapped the 7-item
+                        Interface row across 4 lines, and ran the section to
+                        1218px — the "huge gaps between short words" look.
+                        text-sub (18px) with tighter padding is still plainly
+                        heavier than the sub-copy above it, just not louder
+                        than the screen it's on. */}
+                    <span className="border-line hover:bg-fg hover:text-canvas hover:border-fg rounded-tag font-display inline-flex items-center px-4 py-2 text-sub transition-colors duration-200 sm:px-7 sm:py-3 sm:text-heading-sm">
                       {item}
                     </span>
                   </li>

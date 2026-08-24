@@ -51,6 +51,15 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
         effects: false,
       });
 
+      // Every route mounts its own SmoothScroll (PageShell has no persistent
+      // layout), so this runs fresh on every navigation. Without a hash to
+      // honour, land at the top explicitly rather than trusting whatever
+      // scrollTop the new wrapper happens to start with — a plain page
+      // reporting "opens scrolled to the bottom" is exactly the symptom of
+      // that trust being wrong once, and the cost of asserting it here is
+      // one line.
+      if (!location.hash) smoother.scrollTo(0, false);
+
       // Child effects run before parent effects, so the ScrollTriggers in
       // ScrollPanel/Reveal were created before the smoother existed. create()
       // refreshes internally; this is the belt to that braces.
