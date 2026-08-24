@@ -8,6 +8,7 @@ import { ScrollPanel } from "@/components/scroll-panel";
 import { ButtonPrimary, Tag } from "@/components/ui";
 import { ServiceBlobs } from "@/components/service-blobs";
 import { ServiceIncluded } from "@/components/service-included";
+import { ServiceAsideVisual } from "@/components/service-aside-visual";
 
 type Params = { slug: string };
 
@@ -160,10 +161,19 @@ export default async function ServicePage({
           card that widens — the same device the homepage uses between its
           light and dark halves. `terminal` because nothing of another tone
           follows: no overhang, and the nav holds dark to the bottom. */}
-      <ScrollPanel tone="dark" terminal>
+      {/* `cursor={false}`: this zone already answers the pointer through the
+          dot field beside the paragraph, and the homepage's whole-zone cursor
+          invert on top of that is two effects competing for the same gesture. */}
+      <ScrollPanel tone="dark" terminal cursor={false}>
         <section className="py-section">
           <Reveal className="shell">
-            <div className="grid lg:grid-cols-12">
+            <div className="grid items-center gap-10 lg:grid-cols-12">
+              {/* Decorative, so it is simply absent below `lg` — the empty
+                  columns it fills only exist on a wide screen. */}
+              <div className="hidden lg:col-span-4 lg:block">
+                <ServiceAsideVisual />
+              </div>
+
               <div className="lg:col-span-7 lg:col-start-6">
                 <p className="reveal text-faint flex items-center gap-3 font-mono text-caption uppercase">
                   <ThoughtIcon />
