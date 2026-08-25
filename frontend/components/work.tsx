@@ -1,16 +1,22 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { cases } from "@/lib/content";
-import { Tag } from "./ui";
+import Link from "next/link";
+import { work } from "@/lib/content";
 import { Reveal } from "./reveal";
+import { WorkCard } from "./work-card";
 
 function cardStep(track: HTMLDivElement) {
   const card = track.querySelector<HTMLElement>("[data-card]");
   return card ? card.offsetWidth + 24 : track.clientWidth;
 }
 
-export function Cases() {
+/**
+ * The homepage teaser. It shows the same three entries as `/work` but in the
+ * compact card, and its job is to prove there is work rather than to be the
+ * portfolio — the index owns that, and this section links to it.
+ */
+export function Work() {
   const trackRef = useRef<HTMLDivElement>(null);
   const [atStart, setAtStart] = useState(true);
   const [atEnd, setAtEnd] = useState(false);
@@ -59,16 +65,28 @@ export function Cases() {
       <Reveal>
         <div className="shell">
           <div className="flex items-end justify-between gap-6">
-            <h2 className="reveal font-display text-heading-lg">
-              {cases.headline}
-            </h2>
+            <div>
+              <h2 className="reveal font-display text-heading-lg">
+                {work.headline}
+              </h2>
+              {/* The route, not the anchor. This is the only place on the
+                  homepage that hands a visitor the full index, now that the
+                  nav item points straight at it. */}
+              <Link
+                href="/work"
+                className="reveal text-fg decoration-line hover:decoration-current mt-5 inline-flex items-center gap-2 text-body-sm font-medium underline underline-offset-4 transition-colors"
+              >
+                {work.more}
+                <span aria-hidden>→</span>
+              </Link>
+            </div>
 
             <div className="reveal flex shrink-0 gap-2">
               <button
                 type="button"
                 onClick={() => scrollBy(-1)}
                 disabled={atStart}
-                aria-label="Previous case"
+                aria-label="Previous project"
                 className="border-slate text-carbon hover:bg-carbon hover:text-paper flex h-12 w-12 items-center justify-center rounded-full border-[1.5px] transition-colors disabled:pointer-events-none disabled:opacity-30"
               >
                 ←
@@ -77,7 +95,7 @@ export function Cases() {
                 type="button"
                 onClick={() => scrollBy(1)}
                 disabled={atEnd}
-                aria-label="Next case"
+                aria-label="Next project"
                 className="border-slate text-carbon hover:bg-carbon hover:text-paper flex h-12 w-12 items-center justify-center rounded-full border-[1.5px] transition-colors disabled:pointer-events-none disabled:opacity-30"
               >
                 →
@@ -98,33 +116,20 @@ export function Cases() {
             paddingInlineEnd: "var(--shell-padding)",
           }}
         >
-          {cases.items.map((c) => (
-            <article
-              key={c.title}
-              data-card
-              className="reveal bg-paper rounded-card flex w-[85vw] shrink-0 snap-start flex-col p-8 sm:w-[420px]"
-            >
-              <p className="font-display text-display leading-none">
-                {c.metric}
-              </p>
-              <h3 className="font-display mt-6 text-heading-sm">{c.title}</h3>
-              <p className="text-muted mt-4 flex-1 text-body">{c.body}</p>
-              <div className="mt-8">
-                <Tag>{c.tag}</Tag>
-              </div>
-            </article>
+          {work.items.map((item) => (
+            <WorkCard key={item.slug} item={item} />
           ))}
         </div>
 
-        {scrollable && cases.items.length > 1 && (
+        {scrollable && work.items.length > 1 && (
           <div className="mt-8 flex justify-center gap-2" role="tablist">
-            {cases.items.map((c, i) => (
+            {work.items.map((item, i) => (
               <button
-                key={c.title}
+                key={item.slug}
                 type="button"
                 role="tab"
                 aria-selected={i === active}
-                aria-label={`Go to case ${i + 1}`}
+                aria-label={`Go to project ${i + 1}`}
                 onClick={() => scrollToIndex(i)}
                 className={`h-2 rounded-full transition-all duration-300 ${
                   i === active ? "bg-carbon w-6" : "bg-ash w-2"

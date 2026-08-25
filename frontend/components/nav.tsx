@@ -11,12 +11,24 @@ export function Nav() {
   const pathname = usePathname();
 
   /**
-   * Only real routes can be "current". The other four links are homepage
-   * anchors (`/#process`), and a section scrolled into view is not a page you
-   * are on — marking one would put two current items in the bar at once.
+   * Only real routes can be "current", with one exception: Home is `/#top`,
+   * a hash by necessity (see content.ts), but it is still the landing, so
+   * it has to mark when `pathname` is `/`. The other homepage anchors stay
+   * unmarked — a section scrolled into view is not a page you are on, and
+   * marking one would put two current items in the bar at once.
+   *
    * Compared against the path only, so a trailing hash never breaks the match.
+   * A child route counts as its parent: on /work/some-project the Work item
+   * stays marked, because the visitor is inside that section and a bar with
+   * nothing current gives them no read on where they are.
    */
-  const isCurrent = (href: string) => !href.includes("#") && href === pathname;
+  const isCurrent = (href: string) => {
+    if (href === "/#top") return pathname === "/";
+    return (
+      !href.includes("#") &&
+      (href === pathname || pathname.startsWith(`${href}/`))
+    );
+  };
 
   // Don't let the page scroll behind the open mobile sheet.
   //
@@ -59,8 +71,8 @@ export function Nav() {
           <span className="brand-mark h-9 sm:h-11" aria-hidden />
         </Link>
 
-        <nav className="nav-pill rounded-pill hidden items-center gap-10 px-10 py-5 lg:flex">
-          <ul className="nav-links flex items-center gap-10">
+        <nav className="nav-pill rounded-pill hidden items-center gap-8 px-8 py-5 lg:flex xl:gap-10 xl:px-10">
+          <ul className="nav-links flex items-center gap-8 xl:gap-10">
             {nav.links.map((l) => (
               <li key={l.label}>
                 <Link

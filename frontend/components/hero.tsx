@@ -46,8 +46,17 @@ export function Hero() {
         <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-start lg:gap-10">
           {/* Text column: headline directly followed by sub-copy, so the
               first line of body text is on-screen without scrolling. */}
-          <div className="flex flex-col lg:pt-6">
-            <h1 className="font-display text-display-xl">
+          {/* `@container` so the headline tracks THIS column, not the
+              viewport. `text-display-xl` is 12.5vw of the window — on a
+              13" Air that is still ~160px, poured into half the grid, which
+              is how "Built to convert." became five lines. 18.5% of the
+              column hits the same 168px ceiling on a 27" (so that
+              composition does not move) and drops to ~108px in the Air's
+              half-width column, which is what lets each phrase sit on one
+              line. Floor is the token's 3.75rem: display type does not go
+              below 48px. */}
+          <div className="@container flex flex-col lg:pt-6">
+            <h1 className="font-display text-display-xl [font-size:clamp(3.75rem,18.5cqi,10.5rem)]">
               {hero.headline.map((line) => (
                 <span
                   key={line}

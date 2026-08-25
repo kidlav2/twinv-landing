@@ -32,6 +32,10 @@ gsap.registerPlugin(useGSAP, MorphSVGPlugin);
  * either of them counts as a large surface — so both carry neutrals, exactly
  * as the hero puts carbon/paper/ash on its big blobs. The single voltage dot
  * is the one accent, and a micro-accent is the only role that colour has.
+ *
+ * Grey on the left, black on the right — the shape's own reading order runs
+ * light to dark toward the corner it sits in, which is what keeps the pair
+ * from reading as two unrelated blobs that happen to overlap.
  */
 /**
  * Landscape, and the shapes fill it.
@@ -53,19 +57,34 @@ const A = {
   cx: 236,
   cy: 210,
   base: 150,
-  fill: "var(--color-carbon)",
+  fill: "var(--color-ash)",
 };
 const B = {
   seed: 0x91c3,
   cx: 428,
   cy: 248,
   base: 116,
-  fill: "var(--color-ash)",
+  fill: "var(--color-carbon)",
 };
 
+/**
+ * Pulls `blobRadii`'s 0.74–1.28 swing in toward 1 before it ever reaches a
+ * path — local to this pair, not a change to `lib/blob.ts`, which the hero
+ * and the service pages also read and whose wider swing is right for them.
+ *
+ * Two shapes reads very differently from the hero's five: with only two on
+ * screen, each one is a large surface, and the full swing produced sharp,
+ * almost spiky lobes that looked aggressive rather than calm at that scale.
+ * 0.5 keeps the same eight seeded points (so the morph still has somewhere
+ * to go) but roughly halves how far each one travels from a circle.
+ */
+const SOFTEN = 0.5;
+const soften = (radii: readonly number[]) =>
+  radii.map((r) => 1 + (r - 1) * SOFTEN);
+
 const SHAPES = {
-  a: [blobRadii(A.seed), blobRadii(A.seed + 1), blobRadii(A.seed + 2)],
-  b: [blobRadii(B.seed), blobRadii(B.seed + 1), blobRadii(B.seed + 2)],
+  a: [A.seed, A.seed + 1, A.seed + 2].map((s) => soften(blobRadii(s))),
+  b: [B.seed, B.seed + 1, B.seed + 2].map((s) => soften(blobRadii(s))),
 };
 
 export function AboutPair({ className = "" }: { className?: string }) {
@@ -101,7 +120,10 @@ export function AboutPair({ className = "" }: { className?: string }) {
                 type: "rotational",
                 origin: "50% 50%",
               },
-              duration: 6.5 + i * 1.4,
+              // Slower than the hero's blobs on top of the softened radii —
+              // two large, near-still shapes read as calm; the hero's five
+              // small ones could afford to be livelier.
+              duration: 10 + i * 2,
               ease: "sine.inOut",
             });
           });
@@ -131,16 +153,17 @@ export function AboutPair({ className = "" }: { className?: string }) {
   );
 
   return (
-    <div ref={scope} className={className || "w-full"}>
-      {/* `w-auto` off the height, not `w-full`: told to fill both, the SVG
-          letterboxes its viewBox inside the box and the shapes end up sitting
-          in the middle of a band of empty space. */}
+    /* The box carries the viewBox's own ratio, so a caller only ever sets one
+       dimension and the other follows exactly — no letterboxed band of empty
+       space inside the box, and no `w-auto` circularity when the box is the
+       shrink-to-fit child of an absolutely positioned layer. */
+    <div
+      ref={scope}
+      className={className || "w-full"}
+      style={{ aspectRatio: `${VB_W} / ${VB_H}` }}
+    >
       {/* Abstract shapes carry nothing a screen reader needs. */}
-      <svg
-        viewBox={`0 0 ${VB_W} ${VB_H}`}
-        className="h-full w-auto max-w-full"
-        aria-hidden
-      >
+      <svg viewBox={`0 0 ${VB_W} ${VB_H}`} className="h-full w-full" aria-hidden>
         <path
           id="pair-a"
           d={blobPath(SHAPES.a[0], A.cx, A.cy, A.base)}

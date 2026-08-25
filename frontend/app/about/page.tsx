@@ -6,7 +6,6 @@ import { AboutPair } from "@/components/about-pair";
 import { AboutStage } from "@/components/about-stage";
 import { CardSwap, SwapCard } from "@/components/card-swap";
 import { ServiceAsideVisual } from "@/components/service-aside-visual";
-import { ScrollCue } from "@/components/scroll-cue";
 import { ButtonPrimary } from "@/components/ui";
 
 export const metadata: Metadata = {
@@ -26,15 +25,19 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <PageShell flushFooter footerTone="dark">
-      {/* ---------- Masthead: the contents spread ---------- */}
-      {/* Tuned to land inside one screen rather than on the section-spacing
-          tokens: measured at 1440x900 the token version ran 106px past the
-          fold, which put the scroll cue — the one element whose whole job is
-          to be seen at the bottom of the first screen — below it. */}
-      <section
-        id="about-studio"
-        className="pt-[calc(var(--spacing-nav)+8px)] pb-6"
-      >
+      {/* ---------- Masthead ----------
+          Headline full-width on its own row, then a second row splitting
+          lead copy from the shapes into separate GRID COLUMNS.
+
+          That second point is a correction, not a style choice. An earlier
+          pass made the shapes an absolutely-positioned backdrop the headline
+          crossed, which needs `mix-blend-difference` to keep the crossing
+          type legible — and that blend mode composites `::selection` too, so
+          a reader dragging to select any of this text got the difference of
+          voltage-yellow against canvas (a blue) instead of the site's actual
+          selection colour. Columns make the overlap impossible in the first
+          place, so nothing here has to fight `::selection` for a look. */}
+      <section id="about-studio" className="pt-[calc(var(--spacing-nav)+8px)] pb-6">
         <Reveal className="shell">
           {/* No "About us" eyebrow. It was labelling the page from inside the
               page, which is the job of the nav — and the nav now marks the
@@ -47,38 +50,90 @@ export default function AboutPage() {
               step down inside a 46ch box was what left most of the canvas
               empty on a wide screen.
 
-              The title takes the whole shell rather than a 7-column half —
-              measured at 1440px, 33 characters at 160px broke into five
-              lines in half the width and pushed the contents rail and the
-              laptop's peek off the first screen entirely. Across the full
-              width it sets in two, which is what leaves room for the row
-              below it. */}
+              The title takes the whole shell rather than a column — measured
+              at 1440px, 33 characters at 160px broke into five lines in half
+              the width. Across the full width it sets in two. Keeping it
+              unconstrained (rather than sharing a row with the shapes) is
+              what protects that two-line count: a shared row would have
+              re-wrapped it into four or five short ones the moment the shapes
+              column took half the width. */}
           {/* `text-wrap: balance` evens the two lines out. Left to itself the
               headline filled the first line and dropped two words onto the
               second, which changed the shape of the block at every width and
               left a long ragged gap down the right. */}
+          {/* The voltage band moved up here from the points below, where three
+              of them in a column had stopped being an accent. One phrase, once
+              on the page, on the two words the whole site is an argument for.
+              Marked rather than simply coloured because voltage type on canvas
+              is #fff100 on #e5e5e5 — a colour you cannot read is not an
+              accent. `box-decoration-clone` keeps every wrapped line padded.
+              Padding in `em` so the band tracks the clamped display size
+              instead of holding a 12px gap against 168px letters. */}
           <h1 className="reveal font-display text-display-xl text-balance">
-            {about.headline}
+            <span className="bg-voltage text-carbon box-decoration-clone px-[0.08em]">
+              {about.headline.marked}
+            </span>
+            {about.headline.rest}
           </h1>
 
-          <div className="mt-10 grid items-center gap-x-8 gap-y-10 lg:grid-cols-12">
+          {/* `items-start`, NOT `items-end`. Bottom-aligning the row sank the
+              lead paragraph to the bottom of whatever height the shapes gave
+              it — a screen's worth of blank canvas between the headline and
+              its own standfirst, which read as the paragraph having gone
+              missing. The paragraph belongs directly under the headline; it
+              is the SHAPES that are pushed down, by their own margin, so only
+              the decoration moves. */}
+          <div className="mt-12 grid items-start gap-x-8 gap-y-12 lg:grid-cols-12">
             <p className="reveal text-fg max-w-[46ch] text-lead lg:col-span-5">
               {about.intro}
             </p>
 
-            {/* Sized by viewport HEIGHT, not by its column. Width-driven, the
-                square box grew as tall as the column was wide and the whole
-                masthead stopped fitting on one screen — the big empty band
-                between the title and the copy was that box's height with a
-                short paragraph centred in it. Decorative, so simply absent
-                below `lg`, same call as the service pages' aside. */}
+            {/* Width-driven, not height-driven, and that is what keeps it
+                inside its own column at every breakpoint. `AboutPair`'s box
+                carries the artwork's own aspect ratio (see the component), so
+                handing it a WIDTH lets it derive its height — it can never
+                overflow sideways into the lead paragraph's column, which a
+                height-driven box has no such guarantee against.
+
+                Less than the column's full width, pushed to its right edge
+                and down: the shapes are a note in the corner of the page, not
+                the other half of a two-up layout. Decorative, so simply
+                absent below `lg`, same call as the service pages' aside. */}
             <div className="reveal hidden lg:col-span-6 lg:col-start-7 lg:block">
-              <AboutPair className="flex h-[30vh] justify-end" />
+              <AboutPair className="mt-10 ml-auto w-[74%] xl:mt-16" />
             </div>
           </div>
+        </Reveal>
+      </section>
 
-          {/* Sits at the bottom of the first screen, pointing at the laptop. */}
-          <ScrollCue className="reveal mt-9 hidden lg:block" />
+      {/* ---------- The statement the laptop answers ----------
+          Deliberately a `<p>`, not a heading. It is a line of copy set large,
+          not a section title — the sections on this page each already have
+          one, and adding a fourth to the outline for a block with no content
+          under it would be describing the page wrongly to anything that reads
+          the outline. Which also means `globals.css`'s automatic uppercasing
+          of h1/h2/h3 does not reach it, hence the explicit `uppercase`.
+
+          Both paddings are deliberately smaller than the section-spacing
+          tokens, and the bottom one is gone: this line is the sentence the
+          laptop answers, so the two belong in the same breath. The remaining
+          daylight is `AboutStage`'s own headroom (`TOP_SHARE` there). */}
+      <section className="pt-8 pb-0">
+        <Reveal className="shell">
+          {/* One line, deliberately. `text-display` set it in three, which
+              read as a paragraph rather than a single beat — so this is a
+              custom clamp rather than a type token: no token both fits 35
+              characters of Anton across the shell and stays large enough to
+              carry the moment. `3.8vw` keeps the line at roughly 57% of the
+              shell at every width, which is why `nowrap` is safe rather than
+              a promise of a horizontal scrollbar.
+
+              Below `sm` it is allowed to wrap: the clamp floors at 24px there
+              and a 35-character line does not fit a phone at any size worth
+              reading. */}
+          <p className="reveal font-display text-center text-[clamp(1.5rem,3.8vw,3.5rem)] uppercase sm:whitespace-nowrap">
+            {about.prelude}
+          </p>
         </Reveal>
       </section>
 
@@ -130,17 +185,21 @@ export default function AboutPage() {
                   className="reveal grid gap-4 lg:grid-cols-12 lg:gap-8"
                 >
                   {/* Marked the way a mouse selection marks text: voltage
-                      behind, carbon on top. That is the documented role for
-                      this colour — DESIGN.md's "Voltage Highlight … #fff100
-                      background … on select elements" — and it is the one
-                      thing in the dark zone that is neither white type nor
-                      black ground. `inline` + `box-decoration-break: clone`
-                      so a title that wraps gets a properly padded band on
-                      every line instead of one box behind the lot. */}
+                      behind, carbon on top. DESIGN.md's documented role for
+                      this colour ("Voltage Highlight … #fff100 background … on
+                      select elements") — and "select" is the operative word,
+                      so exactly one of the three carries it and the other two
+                      are plain white type. `box-decoration-break: clone` gives
+                      a wrapped title a padded band per line rather than one
+                      box behind the lot. */}
                   <h3 className="font-display text-heading lg:col-span-5">
-                    <span className="bg-voltage text-carbon box-decoration-clone px-3 py-1">
-                      {point.title}
-                    </span>
+                    {point.marked ? (
+                      <span className="bg-voltage text-carbon box-decoration-clone px-3 py-1">
+                        {point.title}
+                      </span>
+                    ) : (
+                      point.title
+                    )}
                   </h3>
                   <p className="text-muted max-w-[52ch] text-sub lg:col-span-6 lg:col-start-7">
                     {point.body}
@@ -185,8 +244,9 @@ export default function AboutPage() {
                 <CardSwap className="h-[440px] sm:h-[560px] lg:h-[600px] lg:translate-x-[24%] xl:h-[680px] xl:translate-x-[28%]">
                   {about.founders.cards.map((card) => (
                     <SwapCard
-                      key={card.caption}
-                      caption={card.caption}
+                      key={card.name}
+                      name={card.name}
+                      role={card.role}
                       className="h-[340px] w-[260px] sm:h-[480px] sm:w-[360px] lg:h-[560px] lg:w-[440px] xl:h-[640px] xl:w-[520px]"
                     />
                   ))}

@@ -222,10 +222,12 @@ export function CardSwap({
  * the exact trap AGENTS.md documents for light surfaces inside dark zones.
  */
 export function SwapCard({
-  caption,
+  name,
+  role,
   className = "",
 }: {
-  caption: string;
+  name: string;
+  role: string;
   className?: string;
 }) {
   return (
@@ -238,11 +240,16 @@ export function SwapCard({
           visible behind the one in front, so that is where a label can
           actually be read. At the bottom it was hidden under the next card.
 
-          `text-muted`, not the `text-faint` the site's decorative mono labels
-          use: on this white surface faint (#979797) lands at 2.8:1, and this
-          caption is the only thing saying which photograph belongs here. */}
-      <figcaption className="text-muted font-mono border-line border-b px-6 py-5 text-caption uppercase">
-        {caption}
+          Two lines, not one long string: a 260px phone card cannot hold
+          "Vlad — Design and front-end" as a single uppercase mono line
+          without wrapping mid-name, and a wrapped name stops being a name.
+          The name is the thing you came for; the role is the gloss.
+
+          `text-muted` on the role, not `text-faint`: on this white surface
+          faint (#979797) lands at 2.8:1. The name is carbon, full strength. */}
+      <figcaption className="border-line border-b px-5 py-4 sm:px-6 sm:py-5">
+        <p className="font-mono text-caption text-carbon uppercase">{name}</p>
+        <p className="text-muted font-mono text-caption mt-1 uppercase">{role}</p>
       </figcaption>
       {/* The placeholder itself. A flat mist panel — no icon, no dashed
           "upload" affordance — because this is a slot waiting for a

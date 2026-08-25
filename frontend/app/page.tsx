@@ -7,7 +7,7 @@ import { Problem } from "@/components/problem";
 import { Statement } from "@/components/statement";
 import { Product } from "@/components/product";
 import { Pillars } from "@/components/pillars";
-import { Cases } from "@/components/cases";
+import { Work } from "@/components/work";
 import { Stack } from "@/components/stack";
 import { Services } from "@/components/services";
 import { Brief } from "@/components/brief";
@@ -37,7 +37,7 @@ export default function Home() {
           {/* …then the light panel does the same over the black, and the page
             returns to canvas for the proof and the offer. */}
           <ScrollPanel tone="light">
-            <Cases />
+            <Work />
             <Stack />
             <Services />
             <Brief />

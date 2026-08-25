@@ -549,12 +549,21 @@
   }
 }
 
-/* Unlit keycaps. A backlight glow was tried here and pulled back out: it was
-   the one place on the page emitting light, and next to a system that gets all
-   its depth from flat surface contrast it read as the object being lit from
-   inside rather than sitting on the page. Legends are simply printed on. */
+/* Backlit keycaps. The legend is the lamp: on a real machine the light comes
+   through the cut-out letter, so the glyph is what glows and the cap around it
+   stays dark. Two shadows rather than one — a tight core so the letter still
+   has an edge to read by at 11px, and a wide, weak bloom that is what says
+   "emitting" rather than "white text".
+
+   Kept dim on purpose (the core is well under full white). The machine is one
+   lit object on a page whose entire depth model is flat surface contrast, so
+   the backlight has to be a detail seen up close, not a light source the
+   section is lit by. */
 .kbd-legend {
-  color: var(--color-smoke);
+  color: #e3ecfa;
+  text-shadow:
+    0 0 2px rgba(227, 236, 250, 0.85),
+    0 0 7px rgba(200, 222, 255, 0.45);
 }
 @media (min-width: 64rem) and (prefers-reduced-motion: no-preference) {
   .macbook-fallback {
@@ -615,4 +624,13 @@
       scroll-behavior: auto;
     }
   }
+}
+
+/* Portfolio cards are wholly clickable, so the focus ring has to be drawn on
+   the card rather than on something inside it. `--color-fg`, not a fixed
+   colour: the index sits on canvas and the ring must survive if a card is ever
+   placed in a dark zone. */
+.work-card:focus-visible {
+  outline: 2px solid var(--color-fg);
+  outline-offset: 4px;
 }

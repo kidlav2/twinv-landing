@@ -5,10 +5,17 @@
 
 /**
  * Order MUST match the vertical order sections actually appear in on the page
- * (see app/page.tsx) — Process, then Work, then Stack, then Services, then
- * About. A menu that jumps backwards is worse than no menu. This list is
- * genuinely coupled to app/page.tsx's section order — if you reorder one,
- * reorder the other.
+ * (see app/page.tsx) — Home (the landing's top), then Process, then Work,
+ * then Stack, then Services, then About. A menu that jumps backwards is worse
+ * than no menu. This list is genuinely coupled to app/page.tsx's section
+ * order — if you reorder one, reorder the other.
+ *
+ * Home is `/#top`, not `/`. A bare `/` from another route would land the
+ * homepage wherever the new SmoothScroll wrapper happened to open; the hash
+ * is what the smoother honours as an explicit scrollTo. It is also why
+ * Process cannot do this job: from /about, `/#process` is a correct jump
+ * that skips the hero, and that is the thing a visitor clicking the first
+ * item to "go back" actually wanted to see.
  *
  * When service pages become real routes (`/services/x`) this scheme changes:
  * an anchor like `#process` only works from the homepage, so cross-page nav
@@ -26,8 +33,9 @@ export const nav = {
      because they only ever render on `/`. /about is a real route now that
      the page exists. */
   links: [
+    { label: "Home", href: "/#top" },
     { label: "Process", href: "/#process" },
-    { label: "Work", href: "/#work" },
+    { label: "Work", href: "/work" },
     { label: "Stack", href: "/#stack" },
     { label: "Services", href: "/#services" },
     { label: "About", href: "/about" },
@@ -107,26 +115,146 @@ export const pillars = {
   ],
 };
 
-export const cases = {
+/**
+ * Portfolio. Consumed by three surfaces: the `#work` teaser on the homepage,
+ * the `/work` index, and one `/work/[slug]` page per entry.
+ *
+ * !!! EVERY ENTRY BELOW IS A PLACEHOLDER. Replace with real work before this
+ * ships. The three rules that keep the section honest — none of them are
+ * style preferences:
+ *
+ *   `kind` is the one field that must never be fudged. "client" means someone
+ *   paid for it and it runs their business. "self" means we built it for
+ *   ourselves. Self-initiated work belongs here — it is the studio's own
+ *   product, not a lesser exhibit — but it can never be dressed as an
+ *   engagement: no invented company, no testimonial, no business number,
+ *   because there was no business to measure it on. `client` and `sector` are
+ *   optional for exactly that reason.
+ *
+ *   `metric.label` is not a caption, it names what the number IS. That is what
+ *   lets a business result (+142%, trial starts) and a technical fact (1.1s,
+ *   largest contentful paint) share one slot on the card without pretending to
+ *   be the same kind of claim. Client work takes the business number;
+ *   self-initiated work takes a fact measurable on the thing itself. Never the
+ *   reverse — a percentage with no client behind it is the one lie a visitor
+ *   can catch from the outside.
+ *
+ *   `type` is the outcome — Website / Automation / Growth — not the craft. The
+ *   studio sells business change, so someone who arrived needing automation has
+ *   to find themselves in the grid. The old tags ("SaaS · Redesign") sorted the
+ *   work by how WE built it, which is the single axis a buyer does not care
+ *   about.
+ */
+export const work = {
   headline: "Selected work",
+  sub: "Three projects, and what changed because of them.",
+  /** Label for the link from the homepage teaser to the full index. */
+  more: "All work",
   items: [
     {
-      metric: "+142%",
+      slug: "saas-marketing-site",
       title: "Rebuilt a SaaS marketing site around one job",
-      body: "Cut nine landing pages down to three, rewrote the hero around the buyer's actual trigger, and moved signup above the fold. Trial starts more than doubled in six weeks.",
-      tag: "SaaS · Redesign",
+      kind: "client",
+      client: "Client name",
+      sector: "SaaS",
+      year: "2026",
+      type: "Website",
+      summary:
+        "Nine landing pages cut down to three, the hero rewritten around the buyer's actual trigger, and signup moved above the fold.",
+      metric: { value: "+142%", label: "trial starts" },
+      role: "Strategy, design, build",
+      stack: ["Next.js", "TypeScript", "Tailwind", "Vercel"],
+      url: "",
+      task: "The site had grown one landing page per campaign until there were nine, each arguing a different case for the same product. Traffic was fine. Nobody could tell which page was doing the work, and the trial signup sat two scrolls down on all of them.",
+      approach: [
+        {
+          label: "One page per decision",
+          body: "We mapped the nine pages onto the three decisions a buyer actually makes, and wrote one page for each. The other six redirected rather than lingering as dead weight in search.",
+        },
+        {
+          label: "The hero says the trigger",
+          body: "The old hero described the product. The new one names the moment a buyer goes looking for it, which is the sentence they are already saying to themselves.",
+        },
+        {
+          label: "Signup where the decision happens",
+          body: "The trial form moved to the first screen and repeats at the point in the page where the argument finishes, instead of waiting at the bottom.",
+        },
+      ],
+      outcome:
+        "Trial starts more than doubled over six weeks against the same ad spend, and the team stopped shipping a new landing page for every campaign.",
+      outcomeFacts: [
+        { value: "6 wks", label: "to measurable change" },
+        { value: "9 → 3", label: "landing pages" },
+      ],
     },
     {
-      metric: "1.1s",
+      slug: "storefront-performance",
       title: "Took a storefront from four seconds to one",
-      body: "Replaced a plugin-heavy theme with a custom build, trimmed 80% of the JavaScript, and rebuilt the product page. Bounce fell by a third, mobile revenue rose 38%.",
-      tag: "E-commerce · Performance",
+      kind: "self",
+      client: "",
+      sector: "E-commerce",
+      year: "2025",
+      type: "Growth",
+      summary:
+        "A plugin-heavy theme replaced with a custom build: 80% of the JavaScript gone and the product page rebuilt from scratch.",
+      metric: { value: "1.1s", label: "largest contentful paint" },
+      role: "Design, build",
+      stack: ["Next.js", "TypeScript", "PostgreSQL", "Vercel"],
+      url: "",
+      task: "The store loaded in four seconds on a mid-range phone, and most of that was theme plugins doing work nobody had asked for since launch. Every fix so far had been another plugin.",
+      approach: [
+        {
+          label: "Audit before rewrite",
+          body: "We measured what each plugin cost in bytes and blocking time before deciding anything, so the rewrite replaced known weight rather than assumed weight.",
+        },
+        {
+          label: "Custom build, owned as code",
+          body: "The theme became a custom front end the team can read and change — no builder to renew, and nothing that breaks on a plugin's own release schedule.",
+        },
+        {
+          label: "The product page first",
+          body: "The page that converts got rebuilt before anything decorative, because a fast homepage in front of a slow product page moves no revenue.",
+        },
+      ],
+      outcome:
+        "Load time dropped from roughly four seconds to just over one on the same connection, and the JavaScript bundle shrank by about 80%.",
+      outcomeFacts: [
+        { value: "−80%", label: "JavaScript shipped" },
+        { value: "4s → 1.1s", label: "load on mid-range mobile" },
+      ],
     },
     {
-      metric: "3 wks",
-      title: "Launched a studio brand from zero",
-      body: "Identity, site, and CMS for a new architecture practice — from empty repo to live and indexed in under a month, ahead of their first pitch.",
-      tag: "Brand · New build",
+      slug: "studio-brand-launch",
+      title: "Launched a studio brand from an empty repo",
+      kind: "self",
+      client: "",
+      sector: "Brand",
+      year: "2025",
+      type: "Website",
+      summary:
+        "Identity, site, and content model for a new practice — from nothing to live and indexed inside a month.",
+      metric: { value: "3 wks", label: "empty repo to live" },
+      role: "Identity, design, build",
+      stack: ["Next.js", "GSAP", "Tailwind", "Vercel"],
+      url: "",
+      task: "A new practice needed to exist publicly before its first pitch, with no logo, no copy, and no photography — and a date that was not going to move.",
+      approach: [
+        {
+          label: "Type instead of photography",
+          body: "With no photography to build on, the identity was set in type and flat surface contrast, which meant the site could be finished without waiting on a shoot.",
+        },
+        {
+          label: "Copy written to the pitch",
+          body: "The pages were written against the argument the practice was already making in the room, so the site and the pitch said the same thing.",
+        },
+        {
+          label: "One content file",
+          body: "Every word on the site lives in one file the team edits directly, so the first month of changes needed no developer.",
+        },
+      ],
+      outcome:
+        "Live and indexed in three weeks, ahead of the first pitch, and edited by the practice itself from week one.",
+      outcomeFacts: [{ value: "0", label: "developer hours to edit copy" }],
     },
   ],
 };
@@ -348,7 +476,18 @@ export const services = {
 /** Renders at /about (app/about/page.tsx). */
 export const about = {
   eyebrow: "About us",
-  headline: "Two people, a lot of shipped sites",
+  /**
+   * Split into two spans because the first one carries the voltage marking —
+   * which phrase gets marked is a copy decision, so it lives here rather than
+   * being hard-coded into the markup as a `<span>` around a substring.
+   */
+  headline: { marked: "Two people", rest: ", a lot of shipped sites" },
+  /**
+   * The beat between the masthead and the laptop. Three verbs, no adjectives:
+   * it has to read at display scale in one pass, and the laptop's `claim`
+   * immediately after is the sentence that qualifies it.
+   */
+  prelude: "We design it, build it, and ship it.",
   /**
    * The line the laptop's screen holds, and the only copy on the site set at
    * full display scale on its own. ASCII only and short on purpose: Anton has
@@ -369,34 +508,47 @@ export const about = {
   intro:
     "Twin V Studio is a small design and development practice. We take on a handful of projects at a time so each one gets senior attention — the same two people from the first call to the last deploy, not an account manager handing you off to whoever is free.",
   body: "That's a deliberate ceiling, not a stage we're passing through. A studio that stays small stays close to the work: no bench of juniors to keep billable, no layer of process between what you ask for and what ships.",
+  /**
+   * `marked` is the voltage band. Exactly one of the three carries it: three
+   * marked titles in a column stopped being an accent and became the list's
+   * default styling, which is the opposite of what a highlight is for. The
+   * flag is on every entry (rather than optional on one) so the field is part
+   * of the shape and TypeScript can see it on each element.
+   */
   points: [
     {
       title: "Senior on every project",
+      marked: true,
       body: "No junior does the first pass and a senior the review. The people who scope the work are the people who build it.",
     },
     {
       title: "Production code, not a prototype",
+      marked: false,
       body: "What ships in week one is the real stack — Next.js, deployed on your infrastructure — not a Figma file waiting for a second contract.",
     },
     {
       title: "A handful of projects at a time",
+      marked: false,
       body: "We turn down work rather than stretch thin. If we take the call, you get real attention on a real timeline.",
     },
   ],
   /**
-   * The closing section. `cards` are explicit placeholders — real photographs
-   * of the two of us go here, and inventing stand-in "studio photography"
-   * would be the same false claim as the invented metrics PLAN.md flags.
-   * Captions describe what each slot is for so the swap is unambiguous.
+   * The closing section. Cards are a name and a short role — not a CV. The
+   * longer split (automation, the brief, who talks to the client) lives in
+   * `body`, because a caption that lists five jobs wraps into a paragraph
+   * on a 260px phone card and stops being a label.
+   *
+   * First names only, and Vanya not Ivan: the mark is Twin V because it is
+   * Vlad and Vanya, and those are the names a client will actually use.
    */
   founders: {
     eyebrow: "The two of us",
     headline: "Who you actually get",
-    body: "Two senior people, both hands-on. One leads design and front-end, the other back-end and infrastructure — and on a project this size that split is a conversation, not a handoff. You talk to both of us, for the whole engagement.",
+    body: "Two senior people, both hands-on. Vlad leads design and front-end, Vanya leads back-end and infrastructure — and on a project this size that split is a conversation, not a handoff. You talk to both of us, for the whole engagement.",
     cards: [
-      { caption: "Design and front-end — photo to come" },
-      { caption: "Back-end and infrastructure — photo to come" },
-      { caption: "Both of us — photo to come" },
+      { name: "Vlad", role: "Design and front-end" },
+      { name: "Vanya", role: "Back-end" },
+      { name: "Vlad & Vanya", role: "The two of us" },
     ],
   },
   cta: { label: "Start a project", href: "/#contact" },
@@ -539,8 +691,9 @@ export const footer = {
     {
       title: "Studio",
       links: [
+        { label: "Home", href: "/#top" },
         { label: "Process", href: "/#process" },
-        { label: "Work", href: "/#work" },
+        { label: "Work", href: "/work" },
         { label: "Stack", href: "/#stack" },
         { label: "About", href: "/about" },
       ],
