@@ -552,13 +552,13 @@ export const about = {
       {
         name: "Vlad",
         role: "Design and front-end",
-        mark: "design",
+        mark: "design" as const,
         photo: "/about/vlad.jpg",
       },
       {
         name: "Vanya",
         role: "Back-end",
-        mark: "code",
+        mark: "code" as const,
         photo: "/about/vanya.jpg",
         /* Landscape shot, person on the left. Cover-crop on a tall card
            would otherwise take the empty mountain on the right. */
