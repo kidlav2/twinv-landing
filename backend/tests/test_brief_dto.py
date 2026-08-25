@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from twinv_landing.dto.brief import BriefCreateDTO
+from twinv_landing.dto.brief_dto import BriefCreateDTO
 from twinv_landing.models.brief import BriefGoal
 
 

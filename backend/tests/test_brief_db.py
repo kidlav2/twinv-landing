@@ -2,9 +2,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
 from twinv_landing.db import Base
-from twinv_landing.dto.brief import BriefCreateDTO
+from twinv_landing.dto.brief_dto import BriefCreateDTO
 from twinv_landing.models.brief import Brief, BriefGoal
-from twinv_landing.service.brief import BriefService
+from twinv_landing.service.brief_service import BriefService
 
 
 def test_brief_service_persists_to_sqlite():

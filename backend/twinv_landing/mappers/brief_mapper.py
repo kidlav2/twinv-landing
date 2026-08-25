@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from twinv_landing.dto.brief import BriefCreateDTO, BriefDTO
+from twinv_landing.dto.brief_dto import BriefCreateDTO, BriefDTO
 from twinv_landing.models.brief import Brief
 
 

@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from twinv_landing.db import init_db
-from twinv_landing.routers import brief, health
+from twinv_landing.routers import brief_router, health
 
 
 @asynccontextmanager
@@ -24,4 +24,4 @@ app.add_middleware(
 )
 
 app.include_router(health.router)
-app.include_router(brief.router)
+app.include_router(brief_router.router)

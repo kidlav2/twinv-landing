@@ -1,7 +1,7 @@
 from datetime import UTC, datetime
 
-from twinv_landing.dto.brief import BriefCreateDTO
-from twinv_landing.mappers.brief import BriefMapper
+from twinv_landing.dto.brief_dto import BriefCreateDTO
+from twinv_landing.mappers.brief_mapper import BriefMapper
 from twinv_landing.models.brief import BriefGoal
 
 

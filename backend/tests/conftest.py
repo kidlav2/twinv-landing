@@ -7,6 +7,7 @@ from sqlalchemy.pool import StaticPool
 from twinv_landing.db import Base, get_session
 from twinv_landing.main import app
 from twinv_landing.models.brief import Brief  # noqa: F401
+from twinv_landing.service.mail_service import get_mail_service
 
 
 @pytest.fixture
@@ -46,6 +47,8 @@ def client(session_factory, monkeypatch):
             session.close()
 
     app.dependency_overrides[get_session] = override_get_session
+    # Mail stays off in tests even if the developer's .env configures Gmail.
+    app.dependency_overrides[get_mail_service] = lambda: None
     with TestClient(app) as test_client:
         yield test_client
     app.dependency_overrides.clear()
