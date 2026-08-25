@@ -36,7 +36,6 @@ const DELAY = 4200;
 
 const EASE = "elastic.out(0.6,0.9)";
 const DUR = 1.6;
-const PROMOTE_OVERLAP = 0.9;
 const RETURN_DELAY = 0.05;
 
 /** Where card `i` sits when it is `i` places back from the front. */
@@ -82,6 +81,11 @@ export function CardSwap({
         let order = cards.map((_, i) => i);
         let tl: gsap.core.Timeline | null = null;
         let timer = 0;
+        // Hover/focus hold the AUTO cycle, not an in-flight swap. Pausing
+        // the timeline on pointerenter meant a click (which focuses the
+        // button while the pointer is already inside) started a swap and
+        // immediately froze it — one change, then the stack was stuck.
+        let hold = false;
 
         cards.forEach((card, i) => {
           gsap.set(card, {
@@ -102,45 +106,47 @@ export function CardSwap({
         root.dataset.swap = "";
 
         const swap = () => {
-          const [front, ...rest] = order;
+          const front = order[0];
           const elFront = cards[front];
-          // Overwrite rather than queue: a click landing mid-flight should
-          // take over the motion, not wait its turn behind it.
+          // Rotate first so a killed timeline cannot leave `order` behind
+          // the visuals. Relative `y: "+=520"` did that: each interrupted
+          // click stacked another 520px and the front card left the frame.
+          order = [...order.slice(1), front];
+
           tl?.kill();
           tl = gsap.timeline();
 
-          tl.to(elFront, { y: "+=520", duration: DUR, ease: EASE });
+          const last = slot(total - 1, total);
+          tl.to(elFront, { y: 520, duration: DUR, ease: EASE }, 0);
 
-          tl.addLabel("promote", `-=${DUR * PROMOTE_OVERLAP}`);
-          rest.forEach((idx, i) => {
+          order.slice(0, -1).forEach((idx, i) => {
             const s = slot(i, total);
-            tl!.set(cards[idx], { zIndex: s.zIndex }, "promote");
+            tl!.set(cards[idx], { zIndex: s.zIndex }, 0);
             tl!.to(
               cards[idx],
-              { x: s.x, y: s.y, z: s.z, duration: DUR, ease: EASE },
-              `promote+=${i * 0.15}`,
+              { x: s.x, y: s.y, z: s.z, duration: DUR, ease: EASE, overwrite: "auto" },
+              i * 0.15,
             );
           });
 
-          const back = slot(total - 1, total);
-          tl.addLabel("return", `promote+=${DUR * RETURN_DELAY}`);
-          tl.call(
-            () => void gsap.set(elFront, { zIndex: back.zIndex }),
-            undefined,
-            "return",
-          );
+          tl.set(elFront, { zIndex: last.zIndex }, DUR * RETURN_DELAY);
           tl.to(
             elFront,
-            { x: back.x, y: back.y, z: back.z, duration: DUR, ease: EASE },
-            "return",
+            {
+              x: last.x,
+              y: last.y,
+              z: last.z,
+              duration: DUR,
+              ease: EASE,
+              overwrite: "auto",
+            },
+            DUR * RETURN_DELAY,
           );
-          tl.call(() => {
-            order = [...rest, front];
-          });
         };
 
         const start = () => {
           clearInterval(timer);
+          if (hold) return;
           timer = window.setInterval(swap, DELAY);
         };
 
@@ -151,7 +157,6 @@ export function CardSwap({
           start();
         };
 
-        swap();
         start();
 
         // Hover-to-pause only where hovering is real. On a touch screen
@@ -160,11 +165,11 @@ export function CardSwap({
         const hover = gsap.matchMedia();
         hover.add(HOVER_OK, () => {
           const pause = () => {
-            tl?.pause();
+            hold = true;
             clearInterval(timer);
           };
           const resume = () => {
-            tl?.play();
+            hold = false;
             start();
           };
           root.addEventListener("pointerenter", pause);
@@ -216,45 +221,86 @@ export function CardSwap({
 }
 
 /**
- * `.tone-light` is load-bearing, not decoration: this white card renders
- * inside the page's dark zone, and without resetting the roles its caption
- * would inherit that zone's pale `muted` colour onto a white surface. This is
- * the exact trap AGENTS.md documents for light surfaces inside dark zones.
+ * Dark chrome, light frame. The card sits in the about page's dark zone, so
+ * it must NOT carry `.tone-light` — that would paint black type onto a black
+ * bar. Roles inherit the zone: paper text, pale muted.
+ *
+ * Border is paper, not voltage: a yellow outline reads as a CTA, and voltage
+ * is a micro-accent, not a card edge. Icons are Lucide outlines at one
+ * stroke, `currentColor`.
  */
 export function SwapCard({
   name,
   role,
+  mark,
+  photo,
+  photoPosition,
   className = "",
 }: {
   name: string;
   role: string;
+  mark: "design" | "code";
+  photo?: string;
+  photoPosition?: string;
   className?: string;
 }) {
   return (
     <figure
       data-swap-card
-      className={`card-swap-card tone-light bg-paper rounded-card absolute top-1/2 left-1/2 flex flex-col overflow-hidden [backface-visibility:hidden] [transform-style:preserve-3d] ${className}`}
+      className={`card-swap-card bg-carbon border-paper rounded-card absolute top-1/2 left-1/2 flex flex-col overflow-hidden border-2 [backface-visibility:hidden] [transform-style:preserve-3d] ${className}`}
     >
-      {/* Caption on top, reading as the card's tab — with the stack dealt
-          up-and-right, the top edge is the part of every card that stays
-          visible behind the one in front, so that is where a label can
-          actually be read. At the bottom it was hidden under the next card.
-
-          Two lines, not one long string: a 260px phone card cannot hold
-          "Vlad — Design and front-end" as a single uppercase mono line
-          without wrapping mid-name, and a wrapped name stops being a name.
-          The name is the thing you came for; the role is the gloss.
-
-          `text-muted` on the role, not `text-faint`: on this white surface
-          faint (#979797) lands at 2.8:1. The name is carbon, full strength. */}
-      <figcaption className="border-line border-b px-5 py-4 sm:px-6 sm:py-5">
-        <p className="font-mono text-caption text-carbon uppercase">{name}</p>
-        <p className="text-muted font-mono text-caption mt-1 uppercase">{role}</p>
+      <figcaption className="border-paper flex min-h-0 items-center gap-2.5 border-b-2 px-3 py-2 sm:px-4 sm:py-2.5">
+        <RoleMark kind={mark} />
+        <p className="font-mono text-caption min-w-0 flex-1 truncate uppercase">
+          <span className="text-fg">{name}</span>
+          <span className="text-muted"> — {role}</span>
+        </p>
       </figcaption>
-      {/* The placeholder itself. A flat mist panel — no icon, no dashed
-          "upload" affordance — because this is a slot waiting for a
-          photograph, not a control. */}
-      <div className="bg-mist flex-1" />
+      <div className="bg-graphite relative min-h-0 flex-1">
+        {photo ? (
+          <img
+            src={photo}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+            style={
+              photoPosition ? { objectPosition: photoPosition } : undefined
+            }
+            onError={(e) => {
+              e.currentTarget.style.display = "none";
+            }}
+          />
+        ) : null}
+      </div>
     </figure>
+  );
+}
+
+/** Lucide outlined set — same 2px stroke, round caps, 24 viewBox. */
+function RoleMark({ kind }: { kind: "design" | "code" }) {
+  const common = {
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 2,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    className: "text-fg size-4 shrink-0",
+    "aria-hidden": true,
+  };
+
+  if (kind === "design") {
+    return (
+      <svg {...common}>
+        <path d="M12 20h9" />
+        <path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg {...common}>
+      <path d="m16 18 6-6-6-6" />
+      <path d="m8 6-6 6 6 6" />
+    </svg>
   );
 }

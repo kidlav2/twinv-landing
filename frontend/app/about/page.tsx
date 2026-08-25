@@ -247,6 +247,9 @@ export default function AboutPage() {
                       key={card.name}
                       name={card.name}
                       role={card.role}
+                      mark={card.mark}
+                      photo={card.photo}
+                      photoPosition={card.photoPosition}
                       className="h-[340px] w-[260px] sm:h-[480px] sm:w-[360px] lg:h-[560px] lg:w-[440px] xl:h-[640px] xl:w-[520px]"
                     />
                   ))}

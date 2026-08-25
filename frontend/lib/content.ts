@@ -540,15 +540,30 @@ export const about = {
    *
    * First names only, and Vanya not Ivan: the mark is Twin V because it is
    * Vlad and Vanya, and those are the names a client will actually use.
+   *
+   * Photos live in `frontend/public/about/` and are served as `/about/<file>`.
+   * Two cards for now — a third "the two of us" shot waits until there is one.
    */
   founders: {
     eyebrow: "The two of us",
     headline: "Who you actually get",
     body: "Two senior people, both hands-on. Vlad leads design and front-end, Vanya leads back-end and infrastructure — and on a project this size that split is a conversation, not a handoff. You talk to both of us, for the whole engagement.",
     cards: [
-      { name: "Vlad", role: "Design and front-end" },
-      { name: "Vanya", role: "Back-end" },
-      { name: "Vlad & Vanya", role: "The two of us" },
+      {
+        name: "Vlad",
+        role: "Design and front-end",
+        mark: "design",
+        photo: "/about/vlad.jpg",
+      },
+      {
+        name: "Vanya",
+        role: "Back-end",
+        mark: "code",
+        photo: "/about/vanya.jpg",
+        /* Landscape shot, person on the left. Cover-crop on a tall card
+           would otherwise take the empty mountain on the right. */
+        photoPosition: "22% 40%",
+      },
     ],
   },
   cta: { label: "Start a project", href: "/#contact" },

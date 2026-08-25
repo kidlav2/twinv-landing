@@ -591,6 +591,16 @@
   z-index: 1;
 }
 
+/* The stack is a <button> so click/keyboard work. It must not pick up the
+   zone's `--btn-bg-hover` (or any UA button hover): hovering pauses the
+   cycle, it does not restyle the photographs. */
+.card-swap,
+.card-swap:hover,
+.card-swap:focus {
+  background: transparent;
+  color: inherit;
+}
+
 .btn-ghost {
   border-color: var(--btn-ghost-border);
   color: var(--color-fg);
