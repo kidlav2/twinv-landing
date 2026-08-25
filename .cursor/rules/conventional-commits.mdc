@@ -1,0 +1,12 @@
+---
+description: Read Conventional Commits.md before any git commit or git push. Applies to commit, push, PR, and commit-message work.
+alwaysApply: true
+---
+
+# Commits and pushes
+
+Before **any** `git commit` or `git push`, **read** `Conventional Commits.md` at the repo root (use the Read tool). Do not write a message from memory of this rule or of `AGENTS.md`. Follow that file, then continue.
+
+If the request is only to push, still read it and check that commits already on the branch match it (no `wip`, `test123`, mixed `feat`+`fix`).
+
+Do not skip this because the message looks obvious or because a previous turn already committed.
