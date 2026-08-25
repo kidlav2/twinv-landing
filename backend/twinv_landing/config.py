@@ -16,12 +16,17 @@ class Settings(BaseSettings):
 
     database_url: str = f"sqlite:///{DEFAULT_SQLITE_PATH}"
 
-    # Gmail API (OAuth). All four must be set for brief e-mails to go out;
-    # otherwise mail is simply disabled and briefs are only stored in the DB.
     google_client_id: str | None = None
     google_client_secret: str | None = None
     google_refresh_token: str | None = None
+    # Comma-separated: TWINV_MAIL_TO=a@gmail.com,b@gmail.com
     mail_to: str | None = None
+
+    @property
+    def mail_recipients(self) -> list[str]:
+        if not self.mail_to:
+            return []
+        return [part.strip() for part in self.mail_to.split(",") if part.strip()]
 
     @property
     def mail_enabled(self) -> bool:
@@ -30,7 +35,7 @@ class Settings(BaseSettings):
                 self.google_client_id,
                 self.google_client_secret,
                 self.google_refresh_token,
-                self.mail_to,
+                self.mail_recipients,
             )
         )
 

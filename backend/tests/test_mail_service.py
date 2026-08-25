@@ -29,7 +29,7 @@ def make_mailer() -> GmailMailService:
         client_id="id",
         client_secret="secret",
         refresh_token="refresh",
-        mail_to="owner@gmail.com",
+        mail_to=["owner@gmail.com", "partner@gmail.com"],
     )
 
 
@@ -37,7 +37,7 @@ def test_build_message_carries_the_brief():
     raw = make_mailer()._build_message(BRIEF)
     message = message_from_bytes(base64.urlsafe_b64decode(raw))
 
-    assert message["To"] == "owner@gmail.com"
+    assert message["To"] == "owner@gmail.com, partner@gmail.com"
     assert message["Reply-To"] == "ada@example.com"
     assert str(make_header(decode_header(message["Subject"]))) == "Brief: audit — Ada"
     body = message.get_payload()

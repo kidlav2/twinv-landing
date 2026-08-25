@@ -29,7 +29,7 @@ class GmailMailService:
         client_id: str,
         client_secret: str,
         refresh_token: str,
-        mail_to: str,
+        mail_to: list[str],
     ) -> None:
         self._client_id = client_id
         self._client_secret = client_secret
@@ -67,7 +67,7 @@ class GmailMailService:
 
     def _build_message(self, brief: BriefDTO) -> str:
         message = EmailMessage()
-        message["To"] = self._mail_to
+        message["To"] = ", ".join(self._mail_to)
         message["Subject"] = f"Brief: {brief.goal.value} — {brief.name}"
         # Reply-To is the visitor, so hitting "Reply" in Gmail answers them
         # instead of mailing yourself.
@@ -99,5 +99,5 @@ def get_mail_service() -> GmailMailService | None:
         client_id=settings.google_client_id,
         client_secret=settings.google_client_secret,
         refresh_token=settings.google_refresh_token,
-        mail_to=settings.mail_to,
+        mail_to=settings.mail_recipients,
     )

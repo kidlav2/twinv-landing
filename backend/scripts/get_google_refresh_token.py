@@ -61,7 +61,7 @@ def wait_for_code(state: str) -> str:
 def main() -> None:
     client_id = input("OAuth client id: ").strip()
     client_secret = input("OAuth client secret: ").strip()
-    mail_to = input("Send briefs to (your Gmail): ").strip()
+    mail_to = input("Send briefs to (comma-separated Gmail addresses): ").strip()
 
     state = secrets.token_urlsafe(16)
     consent = (
