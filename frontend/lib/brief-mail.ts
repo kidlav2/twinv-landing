@@ -1,5 +1,5 @@
 import type { BriefPayload } from "@/lib/brief";
-import { brief, nav } from "@/lib/content";
+import { brief } from "@/lib/content";
 
 /**
  * Sends a brief via Gmail's API using the friend's TWINV_GOOGLE_* keys.
@@ -17,7 +17,6 @@ type MailConfig = {
   clientSecret: string;
   refreshToken: string;
   to: string[];
-  from?: string;
 };
 
 function oneLine(value: string) {
@@ -42,34 +41,32 @@ export function readBriefMailConfig(): MailConfig | null {
   const clientSecret = process.env.TWINV_GOOGLE_CLIENT_SECRET?.trim();
   const refreshToken = process.env.TWINV_GOOGLE_REFRESH_TOKEN?.trim();
   const to = parseRecipients(process.env.TWINV_MAIL_TO ?? "");
-  const from = process.env.TWINV_MAIL_FROM?.trim();
 
   if (!clientId || !clientSecret || !refreshToken || to.length === 0) {
     return null;
   }
-  return { clientId, clientSecret, refreshToken, to, from };
+  return { clientId, clientSecret, refreshToken, to };
 }
 
 function goalLabel(goal: BriefPayload["goal"]) {
   return brief.goals.find((g) => g.id === goal)?.label ?? goal;
 }
 
-function buildMime(payload: BriefPayload, from: string, to: string[]) {
-  const site = payload.site?.trim() || "(none)";
+function buildMime(payload: BriefPayload, to: string[]) {
+  const site = payload.site?.trim() || "—";
   const subject = `Brief: ${goalLabel(payload.goal)} — ${payload.name}`;
   const body = [
-    "New brief from the site.",
+    `Goal:    ${goalLabel(payload.goal)}`,
+    `Site:    ${site}`,
+    `Name:    ${payload.name}`,
+    `Email:   ${payload.email}`,
     "",
-    `Goal: ${goalLabel(payload.goal)}`,
-    `Name: ${payload.name}`,
-    `Email: ${payload.email}`,
-    `Site: ${site}`,
-    "",
+    "Message:",
     payload.message,
   ].join("\r\n");
 
+  // No From: Gmail fills the authorised mailbox, same as the FastAPI sender.
   return [
-    `From: ${encodeHeader(nav.brand)} <${oneLine(from)}>`,
     `To: ${to.join(", ")}`,
     `Reply-To: ${encodeHeader(payload.name)} <${oneLine(payload.email)}>`,
     `Subject: ${encodeHeader(subject)}`,
@@ -111,23 +108,6 @@ async function accessToken(config: MailConfig): Promise<string> {
   return data.access_token;
 }
 
-async function senderAddress(token: string, fallback?: string) {
-  if (fallback) return fallback;
-  const res = await fetch(
-    "https://gmail.googleapis.com/gmail/v1/users/me/profile",
-    { headers: { Authorization: `Bearer ${token}` } },
-  );
-  if (!res.ok) {
-    const detail = await res.text().then((t) => t.slice(0, 300), () => "");
-    throw new Error(`Gmail profile lookup failed (${res.status}) ${detail}`);
-  }
-  const data = (await res.json()) as { emailAddress?: string };
-  if (!data.emailAddress) {
-    throw new Error("Gmail profile had no emailAddress");
-  }
-  return data.emailAddress;
-}
-
 export async function sendBriefMail(payload: BriefPayload): Promise<void> {
   const config = readBriefMailConfig();
   if (!config) {
@@ -135,8 +115,7 @@ export async function sendBriefMail(payload: BriefPayload): Promise<void> {
   }
 
   const token = await accessToken(config);
-  const from = await senderAddress(token, config.from);
-  const raw = toBase64Url(buildMime(payload, from, config.to));
+  const raw = toBase64Url(buildMime(payload, config.to));
 
   const res = await fetch(
     "https://gmail.googleapis.com/gmail/v1/users/me/messages/send",
