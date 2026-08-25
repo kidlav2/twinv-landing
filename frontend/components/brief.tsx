@@ -42,7 +42,7 @@ export function Brief() {
   );
 
   const formRef = useRef<HTMLFormElement>(null);
-  const doneRef = useRef<HTMLParagraphElement>(null);
+  const doneRef = useRef<HTMLHeadingElement>(null);
 
   /**
    * "Book a demo" in the nav points at this section and carries
@@ -137,33 +137,33 @@ export function Brief() {
           </div>
 
           <div>
-            <div className="reveal max-w-[46ch]">
-              <p className={label}>{brief.eyebrow}</p>
-              <h2 className="font-display mt-6 text-heading-lg">
-                {brief.headline}
-              </h2>
-              <p className="text-muted mt-5 text-sub">{brief.sub}</p>
-            </div>
-
             {state === "sent" ? (
-              <div className="reveal mt-10 max-w-[46ch]">
-                <p
+              <div className="reveal max-w-[46ch]" role="status">
+                <h2
                   ref={doneRef}
                   tabIndex={-1}
-                  role="status"
-                  className="font-display text-heading"
+                  className="font-display text-heading-lg"
                 >
                   {brief.success.headline}
-                </p>
-                <p className="text-muted mt-4 text-sub">{brief.success.body}</p>
+                </h2>
+                <p className="text-muted mt-5 text-sub">{brief.success.body}</p>
               </div>
             ) : (
-              <form
-                ref={formRef}
-                noValidate
-                onSubmit={onSubmit}
-                className="reveal mt-10 flex flex-col gap-8"
-              >
+              <>
+                <div className="reveal max-w-[46ch]">
+                  <p className={label}>{brief.eyebrow}</p>
+                  <h2 className="font-display mt-6 text-heading-lg">
+                    {brief.headline}
+                  </h2>
+                  <p className="text-muted mt-5 text-sub">{brief.sub}</p>
+                </div>
+
+                <form
+                  ref={formRef}
+                  noValidate
+                  onSubmit={onSubmit}
+                  className="reveal mt-10 flex flex-col gap-8"
+                >
                 <fieldset>
                   <legend className={label}>{brief.goalLegend}</legend>
                   <div className="mt-5 flex flex-wrap gap-3">
@@ -322,6 +322,7 @@ export function Brief() {
                   </p>
                 )}
               </form>
+              </>
             )}
           </div>
         </div>
