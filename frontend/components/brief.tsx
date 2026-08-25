@@ -19,8 +19,11 @@ type Errors = Partial<Record<FieldName, string>>;
  * "start a project" / "book a demo" / pillar / service link lands here.
  *
  * Knows nothing about transport — `submitBrief` in lib/brief.ts owns that, and
- * `app/api/brief/route.ts` owns where it lands. This file is UX only: what is
- * asked, in what order, and what happens when it goes wrong.
+ * `app/api/brief/route.ts` owns where it lands (Gmail on Vercel, FastAPI in
+ * local dev). This file is UX only: what is asked, in what order, and what
+ * happens when it goes wrong. The message field's title and placeholder come
+ * from `brief.goals[].prompt` for the selected goal — the copy lives in
+ * lib/content.ts, not here.
  *
  * The goal is a real radio group rather than styled buttons, so arrow keys
  * move between options and a screen reader announces "2 of 4" without any
@@ -113,6 +116,9 @@ export function Brief() {
     if (state === "sent") doneRef.current?.focus();
   }, [state]);
 
+  const prompt =
+    brief.goals.find((g) => g.id === goal)?.prompt ?? brief.goals[0].prompt;
+
   const field =
     "bg-paper border-line-strong rounded-btn text-fg w-full border px-4 py-3 text-body";
   const label = "text-faint font-mono text-caption uppercase";
@@ -203,7 +209,7 @@ export function Brief() {
 
                 <div>
                   <label htmlFor="brief-message" className={label}>
-                    {brief.fields.message.label}
+                    {prompt.label}
                   </label>
                   <textarea
                     id="brief-message"
@@ -214,7 +220,7 @@ export function Brief() {
                       setMessage(e.target.value);
                       clearIfFixed("message", !!e.target.value.trim());
                     }}
-                    placeholder={brief.fields.message.placeholder}
+                    placeholder={prompt.placeholder}
                     aria-invalid={!!errors.message}
                     aria-describedby={
                       errors.message ? "brief-message-e" : undefined

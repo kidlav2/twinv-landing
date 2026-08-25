@@ -170,22 +170,26 @@ separate items with spacing and, where useful, a hover state instead.
   workspace root.
 - Section visuals (e.g. the browser mockup in `components/product.tsx`) are
   built from CSS surfaces, not images. Swap them for real work screenshots.
-- Contact details (`hello@vandv.studio`, social links) are placeholders in
-  `lib/content.ts`.
+- Studio email is `contact@twinvstudio.com` in `lib/content.ts`. Social links
+  there are still placeholders.
+- The homepage brief emails via Gmail from `app/api/brief/route.ts` when
+  `TWINV_GOOGLE_CLIENT_ID`, `TWINV_GOOGLE_CLIENT_SECRET`,
+  `TWINV_GOOGLE_REFRESH_TOKEN`, and `TWINV_MAIL_TO` are set (Vercel env).
+  Without those, `next dev` still forwards to FastAPI on `:8000`. Never put
+  those keys in `NEXT_PUBLIC_*` or in git.
 
 ## Commits
 
-Follow `Conventional Commits.md` in the repo root — `<type>(<scope>): <subject>`,
-imperative mood, lowercase subject, no trailing period, 72 chars max. Types are
-`feat` / `fix` / `docs` / `style` / `refactor` / `perf` / `test` / `chore` /
-`ci` / `revert`. One logical change per commit; don't mix `feat` and `fix`.
+**Before any `git commit` or `git push`, read `Conventional Commits.md` in the
+repo root in full, then follow it.** Do not write a commit message from this
+summary or from memory. That file is the source; this section is only the
+reminder to open it, plus two project facts it does not cover:
 
-Scopes in use here: `services`, `hero`, `nav`, `footer`, `motion`, `tokens`,
-`content`. Omit the scope for repo-wide chores.
-
-**Author identity matters for deploys.** Vercel is on a Hobby plan, which only
-accepts deployments whose commit author has access to the project — the account
-is `kidlav2`. Commits made as `kidlav` (`valdik20032944@gmail.com`) are blocked
-with "the commit author does not have contributing access". This repo therefore
-pins `user.email` to `264042178+kidlav2@users.noreply.github.com` locally; if
-you clone it fresh, set that again before committing.
+- Scopes in use: `about`, `hero`, `nav`, `footer`, `motion`, `tokens`,
+  `content`, `services`, `work`. Omit the scope for repo-wide chores.
+- **Author identity matters for deploys.** Vercel is on a Hobby plan, which only
+  accepts deployments whose commit author has access to the project — the account
+  is `kidlav2`. Commits made as `kidlav` (`valdik20032944@gmail.com`) are blocked
+  with "the commit author does not have contributing access". This repo therefore
+  pins `user.email` to `264042178+kidlav2@users.noreply.github.com` locally; if
+  you clone it fresh, set that again before committing.

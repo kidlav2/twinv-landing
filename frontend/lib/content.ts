@@ -555,7 +555,7 @@ export const about = {
 };
 
 export const legal = {
-  updated: "23 August 2026",
+  updated: "25 August 2026",
   terms: {
     title: "Terms of Service",
     intro:
@@ -583,7 +583,7 @@ export const legal = {
       },
       {
         title: "Contact",
-        body: "Questions about these terms can go to hello@vandv.studio.",
+        body: "Questions about these terms can go to contact@twinvstudio.com.",
       },
     ],
   },
@@ -606,7 +606,7 @@ export const legal = {
       },
       {
         title: "Your rights",
-        body: "You can ask what we hold about you, ask us to correct it, or ask us to delete it, at any time, by writing to hello@vandv.studio.",
+        body: "You can ask what we hold about you, ask us to correct it, or ask us to delete it, at any time, by writing to contact@twinvstudio.com.",
       },
       {
         title: "Changes",
@@ -622,7 +622,10 @@ export const legal = {
  * `goals[0]` is the default selection; the nav CTA carries
  * `data-brief-goal="demo"` so arriving from "Book a demo" preselects that one
  * instead. Goal ids are part of the payload contract — see lib/brief.ts — so
- * renaming one is a backend-visible change, while `label` is free text.
+ * renaming one is a backend-visible change, while `label` and `prompt` are
+ * free text. `prompt` is the message field: its title and placeholder swap
+ * with the selected goal so the form asks the right question, not a generic
+ * "what is not working" on a new-site brief.
  */
 export const brief = {
   /* "Start a project" and "Start a brief" were two names for one action, on
@@ -633,21 +636,48 @@ export const brief = {
   sub: "Send the URL and the number you want to move. We'll come back with an honest read on whether we can help — free, no deck.",
   goalLegend: "What do you need?",
   goals: [
-    { id: "new-site", label: "New site" },
-    { id: "redesign", label: "Redesign" },
-    { id: "audit", label: "Audit" },
-    { id: "demo", label: "Demo" },
+    {
+      id: "new-site",
+      label: "New site",
+      prompt: {
+        label: "What should the new site do?",
+        placeholder:
+          "Who it's for, what it should achieve, and what you already have — even if that's nothing.",
+      },
+    },
+    {
+      id: "redesign",
+      label: "Redesign",
+      prompt: {
+        label: "What is not working?",
+        placeholder:
+          "The number you want to move, and what you think is in the way.",
+      },
+    },
+    {
+      id: "audit",
+      label: "Audit",
+      prompt: {
+        label: "What should we look at?",
+        placeholder:
+          "The pages or funnel that worry you, and what you'd need to see to act.",
+      },
+    },
+    {
+      id: "demo",
+      label: "Demo",
+      prompt: {
+        label: "What do you want to walk through?",
+        placeholder:
+          "A similar build, how we work, or a specific question.",
+      },
+    },
   ],
   fields: {
     site: {
       label: "Current site",
       hint: "Optional",
-      placeholder: "vandv.studio",
-    },
-    message: {
-      label: "What is not working?",
-      placeholder:
-        "The number you want to move, and what you think is in the way.",
+      placeholder: "yourstudio.com",
     },
     name: { label: "Name", placeholder: "" },
     email: { label: "Email", placeholder: "" },
@@ -658,7 +688,8 @@ export const brief = {
     name: "We would rather not open with \u201cHi there\u201d.",
     email: "We need somewhere to reply.",
     emailFormat: "That address is missing something.",
-    submit: "That did not send. Try again, or email us directly.",
+    submit:
+      "That did not send. Try again, or email contact@twinvstudio.com.",
   },
   submit: "Send the brief",
   sending: "Sending\u2026",
@@ -672,7 +703,7 @@ export const brief = {
 };
 
 export const footer = {
-  email: "hello@vandv.studio",
+  email: "contact@twinvstudio.com",
   blurb:
     "A web design and development studio building sites that carry their weight.",
   /* The Services links used to be six identical `#services` anchors — every

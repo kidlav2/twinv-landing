@@ -4,7 +4,7 @@
  * This file is the whole seam between the form's UX and whatever eventually
  * receives a submission. The component imports `submitBrief` and nothing else
  * about the network; swapping the transport means editing this file and
- * `app/api/brief/route.ts`, and touching no markup.
+ * `app/api/brief/route.ts` (Gmail in lib/brief-mail.ts), and touching no markup.
  *
  * Deliberately imports nothing — a server route reads these types too.
  */
