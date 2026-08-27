@@ -55,56 +55,49 @@ function Metric({ item }: { item: Item }) {
    the same reason — a card that is entirely clickable does not need a smaller
    thing inside it claiming to be the click target. */
 
-function TeaserRest({ item }: { item: Item }) {
-  return (
-    <div className="work-card-rest flex h-full flex-col">
-      <div className="bg-ash relative min-h-0 flex-1 overflow-hidden">
-        <Image
-          src={item.image}
-          alt=""
-          fill
-          sizes="(min-width: 640px) 420px, 85vw"
-          className="object-cover"
-        />
-      </div>
-      <div className="flex flex-col gap-4 p-6">
-        <h3 className="font-display text-heading-sm">{item.title}</h3>
-        <Tag className="self-start">{item.type}</Tag>
-      </div>
-    </div>
-  );
-}
-
-function TeaserHover({ item }: { item: Item }) {
-  return (
-    <div className="work-card-hover flex h-full flex-col p-8">
-      <Kicker item={item} />
-      <div className="mt-8">
-        <Metric item={item} />
-      </div>
-      <h3 className="font-display mt-8 text-heading-sm">{item.title}</h3>
-      <p className="text-muted mt-4 flex-1 text-body">{item.summary}</p>
-      <div className="mt-8">
-        <Tag>{item.type}</Tag>
-      </div>
-    </div>
-  );
-}
-
 /** Compact card — the homepage teaser track.
  *
- *  At rest it is the still: photo, title, type. On hover it becomes the
- *  previous card — kicker, metric, title, summary, tag — the two faces share
- *  one grid cell so the track does not jump when the swap happens. */
+ *  Height is the rest layout and never changes. The still stays in flow; a
+ *  same-size overlay carries the title and translates by its own height
+ *  (`-100%`), so nothing — not `cqw`, not grid rows — is interpolated as
+ *  layout. The summary is out of flow and cannot shove the tag. */
 export function WorkCard({ item }: { item: Item }) {
   return (
     <Link
       href={`/work/${item.slug}`}
       data-card
-      className="reveal work-card work-card-teaser bg-paper rounded-card w-[85vw] shrink-0 snap-start overflow-hidden sm:w-[420px]"
+      className="reveal work-card work-card-teaser bg-paper rounded-card flex w-[85vw] shrink-0 snap-start flex-col overflow-hidden sm:w-[420px]"
     >
-      <TeaserRest item={item} />
-      <TeaserHover item={item} />
+      <div className="work-card-pin">
+        <div className="work-card-still">
+          <div className="work-card-still-inner">
+            <Image
+              src={item.image}
+              alt=""
+              fill
+              sizes="(min-width: 640px) 420px, 85vw"
+              className="object-cover"
+            />
+          </div>
+        </div>
+        <div className="work-card-mover">
+          <div className="work-card-shift px-6 pt-6">
+            <h3 className="font-display text-heading-sm">{item.title}</h3>
+            <div className="work-card-lede px-6">
+              <Kicker item={item} />
+              <p className="text-muted mt-4 text-body">{item.summary}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="work-card-title-slot px-6 pt-6" aria-hidden>
+        <h3 className="font-display text-heading-sm">{item.title}</h3>
+      </div>
+
+      <div className="work-card-foot px-6 pt-4 pb-6">
+        <Tag className="self-start">{item.type}</Tag>
+      </div>
     </Link>
   );
 }

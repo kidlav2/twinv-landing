@@ -446,27 +446,27 @@ export const services = {
       ],
     },
     {
-      slug: "brand-identity",
-      title: "Brand & Identity",
-      body: "A system, not just a logo.",
+      slug: "android-development",
+      title: "Android development",
+      body: "Not just an app, but a complete product. Native development, interface, performance, and functionality working seamlessly across all devices.",
       intro:
-        "Identity, typography, colour, and visual direction built to work across your brand and website.",
+        "An APK is not a product. We build the native Android app as the thing people actually use — the interface, the performance on the phones they own, and the features that have to work the same way on a cheap handset and a flagship, not a demo that only holds on the device it was designed on.",
       included: [
         {
-          label: "Identity",
-          body: "Mark, wordmark, and the construction rules that keep them from being redrawn wrong.",
+          label: "Native build",
+          body: "Native Kotlin development, not a wrap of a website, so the app behaves like it belongs on Android.",
         },
         {
-          label: "Type & colour",
-          body: "Typography and colour with the roles each one plays, not just the values.",
+          label: "Interface",
+          body: "Interface designed for thumbs and varied screen sizes, not a desktop layout squeezed down.",
         },
         {
-          label: "Visual direction",
-          body: "The rules for layout, surface, and image so the system holds on a site, a deck, and a card.",
+          label: "Performance",
+          body: "Performance work so launch, scroll, and the paths people hit every day stay fast on real devices.",
         },
         {
-          label: "Applied to the site",
-          body: "Built into the website itself, not handed off as a theoretical document.",
+          label: "Device coverage",
+          body: "Functionality checked across the device range your users actually have, not a single studio phone.",
         },
       ],
     },

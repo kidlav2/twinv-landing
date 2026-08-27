@@ -83,8 +83,8 @@ const LAYOUTS: Record<string, Blob[]> = {
     { fill: MINT, cx: 200, cy: 336, base: 38 },
     { fill: VOLT, cx: 66, cy: 352, base: 20 },
   ],
-  // One mark, held by a tight cluster — an identity and its constructions.
-  "brand-identity": [
+  // One body, held by a tight cluster — a device and the screens it carries.
+  "android-development": [
     { fill: CARBON, cx: 196, cy: 185, base: 140 },
     { fill: PAPER, cx: 318, cy: 300, base: 58 },
     { fill: ASH, cx: 74, cy: 300, base: 50 },

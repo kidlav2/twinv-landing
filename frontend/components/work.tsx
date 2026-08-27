@@ -110,7 +110,7 @@ export function Work() {
             effect, so the native scroll/snap behaviour is unchanged there. */}
         <div
           ref={trackRef}
-          className="mt-12 flex snap-x snap-mandatory gap-6 overflow-x-auto pb-4 [scrollbar-width:none] lg:justify-center [&::-webkit-scrollbar]:hidden"
+          className="mt-12 flex snap-x snap-mandatory items-start gap-6 overflow-x-auto pb-4 [scrollbar-width:none] lg:justify-center [&::-webkit-scrollbar]:hidden"
           style={{
             paddingInlineStart: "var(--shell-padding)",
             paddingInlineEnd: "var(--shell-padding)",
