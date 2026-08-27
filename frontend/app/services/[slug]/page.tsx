@@ -6,6 +6,7 @@ import { PageShell } from "@/components/page-shell";
 import { Reveal } from "@/components/reveal";
 import { ScrollPanel } from "@/components/scroll-panel";
 import { ButtonPrimary, Tag } from "@/components/ui";
+import { AdjacentPager } from "@/components/adjacent-pager";
 import { ServiceBlobs } from "@/components/service-blobs";
 import { ServiceIncluded } from "@/components/service-included";
 import { ServiceAsideVisual } from "@/components/service-aside-visual";
@@ -29,7 +30,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const service = findService((await params).slug);
   if (!service) return {};
-  return { title: service.title, description: service.body };
+  return { title: service.title, description: service.intro };
 }
 
 /** A pointer, not an arrow. The `←` glyph is a hairline with a long stem and
@@ -207,38 +208,19 @@ export default async function ServicePage({
           </Reveal>
         </section>
 
-        {/* Prev/next pager — how you move between services without climbing
-            back to the homepage grid, and the internal linking that makes six
-            separate pages read as one set to a crawler. Wraps: from the last
-            service, next is the first. `.pager-tile` rather than a
-            `hover:bg-carbon` utility because the hover has to invert against
-            the zone — black-on-black would be no hover at all in here. */}
-        <nav aria-label="More services" className="border-line border-t">
-          <div className="grid sm:grid-cols-2">
-            <Link
-              href={`/services/${prev.slug}`}
-              className="pager-tile group border-line flex flex-col gap-3 border-b p-8 transition-colors duration-300 sm:border-r sm:border-b-0 sm:p-12"
-            >
-              <span className="pager-label text-faint font-mono text-caption uppercase transition-colors duration-300">
-                ← Previous service
-              </span>
-              <span className="pager-title font-display text-fg text-heading transition-colors duration-300">
-                {prev.title}
-              </span>
-            </Link>
-            <Link
-              href={`/services/${next.slug}`}
-              className="pager-tile group flex flex-col items-start gap-3 p-8 text-left transition-colors duration-300 sm:items-end sm:p-12 sm:text-right"
-            >
-              <span className="pager-label text-faint font-mono text-caption uppercase transition-colors duration-300">
-                Next service →
-              </span>
-              <span className="pager-title font-display text-fg text-heading transition-colors duration-300">
-                {next.title}
-              </span>
-            </Link>
-          </div>
-        </nav>
+        <AdjacentPager
+          label="More services"
+          prev={{
+            href: `/services/${prev.slug}`,
+            kicker: services.pager.prev,
+            title: prev.title,
+          }}
+          next={{
+            href: `/services/${next.slug}`,
+            kicker: services.pager.next,
+            title: next.title,
+          }}
+        />
       </ScrollPanel>
     </PageShell>
   );

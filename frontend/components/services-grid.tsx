@@ -189,7 +189,9 @@ export function ServicesGrid() {
           <h3 className="service-title font-display text-fg mt-4 text-heading-sm">
             {s.title}
           </h3>
-          <p className="text-muted mt-3 text-body-sm">{s.body}</p>
+          <p className="text-muted mt-3 text-pretty text-body-sm leading-[1.45]">
+            {s.body} {s.intro}
+          </p>
         </a>
       ))}
     </div>

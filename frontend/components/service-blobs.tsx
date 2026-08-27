@@ -74,8 +74,8 @@ const LAYOUTS: Record<string, Blob[]> = {
     { fill: MINT, cx: 108, cy: 338, base: 36 },
     { fill: VOLT, cx: 236, cy: 352, base: 24 },
   ],
-  // Four comparable forms on a grid — a catalog, not a hero product.
-  ecommerce: [
+  // Overlapping panels — an app, a dashboard, a portal sharing one system.
+  "digital-products": [
     { fill: CARBON, cx: 118, cy: 116, base: 84 },
     { fill: PAPER, cx: 282, cy: 112, base: 80 },
     { fill: ASH, cx: 116, cy: 262, base: 76 },
@@ -101,7 +101,7 @@ const LAYOUTS: Record<string, Blob[]> = {
   ],
   // A ring handing work around a hub. The hub is ash rather than an accent
   // colour precisely because it sits dead centre, under the type.
-  "process-automation": [
+  "digital-solutions": [
     { fill: CARBON, cx: 200, cy: 88, base: 62 },
     { fill: PAPER, cx: 308, cy: 196, base: 58 },
     { fill: ASH, cx: 200, cy: 304, base: 56 },
