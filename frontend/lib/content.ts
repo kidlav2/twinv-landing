@@ -131,13 +131,21 @@ export const pillars = {
  *   because there was no business to measure it on. `client` and `sector` are
  *   optional for exactly that reason.
  *
+ *   `metric` is NOT rendered on the `/work` index. An index lists work, and a
+ *   headline figure there makes a claim before the visitor knows whose
+ *   business it was measured on — while every number below is still a
+ *   placeholder. The homepage teaser does still show it, on the hover face of
+ *   the card, and the case page shows it beside `outcomeFacts`. Those two are
+ *   unresolved rather than decided: the index and the teaser disagree on
+ *   purpose until the figures are real.
+ *
  *   `metric.label` is not a caption, it names what the number IS. That is what
  *   lets a business result (+142%, trial starts) and a technical fact (1.1s,
- *   largest contentful paint) share one slot on the card without pretending to
- *   be the same kind of claim. Client work takes the business number;
- *   self-initiated work takes a fact measurable on the thing itself. Never the
- *   reverse — a percentage with no client behind it is the one lie a visitor
- *   can catch from the outside.
+ *   largest contentful paint) share one slot without pretending to be the same
+ *   kind of claim. Client work takes the business number; self-initiated work
+ *   takes a fact measurable on the thing itself. Never the reverse — a
+ *   percentage with no client behind it is the one lie a visitor can catch
+ *   from the outside.
  *
  *   `type` is the outcome — Website / Automation / Growth — not the craft. The
  *   studio sells business change, so someone who arrived needing automation has
@@ -145,14 +153,25 @@ export const pillars = {
  *   work by how WE built it, which is the single axis a buyer does not care
  *   about.
  *
- *   `image` is the still on the homepage card. Swap the files in `public/work/`
- *   for real screenshots; the path is the only thing the card reads.
+ *   `image` is the screenshot, and on the `/work` index it carries the weight
+ *   the metric used to. Files live in `public/work/<slug>.png`; swapping a
+ *   file is enough, the path is all any surface reads. Required in practice:
+ *   the teaser card renders it directly, so an empty string breaks that card.
+ *   The index and the case page go through `WorkStill`, which falls back to
+ *   the CSS drawing for that slug. Shoot wide — about 3:2 and at least 1600px
+ *   across — since the index crops to 3:2 and the case page to 4:3.
  */
 export const work = {
   headline: "Selected work",
   sub: "Three projects, and what changed because of them.",
   /** Label for the link from the homepage teaser to the full index. */
   more: "All work",
+  /** Closing panel on `/work` and each case study. */
+  close: {
+    headline: "Tell us what you need to move",
+    body: "Send the URL and the number you want to change. We'll come back with an honest read on whether we can help.",
+    cta: { label: "Start a project", href: "/#contact" },
+  },
   items: [
     {
       slug: "saas-marketing-site",

@@ -4,7 +4,7 @@ import { PageShell } from "@/components/page-shell";
 import { Reveal } from "@/components/reveal";
 import { ScrollPanel } from "@/components/scroll-panel";
 import { ButtonPrimary } from "@/components/ui";
-import { WorkRow } from "@/components/work-card";
+import { WorkTile } from "@/components/work-card";
 
 export const metadata: Metadata = {
   title: "Work",
@@ -12,19 +12,33 @@ export const metadata: Metadata = {
 };
 
 /**
- * The portfolio index.
+ * The portfolio index: pictures first, two to a row.
  *
- * The homepage `#work` section keeps its scroller of compact cards; this page
- * is deliberately a different object rather than the same section on its own
- * URL. Full-width rows give each project the room the teaser cannot, and they
- * hold their shape whether there are three entries or ten — where a grid at
- * three leaves an orphan cell and implies every piece of work weighs the same.
+ * It used to be a stack of full-width rows built around a metric set in
+ * display type. That reads at three projects and collapses at ten — ten
+ * screens of interchangeable numbers, each shouting as loudly as the page
+ * heading, and not one photograph of the work. A tile has a fixed density
+ * instead: ten projects are five rows, not ten screens.
  *
- * Light masthead, rows on canvas, then the black panel arrives for the close —
- * the same two-zone shape as a service page, so the two sets of subpages read
- * as one site.
+ * The one thing a two-column grid does badly is an odd count, which strands a
+ * lone tile in the last row. So the first project takes the full width when
+ * the count is odd, and the remainder is always even. Three → one wide plus a
+ * pair; ten → five clean rows; twenty-one → one wide plus twenty. No layout
+ * decision has to be revisited as work is added, and there is no hand-picked
+ * "featured" list to keep honest — the wide slot is arithmetic.
+ *
+ * Deliberately uncapped and un-filtered. A type filter (Website / Growth /
+ * Automation) is the natural next move somewhere past a dozen entries; the
+ * tiles are uniform precisely so it can be dropped in above the grid without
+ * touching them.
+ *
+ * Light masthead, tiles on canvas, then the black panel arrives for the close
+ * — the same two-zone shape as a service page, so the two sets of subpages
+ * read as one site.
  */
 export default function WorkIndexPage() {
+  const wideFirst = work.items.length % 2 === 1;
+
   return (
     <PageShell footerTone="dark">
       <section className="pt-[calc(var(--spacing-nav)+24px)] pb-section">
@@ -40,10 +54,21 @@ export default function WorkIndexPage() {
 
       <section className="pb-section">
         <Reveal className="shell">
-          <div className="flex flex-col gap-6">
-            {work.items.map((item) => (
-              <WorkRow key={item.slug} item={item} />
-            ))}
+          {/* The row gap is much larger than the column gap on purpose: a
+              caption sits directly under its picture, so with equal gaps the
+              tile below reads as part of the caption above it. */}
+          <div className="grid gap-y-20 lg:grid-cols-2 lg:gap-x-12 lg:gap-y-28">
+            {work.items.map((item, i) => {
+              const feature = wideFirst && i === 0;
+              return (
+                <WorkTile
+                  key={item.slug}
+                  item={item}
+                  feature={feature}
+                  className={feature ? "lg:col-span-2" : ""}
+                />
+              );
+            })}
           </div>
         </Reveal>
       </section>
@@ -52,14 +77,15 @@ export default function WorkIndexPage() {
         <section className="py-section-lg">
           <Reveal className="shell">
             <h2 className="reveal font-display max-w-[18ch] text-heading-lg">
-              Tell us what you need to move
+              {work.close.headline}
             </h2>
             <p className="reveal text-muted mt-8 max-w-[46ch] text-lead">
-              Send the URL and the number you want to change. We&rsquo;ll come
-              back with an honest read on whether we can help.
+              {work.close.body}
             </p>
             <div className="reveal mt-12">
-              <ButtonPrimary href="/#contact">Start a project</ButtonPrimary>
+              <ButtonPrimary href={work.close.cta.href}>
+                {work.close.cta.label}
+              </ButtonPrimary>
             </div>
           </Reveal>
         </section>

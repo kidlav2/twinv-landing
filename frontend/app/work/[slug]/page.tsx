@@ -6,14 +6,16 @@ import { PageShell } from "@/components/page-shell";
 import { Reveal } from "@/components/reveal";
 import { ScrollPanel } from "@/components/scroll-panel";
 import { ButtonPrimary, SectionLabel, Tag } from "@/components/ui";
+import { WorkStill } from "@/components/work-still";
 
 type Params = { slug: string };
+type Project = (typeof work.items)[number];
 
 export function generateStaticParams(): Params[] {
   return work.items.map((p) => ({ slug: p.slug }));
 }
 
-function findProject(slug: string) {
+function findProject(slug: string): Project | undefined {
   return work.items.find((p) => p.slug === slug);
 }
 
@@ -84,57 +86,65 @@ export default async function ProjectPage({
     <PageShell flushFooter footerTone="dark">
       {/* Short of the viewport on purpose: a sliver of the black panel below
           the fold is what asks for the scroll. Same as the service pages. */}
-      <section className="min-h-[88svh] pt-[calc(var(--spacing-nav)+24px)] pb-section">
+      <section className="min-h-[88svh] overflow-x-clip pt-[calc(var(--spacing-nav)+24px)] pb-section">
         <Reveal className="shell">
-          <Link
-            href="/work"
-            className="reveal font-display text-faint hover:text-fg inline-flex items-center gap-3 text-heading-sm transition-colors"
-          >
-            <BackChevron />
-            {work.more}
-          </Link>
-
-          <p className="reveal text-faint mt-12 font-mono text-caption uppercase">
-            {lead} · {project.year}
-            {project.client ? ` · ${project.client}` : ""}
-          </p>
-
-          {/* `text-display`, not the service pages' `display-xl`. Their
-              titles are one or two words; a project title here is a full
-              sentence, and at the 168px ceiling it ran six lines and
-              pushed the summary off the first screen entirely. */}
-          <h1 className="reveal font-display mt-6 max-w-[18ch] text-display">
-            {project.title}
-          </h1>
-
-          <p className="reveal text-fg mt-10 max-w-[46ch] text-lead">
-            {project.summary}
-          </p>
-
-          <div className="reveal mt-10 flex flex-wrap items-center gap-4">
-            <Tag>{project.type}</Tag>
-            <span className="text-faint font-mono text-caption uppercase">
-              {project.role}
-            </span>
-            {project.url && (
-              <a
-                href={project.url}
-                target="_blank"
-                rel="noreferrer"
-                className="text-fg decoration-line hover:decoration-current inline-flex items-center gap-2 text-body-sm font-medium underline underline-offset-4 transition-colors"
+          <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
+            <div className="lg:col-span-5">
+              <Link
+                href="/work"
+                className="reveal font-display text-faint hover:text-fg inline-flex items-center gap-3 text-heading-sm transition-colors"
               >
-                Visit the site
-                <span aria-hidden>↗</span>
-              </a>
-            )}
+                <BackChevron />
+                {work.more}
+              </Link>
+
+              <p className="reveal text-faint mt-12 font-mono text-caption uppercase">
+                {lead} · {project.year}
+                {project.client ? ` · ${project.client}` : ""}
+              </p>
+
+              {/* `text-heading-lg` beside the still, not `text-display`.
+                  Display is a full-width sentence size; in five columns it
+                  wrapped the claim into a stack and crowded the picture out.
+                  The still is the loud element on this screen now. */}
+              <h1 className="reveal font-display mt-6 max-w-[16ch] text-heading-lg">
+                {project.title}
+              </h1>
+
+              <p className="reveal text-fg mt-8 max-w-[46ch] text-lead">
+                {project.summary}
+              </p>
+
+              <div className="reveal mt-8 flex flex-wrap items-center gap-4">
+                <Tag>{project.type}</Tag>
+                <span className="text-faint font-mono text-caption uppercase">
+                  {project.role}
+                </span>
+                {project.url && (
+                  <a
+                    href={project.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-fg decoration-line hover:decoration-current inline-flex items-center gap-2 text-body-sm font-medium underline underline-offset-4 transition-colors"
+                  >
+                    Visit the site
+                    <span aria-hidden>↗</span>
+                  </a>
+                )}
+              </div>
+            </div>
+
+            <div className="reveal lg:col-span-7">
+              <WorkStill slug={project.slug} image={project.image} />
+            </div>
           </div>
         </Reveal>
       </section>
 
       <ScrollPanel tone="dark" terminal cursor={false}>
-        {/* The figures, together, once. On the card the metric had to carry
-            the whole project alone; here it sits with the rest of what was
-            measured, each one still naming what it is. */}
+        {/* The figures, together, once. On the teaser the metric is a caption
+            beside the still; here it sits with the rest of what was measured,
+            each one still naming what it is. */}
         <section className="py-section">
           <Reveal className="shell">
             <dl className="border-line grid gap-10 border-t pt-10 sm:grid-cols-3">
@@ -216,8 +226,8 @@ export default async function ProjectPage({
                   ))}
                 </ul>
                 <div className="mt-12">
-                  <ButtonPrimary href="/#contact">
-                    Start a project
+                  <ButtonPrimary href={work.close.cta.href}>
+                    {work.close.cta.label}
                   </ButtonPrimary>
                 </div>
               </div>
