@@ -1,5 +1,11 @@
 # V&V Studio — marketing site
 
+Before applying any external design skills, read the global rules at
+`~/.ai-studio-playbook.md` (repo copy:
+[`AI Design Skills & Architecture Playbook.md`](./AI%20Design%20Skills%20%26%20Architecture%20Playbook.md)).
+**This file wins on conflict** — anything in that playbook that contradicts the
+rules below is ignored (playbook Rule №0).
+
 Next.js 16 (App Router, Turbopack) · React 19 · Tailwind v4 · GSAP.
 
 Single long landing page. Section order lives in `app/page.tsx`; every section is
