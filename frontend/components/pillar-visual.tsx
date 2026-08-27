@@ -132,7 +132,7 @@ const VARIANTS: Record<PillarVariant, () => React.ReactElement> = {
 export function PillarVisual({ variant }: { variant: PillarVariant }) {
   const Shape = VARIANTS[variant];
   return (
-    <svg viewBox="0 0 220 220" className="block h-auto w-full" aria-hidden>
+    <svg viewBox="0 0 220 220" className="p-art block h-auto w-full" aria-hidden>
       <Shape />
     </svg>
   );

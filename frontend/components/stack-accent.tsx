@@ -18,10 +18,9 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
  * The two instances are NOT mirrored bookends, and the left one is pinned to
  * the BOTTOM of the section for a measured reason: the widest thing here is
  * not the heading (a centred 46ch column) but the chip rows, which fill the
- * shell. Measured at 1280px, the free gutter beside each row is 131px for
- * "Interface", 203px for "Server & data" and 436px for the last row — the
- * accent is 208px wide, so only the last row has room for it. Anchoring to
- * the bottom puts it beside that row at every width instead of guessing a
+ * shell. The last group is the shortest (Android, two chips), so only that
+ * row leaves a gutter wide enough for the 208px accent. Anchoring to the
+ * bottom puts it beside that row at every width instead of guessing a
  * vertical offset. `xl:` and up only; below that even the last row is tight.
  */
 export function StackAccent({ side = "right" }: { side?: "left" | "right" }) {

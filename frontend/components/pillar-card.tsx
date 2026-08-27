@@ -6,7 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { MorphSVGPlugin } from "gsap/MorphSVGPlugin";
 import { useGSAP } from "@gsap/react";
-import { isDocumentVisible, MOTION_OK } from "@/lib/motion";
+import { isDocumentVisible, HOVER_OK, MOTION_OK } from "@/lib/motion";
 import { PillarVisual, DESIGN_REST, type PillarVariant } from "./pillar-visual";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, MorphSVGPlugin);
@@ -26,16 +26,24 @@ const DESIGN_SHAPES = [
  * One pillar. The whole card is the link — there is no separate "More details"
  * affordance any more.
  *
- * The visual's wrapper is a fixed 220px box that exactly matches the SVG's box,
- * and it is centred. That matters: previously the wrapper was `w-full` (~380px)
- * while the SVG was `max-w-[190px]` and left-aligned, so a CSS `scale-110`
- * scaled about the *wrapper's* centre — ~95px right of the art's own centre —
- * and the art visibly slid left instead of growing in place.
+ * The visual's wrapper matches the SVG's box and is centred. That matters:
+ * previously the wrapper was `w-full` (~380px) while the SVG was
+ * `max-w-[190px]` and left-aligned, so a CSS `scale-110` scaled about the
+ * *wrapper's* centre — ~95px right of the art's own centre — and the art
+ * visibly slid left instead of growing in place.
  *
- * GSAP owns the transform outright. Tailwind v4 compiles `scale-110` to the
+ * GSAP owns the transform outright. Tailwind v4 compiles `scale-*` to the
  * standalone `scale:` property while GSAP writes `transform: scale()`; running
- * both would multiply them.
+ * both would multiply them. Rest size is therefore a layout width, not a
+ * rest-scale — otherwise the 260px box would still be the hover target
+ * around a visually smaller drawing.
+ *
+ * Authored drawing was 260px. Rest is 1.5× smaller, so hover can grow the
+ * icon 1.5× back to authored size without eating the neighbours. 2× did.
+ * Listener is on the SVG, not the article: the title and body are not the icon.
  */
+const ART_REST_PX = 260 / 1.5;
+const ART_HOVER = 1.5;
 export function PillarCard({
   title,
   body,
@@ -52,9 +60,19 @@ export function PillarCard({
 
   useGSAP(
     () => {
+      gsap.set(art.current, {
+        scale: 1,
+        transformOrigin: "50% 50%",
+      });
+
       const mm = gsap.matchMedia();
 
-      mm.add(MOTION_OK, () => {
+      mm.add({ motion: MOTION_OK, hover: HOVER_OK }, (ctx) => {
+        const { motion, hover: canHover } = ctx.conditions as {
+          motion: boolean;
+          hover: boolean;
+        };
+        if (!motion) return;
         if (!isDocumentVisible()) return;
 
         const loop = gsap.timeline({
@@ -149,31 +167,36 @@ export function PillarCard({
           onToggle: ({ isActive }) => (isActive ? loop.play() : loop.pause()),
         });
 
-        // A paused timeline played/reversed — not two gsap.to calls, which
-        // stutter when the pointer enters and leaves quickly.
-        const hover = gsap
-          .timeline({ paused: true })
-          .to(
-            art.current,
-            {
-              scale: 1.1,
-              duration: 0.35,
-              ease: "power2.out",
-              transformOrigin: "50% 50%",
-            },
-            0,
-          )
-          .to(loop, { timeScale: 1.8, duration: 0.4 }, 0);
+        const drawing = art.current?.querySelector(".p-art");
+        let hover: gsap.core.Timeline | undefined;
+        const enter = () => hover?.play();
+        const leave = () => hover?.reverse();
 
-        const el = scope.current;
-        const enter = () => hover.play();
-        const leave = () => hover.reverse();
-        el?.addEventListener("pointerenter", enter);
-        el?.addEventListener("pointerleave", leave);
+        if (canHover && drawing) {
+          // A paused timeline played/reversed — not two gsap.to calls, which
+          // stutter when the pointer enters and leaves quickly. Listener is
+          // on the SVG, not the article: the title and body are not the icon.
+          hover = gsap
+            .timeline({ paused: true })
+            .to(
+              art.current,
+              {
+                scale: ART_HOVER,
+                duration: 0.35,
+                ease: "power2.out",
+                transformOrigin: "50% 50%",
+              },
+              0,
+            )
+            .to(loop, { timeScale: 1.8, duration: 0.4 }, 0);
+
+          drawing.addEventListener("pointerenter", enter);
+          drawing.addEventListener("pointerleave", leave);
+        }
 
         return () => {
-          el?.removeEventListener("pointerenter", enter);
-          el?.removeEventListener("pointerleave", leave);
+          drawing?.removeEventListener("pointerenter", enter);
+          drawing?.removeEventListener("pointerleave", leave);
           loop.kill();
         };
       });
@@ -193,8 +216,11 @@ export function PillarCard({
         aria-label={title}
         className="pillar-link flex flex-col items-center rounded-card-sm px-2 py-2"
       >
-        <div className="flex w-[260px] max-w-full justify-center">
-          <div ref={art} className="w-full">
+        <div
+          className="flex max-w-full justify-center overflow-visible"
+          style={{ width: ART_REST_PX }}
+        >
+          <div ref={art} className="relative z-10 w-full">
             <PillarVisual variant={variant} />
           </div>
         </div>
@@ -204,7 +230,7 @@ export function PillarCard({
         </h3>
       </Link>
 
-      <p className="text-muted mt-4 max-w-[34ch] text-body">{body}</p>
+      <p className="text-muted mt-4 max-w-[34ch] text-pretty text-body leading-[1.45]">{body}</p>
     </article>
   );
 }

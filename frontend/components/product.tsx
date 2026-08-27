@@ -38,15 +38,13 @@ export function Product() {
               the overflow instead of adding a horizontal scrollbar to the
               whole page). */}
           <div className="reveal relative">
-            {/* Below lg the grid is single-column and this cell is exactly
-                `.shell`'s content width — measured at 375px: a 327px image
-                boxed in by the shell's 24px gutters on both sides. Negative
-                margins equal to `--shell-padding` (not a hard-coded px value:
-                the token is a clamp, so a fixed number would under-cancel it
-                at tablet widths) pull the image out to the viewport edges for
-                the whole stacked range, not only phones — that is the same
-                range where the desktop bleed treatment below is inactive. */}
-            <div className="mx-[calc(var(--shell-padding)*-1)] w-[calc(100%+var(--shell-padding)*2)] lg:mx-0 lg:absolute lg:inset-y-0 lg:left-0 lg:flex lg:w-[180%] lg:items-center">
+            {/* Below lg the grid is single-column and this cell is `.shell`'s
+                content width. Negative margins cancel `--shell-padding` and
+                then push a further 16vw past each edge so the machine reads
+                larger than the type column, clipped by `overflow-x-clip` on
+                the section — same idea as the desktop 180% bleed, for the
+                stacked range. */}
+            <div className="mx-[calc(var(--shell-padding)*-1-16vw)] w-[calc(100%+var(--shell-padding)*2+32vw)] lg:mx-0 lg:absolute lg:inset-y-0 lg:left-0 lg:flex lg:w-[180%] lg:items-center">
               {/* `draggable={false}` alone is not enough: WebKit ignores it in
                   some paths and honours the non-standard `-webkit-user-drag`
                   instead. Deliberately NOT `pointer-events-none` — that would
