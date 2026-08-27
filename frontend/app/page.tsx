@@ -12,6 +12,7 @@ import { Stack } from "@/components/stack";
 import { Services } from "@/components/services";
 import { Brief } from "@/components/brief";
 import { Footer } from "@/components/footer";
+import { FooterZone } from "@/components/footer-zone";
 
 export default function Home() {
   return (
@@ -43,7 +44,13 @@ export default function Home() {
             <Brief />
           </ScrollPanel>
         </main>
-        <Footer />
+        {/* Dark band per DESIGN.md. Not inside the light ScrollPanel — a
+            <footer> in a <section> would be that section's footer. The band
+            is compact, so it never reaches the nav; the bar stays with the
+            light panel still sitting under it. */}
+        <FooterZone>
+          <Footer flush />
+        </FooterZone>
       </SmoothScroll>
     </>
   );
