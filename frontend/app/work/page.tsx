@@ -39,8 +39,12 @@ export const metadata: Metadata = {
 export default function WorkIndexPage() {
   const wideFirst = work.items.length % 2 === 1;
 
+  /* flushFooter: the closing panel already ends on its own section padding, so
+     the footer's default `pt-section` stacked on top of it reads as an empty
+     black band between the page and the footer rather than as spacing. Every
+     other route passes this; /work was the one that did not. */
   return (
-    <PageShell footerTone="dark">
+    <PageShell flushFooter footerTone="dark">
       <section className="pt-[calc(var(--spacing-nav)+24px)] pb-section">
         <Reveal className="shell">
           <h1 className="reveal font-display max-w-[14ch] text-display-xl">
