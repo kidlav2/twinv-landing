@@ -32,6 +32,17 @@ export const HOVER_OK =
   "(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)";
 
 /**
+ * Title-pin on the case-study timeline. CSS `sticky` cannot be used: this
+ * page lives inside ScrollSmoother, which transforms `#smooth-content`, and
+ * a transformed ancestor is the containing block — sticky would stick to
+ * the content wrapper, not the viewport. ScrollTrigger pin is the
+ * replacement. Not on a phone: `ignoreMobileResize` leaves pin geometry
+ * stale when the address bar collapses, the same reason MACBOOK_SCRUB_OK
+ * is desktop-only.
+ */
+export const TIMELINE_PIN_OK = "(min-width: 1024px)";
+
+/**
  * One reveal signature for the whole site. Before this the page had three
  * different ones (0.75s/power2, 1s/default, 0.9s/power3), which is what read as
  * inconsistent when scrolling.

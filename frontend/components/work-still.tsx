@@ -106,10 +106,10 @@ function StillFor({ slug }: { slug: string }) {
 }
 
 /**
- * `lg` is the case-study hero and is the only size that bleeds past the
- * gutter on a phone. The two index sizes must not: they sit in a grid whose
- * neighbours keep the gutter, and one tile breaking the margin reads as a
- * layout bug rather than a full-bleed image.
+ * `lg` is the case-study still. Alone it bleeds past the gutter on a phone;
+ * inside WorkLive the wrapper does that, and `bleed={false}` keeps this
+ * frame from doing it twice. The two index sizes must never bleed: they sit
+ * in a grid whose neighbours keep the gutter.
  *
  * Both index sizes are 3:2 and differ only in `sizes`. The index's wide slot
  * earns its width by putting the caption beside the picture, not by running
@@ -121,32 +121,51 @@ function StillFor({ slug }: { slug: string }) {
  * page that is now mostly photography.
  */
 const FRAME = {
-  lg: "aspect-[4/3] w-full max-lg:-mx-[var(--shell-padding)] max-lg:w-[calc(100%+var(--shell-padding)*2)] max-lg:rounded-none",
+  lg: "aspect-[4/3] w-full",
   wide: "aspect-[3/2] w-full",
   tile: "aspect-[3/2] w-full",
+  full: "aspect-[3/2] w-full",
+  /** Case gallery on a monitor: phone keeps 3:2; desktop fills the cell. */
+  fit: "aspect-[3/2] w-full lg:aspect-auto lg:h-full lg:min-h-0",
 } as const;
+
+/** Case-page still, used alone. When the still sits inside WorkLive the
+ *  wrapper already cancels the gutter, so this must not run a second time. */
+const BLEED =
+  "max-lg:-mx-[var(--shell-padding)] max-lg:w-[calc(100%+var(--shell-padding)*2)] max-lg:rounded-none";
 
 const SIZES = {
   lg: "(min-width: 1024px) 58vw, 100vw",
   wide: "(min-width: 1024px) 56vw, 100vw",
   tile: "(min-width: 1024px) 48vw, 100vw",
+  full: "(min-width: 1024px) 92vw, 100vw",
+  fit: "(min-width: 1024px) 92vw, 100vw",
 } as const;
 
 export function WorkStill({
   slug,
   image,
   size = "lg",
+  bleed,
   className = "",
 }: {
   slug: string;
   image?: string;
   size?: keyof typeof FRAME;
+  /** Phone gutter-break. Defaults on for `lg` (a lone case-study still) and
+   *  off for the index sizes, which sit inside a grid that already owns the
+   *  margin. Pass false when a parent (WorkLive) is the thing that bleeds. */
+  bleed?: boolean;
   className?: string;
 }) {
+  const phoneBleed = bleed ?? size === "lg";
+
   return (
     <div
       aria-hidden
-      className={`@container rounded-card relative overflow-hidden ${FRAME[size]} ${className}`}
+      className={`@container rounded-card relative overflow-hidden ${FRAME[size]} ${
+        phoneBleed ? BLEED : ""
+      } ${className}`}
     >
       {/* The scale lives on this inner layer, not on the link: the link is a
           `.reveal` target and GSAP writes `transform` on those, so a Tailwind

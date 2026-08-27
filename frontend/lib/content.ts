@@ -121,13 +121,12 @@ export const pillars = {
  *   because there was no business to measure it on. `client` and `sector` are
  *   optional for exactly that reason.
  *
- *   `metric` is NOT rendered on the `/work` index. An index lists work, and a
- *   headline figure there makes a claim before the visitor knows whose
- *   business it was measured on — while every number below is still a
- *   placeholder. The homepage teaser does still show it, on the hover face of
- *   the card, and the case page shows it beside `outcomeFacts`. Those two are
- *   unresolved rather than decided: the index and the teaser disagree on
- *   purpose until the figures are real.
+ *   `metric` still sits only on the homepage teaser hover. `outcomeFacts`
+ *   land on the case page under "What changed", next to the outcome
+ *   paragraph — they are the proof for that beat, and they give the
+ *   timeline the height the short copy would not. They stay off the `/work`
+ *   index. Every number below is still a placeholder; swap the strings
+ *   when the figures are real.
  *
  *   `metric.label` is not a caption, it names what the number IS. That is what
  *   lets a business result (+142%, trial starts) and a technical fact (1.1s,
@@ -143,6 +142,17 @@ export const pillars = {
  *   work by how WE built it, which is the single axis a buyer does not care
  *   about.
  *
+ *   `url` is the live site. The case page treats the screenshot as that
+ *   link; an empty string would be a click into nowhere, so every entry
+ *   carries a URL. Placeholders (`example.com/...`) are fine until the real
+ *   address lands — swap the string, nothing else changes.
+ *
+ *   `gallery` is extra shots on the case page, after the timeline. The hero
+ *   `image` is already on the first screen, so this list is more of the
+ *   same site — interiors, mobile, a second page. Leave it `[]` until those
+ *   files exist; the gallery then shows `image` alone rather than inventing
+ *   a second drawing. Drop files next to the hero shot in `public/work/`.
+ *
  *   `image` is the screenshot, and on the `/work` index it carries the weight
  *   the metric used to. Files live in `public/work/<slug>.png`; swapping a
  *   file is enough, the path is all any surface reads. Required in practice:
@@ -156,6 +166,21 @@ export const work = {
   sub: "Three projects, and what changed because of them.",
   /** Label for the link from the homepage teaser to the full index. */
   more: "All work",
+  /** External link on `/work/[slug]`. The screenshot is the same action. */
+  visit: "Visit the site",
+  /** Sticky titles on the case-study timeline. Display size, not captions. */
+  beats: {
+    problem: "The problem",
+    did: "What we did",
+    changed: "What changed",
+    stack: "The stack",
+  },
+  /** Heading above the screenshot strip that follows the timeline. */
+  frames: "Selected frames",
+  pager: {
+    prev: "Previous project",
+    next: "Next project",
+  },
   /** Closing panel on `/work` and each case study. */
   close: {
     headline: "Tell us what you need to move",
@@ -172,12 +197,14 @@ export const work = {
       year: "2026",
       type: "Website",
       image: "/work/saas-marketing-site.png",
+      gallery: [],
       summary:
         "Nine landing pages cut down to three, the hero rewritten around the buyer's actual trigger, and signup moved above the fold.",
       metric: { value: "+142%", label: "trial starts" },
       role: "Strategy, design, build",
       stack: ["Next.js", "TypeScript", "Tailwind", "Vercel"],
-      url: "",
+      /* Placeholder — replace with the live site. */
+      url: "https://example.com/saas-marketing-site",
       task: "The site had grown one landing page per campaign until there were nine, each arguing a different case for the same product. Traffic was fine. Nobody could tell which page was doing the work, and the trial signup sat two scrolls down on all of them.",
       approach: [
         {
@@ -196,6 +223,7 @@ export const work = {
       outcome:
         "Trial starts more than doubled over six weeks against the same ad spend, and the team stopped shipping a new landing page for every campaign.",
       outcomeFacts: [
+        { value: "+142%", label: "trial starts" },
         { value: "6 wks", label: "to measurable change" },
         { value: "9 → 3", label: "landing pages" },
       ],
@@ -209,12 +237,14 @@ export const work = {
       year: "2025",
       type: "Growth",
       image: "/work/storefront-performance.png",
+      gallery: [],
       summary:
         "A plugin-heavy theme replaced with a custom build: 80% of the JavaScript gone and the product page rebuilt from scratch.",
       metric: { value: "1.1s", label: "largest contentful paint" },
       role: "Design, build",
       stack: ["Next.js", "TypeScript", "PostgreSQL", "Vercel"],
-      url: "",
+      /* Placeholder — replace with the live site. */
+      url: "https://example.com/storefront-performance",
       task: "The store loaded in four seconds on a mid-range phone, and most of that was theme plugins doing work nobody had asked for since launch. Every fix so far had been another plugin.",
       approach: [
         {
@@ -233,6 +263,7 @@ export const work = {
       outcome:
         "Load time dropped from roughly four seconds to just over one on the same connection, and the JavaScript bundle shrank by about 80%.",
       outcomeFacts: [
+        { value: "1.1s", label: "largest contentful paint" },
         { value: "−80%", label: "JavaScript shipped" },
         { value: "4s → 1.1s", label: "load on mid-range mobile" },
       ],
@@ -246,12 +277,14 @@ export const work = {
       year: "2025",
       type: "Website",
       image: "/work/studio-brand-launch.png",
+      gallery: [],
       summary:
         "Identity, site, and content model for a new practice — from nothing to live and indexed inside a month.",
       metric: { value: "3 wks", label: "empty repo to live" },
       role: "Identity, design, build",
       stack: ["Next.js", "GSAP", "Tailwind", "Vercel"],
-      url: "",
+      /* Placeholder — replace with the live site. */
+      url: "https://example.com/studio-brand-launch",
       task: "A new practice needed to exist publicly before its first pitch, with no logo, no copy, and no photography — and a date that was not going to move.",
       approach: [
         {
@@ -269,43 +302,51 @@ export const work = {
       ],
       outcome:
         "Live and indexed in three weeks, ahead of the first pitch, and edited by the practice itself from week one.",
-      outcomeFacts: [{ value: "0", label: "developer hours to edit copy" }],
+      outcomeFacts: [
+        { value: "3 wks", label: "empty repo to live" },
+        { value: "0", label: "developer hours to edit copy" },
+        { value: "1", label: "file the team edits" },
+      ],
     },
   ],
 };
 
 /**
- * Only tools actually used in shipped work by one of the two partners.
- * Deliberately absent, and why — do not re-add without a real project behind it:
- *   Sanity / any CMS — neither partner has shipped one.
- *   Playwright        — a dev dependency with no tests written against it.
- *   Netlify           — a leftover config from an earlier stage; prod is Vercel.
- *   Figma             — kept, but only because the back-end partner genuinely
- *                       works in it; front-end design here is AI-assisted now.
+ * The studio's working set, grouped the way a client would ask "what do you
+ * actually build with". Names match the tools, not a vendor's marketing line
+ * (Vue.js not Vue; Jetpack Compose not Compose).
  */
 export const stack = {
   headline: "We build on tools your team can keep",
   sub: "No proprietary page builder you can't leave. Everything ships as code you own, on infrastructure you control.",
   groups: [
     {
-      title: "Interface",
+      title: "Frontend",
       items: [
         "React",
         "TypeScript",
         "Next.js",
         "Vite",
+        "Vue.js",
         "Tailwind",
         "GSAP",
-        "Vue",
       ],
     },
     {
-      title: "Server & data",
-      items: ["Spring Boot", "FastAPI", "Firebase", "PostgreSQL", "Redis"],
+      title: "Backend",
+      items: ["Java", "Scala", "Kotlin", "Python", "JavaScript"],
+    },
+    {
+      title: "Data & storage",
+      items: ["PostgreSQL", "SQL", "Redis", "Firebase"],
     },
     {
       title: "Ship & run",
-      items: ["Vercel", "Docker", "Git"],
+      items: ["Vercel", "Docker", "Git", "Kubernetes", "Linux"],
+    },
+    {
+      title: "Android",
+      items: ["Android Views", "Jetpack Compose"],
     },
   ],
 };
@@ -324,164 +365,164 @@ export const stack = {
 export const services = {
   headline: "Services",
   sub: "Pick the one that matches where you are.",
+  pager: {
+    prev: "Previous service",
+    next: "Next service",
+  },
   items: [
     {
       slug: "website-design",
-      title: "Website design",
-      body: "A new site from strategy through launch, for companies with something to say and nowhere good to say it.",
+      title: "Web Design & Development",
+      body: "From concept to launch.",
       meta: "From 4 weeks",
       intro:
-        "You're describing the business in a deck or a doc, not on the site — or the site was built for a version of the company that no longer exists. We start from the argument the business needs to make, not a template, and build the pages that make it.",
+        "Custom websites designed around your business, built for performance, clarity, and conversion.",
       included: [
         {
-          label: "Positioning & IA",
-          body: "Positioning and information architecture before any screen design.",
+          label: "Concept & structure",
+          body: "The argument the site has to make, and the pages that make it, before any visual pass.",
         },
         {
-          label: "Full-page design",
-          body: "Full-page designs for the pages that carry the argument, not just the homepage.",
+          label: "Custom design",
+          body: "Designed around this business, not a template with the logo swapped.",
         },
         {
           label: "Production build",
-          body: "Production build in Next.js — the same stack this site runs on.",
+          body: "Shipped as production code — fast, clear, and yours to keep.",
         },
         {
-          label: "Copy direction",
-          body: "Copy direction and editing, so launch doesn't wait on a separate writer.",
-        },
-        {
-          label: "Analytics & staging",
-          body: "Analytics and a staging environment for a real look before it's public.",
+          label: "Built to convert",
+          body: "The screens that carry the decision get the attention, not a gallery of unused states.",
         },
       ],
     },
     {
       slug: "redesign",
-      title: "Redesign",
-      body: "Your site works but underperforms. We keep what converts, rebuild what doesn't, and migrate without losing rankings.",
+      title: "Website Redesign",
+      body: "Make your existing site work harder.",
       meta: "From 3 weeks",
       intro:
-        "A redesign is not a repaint. We start by finding what the current site is already doing right — the pages that rank, the flows that convert — and rebuild around that, not over it. Nothing that already works gets thrown out for the sake of new.",
+        "We rethink structure, UX, design, and performance while preserving what already works.",
       included: [
         {
-          label: "Traffic audit",
-          body: "An audit of current traffic, rankings, and conversion paths before any redesign work.",
+          label: "What already works",
+          body: "An audit of the pages, flows, and rankings worth keeping, before anything is taken apart.",
         },
         {
-          label: "Migration plan",
-          body: "A redirect and migration plan, so URLs that rank keep ranking.",
+          label: "Structure & UX",
+          body: "Information architecture and flows rebuilt around the decision a visitor is actually making.",
         },
         {
-          label: "Staged rebuild",
-          body: "Section-by-section rebuild, so the site can ship in pieces instead of one long freeze.",
+          label: "Design & performance",
+          body: "A new visual system and a faster front end, not a repaint on the same slow stack.",
         },
         {
-          label: "Before & after",
-          body: "Before/after comparison on the metrics that mattered going in.",
+          label: "Migration without loss",
+          body: "Redirects and a staged cutover, so what already ranks and converts is not thrown out with the rest.",
         },
       ],
     },
     {
-      slug: "ecommerce",
-      title: "E-commerce",
-      body: "Storefronts built for speed and checkout completion. Custom fronts on Shopify or headless, tuned to mobile.",
+      slug: "digital-products",
+      title: "Digital Products",
+      body: "From idea to working product.",
       meta: "From 6 weeks",
       intro:
-        "Most storefront themes are built for a catalog, not your catalog. We build the front end around how your specific products actually get chosen and bought, on Shopify when that's the right fit or headless when it isn't, with checkout treated as its own design problem.",
+        "Web apps, dashboards, portals, and custom digital experiences designed and built around your users.",
       included: [
         {
-          label: "Custom storefront",
-          body: "Custom storefront on Shopify, or a headless front end over the commerce platform you already run.",
+          label: "The job first",
+          body: "We start with the job the product has to do for a real user, not a feature list.",
         },
         {
-          label: "Checkout rebuild",
-          body: "Checkout and cart flow audited and rebuilt for completion, not just appearance.",
+          label: "Apps, dashboards, portals",
+          body: "Designed as products people work in, not as dressed-up admin screens.",
         },
         {
-          label: "Scaling templates",
-          body: "Product and collection templates that scale past the handful you'll launch with.",
+          label: "Around your users",
+          body: "Flows and interface follow how people actually use it, not how the schema is shaped.",
         },
         {
-          label: "Mobile-first build",
-          body: "Mobile-first build and testing — most of the traffic arrives on a phone.",
+          label: "Working software",
+          body: "What we hand over runs — owned code, on infrastructure you control.",
         },
       ],
     },
     {
       slug: "brand-identity",
-      title: "Brand & identity",
-      body: "Logo, type, color, and the rules that keep it consistent — delivered as a system, not a folder of files.",
+      title: "Brand & Identity",
+      body: "A system, not just a logo.",
       meta: "From 3 weeks",
       intro:
-        "A logo file isn't a brand. We deliver the rules that make the mark, the type, and the color hold together across a website, a deck, and a business card without someone having to guess — a system your team or the next agency can actually use.",
+        "Identity, typography, colour, and visual direction built to work across your brand and website.",
       included: [
         {
-          label: "Mark & wordmark",
+          label: "Identity",
           body: "Mark, wordmark, and the construction rules that keep them from being redrawn wrong.",
         },
         {
-          label: "Type & color",
-          body: "Type and color system, with the roles each one plays, not just the values.",
+          label: "Type & colour",
+          body: "Typography and colour with the roles each one plays, not just the values.",
         },
         {
-          label: "Written guide",
-          body: "A written guide covering the cases people actually get wrong.",
+          label: "Visual direction",
+          body: "The rules for layout, surface, and image so the system holds on a site, a deck, and a card.",
         },
         {
-          label: "Applied in build",
-          body: "Applied to the website itself, not handed off as a theoretical document.",
+          label: "Applied to the site",
+          body: "Built into the website itself, not handed off as a theoretical document.",
         },
       ],
     },
     {
       slug: "care-growth",
-      title: "Care & growth",
-      body: "Ongoing design and development. New pages, tests, and fixes on a monthly retainer with a shipping cadence.",
+      title: "Care & Growth",
+      body: "Your website doesn't stop at launch.",
       meta: "Monthly",
       intro:
-        "A site is a product, not a project that ends at launch. This is the retainer for the work that comes after: new landing pages, fixes, small tests, the backlog that never quite gets prioritized on a one-off contract. A fixed cadence, not an open-ended favor.",
+        "Ongoing design, development, optimization, and improvements through a monthly partnership.",
       included: [
         {
-          label: "Monthly hours",
-          body: "A monthly block of design and development hours, scoped before the month starts.",
+          label: "Monthly partnership",
+          body: "A block of design and development hours, scoped before the month starts.",
         },
         {
-          label: "Shipping cadence",
-          body: "A shipping cadence — agreed dates, not a queue that quietly slips.",
+          label: "Optimization",
+          body: "Performance, conversion, and the small tests that a one-off launch never gets to.",
         },
         {
-          label: "Priority fixes",
-          body: "Priority turnaround on fixes, ahead of new project work.",
+          label: "Improvements that ship",
+          body: "New pages, fixes, and iteration on an agreed cadence — not a queue that quietly slips.",
         },
         {
-          label: "Shipped log",
-          body: "A running log of what shipped, so the retainer stays accountable to itself.",
+          label: "A log of what moved",
+          body: "A running record of what shipped, so the retainer stays accountable to itself.",
         },
       ],
     },
     {
-      slug: "process-automation",
-      title: "Process automation",
-      body: "The work behind the site: integrations, queues, and scheduled jobs, plus the dashboards to watch them from.",
+      slug: "digital-solutions",
+      title: "Digital Solutions",
+      body: "Connect the pieces. Automate the work.",
       meta: "From 5 weeks",
       intro:
-        "The site is the part visitors see. This is the part that keeps it running: the integrations between your tools, the scheduled jobs that used to be a person's Tuesday morning, and a dashboard so the work is visible instead of trusted blindly.",
+        "Custom integrations, APIs, automation, and digital tools that make your business run better.",
       included: [
         {
-          label: "Tool integrations",
-          body: "Integrations between the tools your team already uses — CRM, billing, support.",
+          label: "Integrations",
+          body: "The tools your team already uses — CRM, billing, support — talking to each other instead of through a spreadsheet.",
         },
         {
-          label: "Jobs & queues",
-          body: "Scheduled jobs and queues for work that shouldn't depend on someone remembering.",
+          label: "APIs",
+          body: "Interfaces between systems you own, so the next tool can plug in without a rebuild.",
         },
         {
-          label: "Ops dashboard",
-          body: "A dashboard to see what ran, what failed, and why.",
+          label: "Automation",
+          body: "The Tuesday-morning work that should not depend on someone remembering to do it.",
         },
         {
-          label: "Own the infra",
-          body: "Built on infrastructure your team can read and maintain, not a black box.",
+          label: "Digital tools",
+          body: "Small internal products for the jobs a SaaS package almost covers, built on infrastructure you can keep.",
         },
       ],
     },
@@ -585,7 +626,7 @@ export const about = {
 };
 
 export const legal = {
-  updated: "25 August 2026",
+  updated: "26 August 2026",
   terms: {
     title: "Terms of Service",
     intro:
@@ -624,11 +665,11 @@ export const legal = {
     sections: [
       {
         title: "What we collect",
-        body: "The brief form asks for your name, email address, what you need, and optionally your current site's URL. That's the whole set — see the form itself for the exact fields. We don't collect anything passively: no cookies, no analytics pixels, no third-party scripts on this site.",
+        body: "The brief form asks for your name, email, phone number, what you need, how you heard about the studio, optionally your current site's URL, and a budget range unless you asked for a demo. That's the whole set — see the form itself for the exact fields. We don't collect anything passively: no cookies, no analytics pixels, no third-party scripts on this site.",
       },
       {
         title: "How we use it",
-        body: "To read your brief and reply to the email address you gave us. Nothing is added to a marketing list, and nothing is sold or shared with a third party.",
+        body: "To read your brief and reply by email or phone. Nothing is added to a marketing list, and nothing is sold or shared with a third party.",
       },
       {
         title: "How long we keep it",
@@ -655,7 +696,8 @@ export const legal = {
  * renaming one is a backend-visible change, while `label` and `prompt` are
  * free text. `prompt` is the message field: its title and placeholder swap
  * with the selected goal so the form asks the right question, not a generic
- * "what is not working" on a new-site brief.
+ * "what is not working" on a new-site brief. Budget, source, and phone ids
+ * live on the same contract.
  */
 export const brief = {
   /* "Start a project" and "Start a brief" were two names for one action, on
@@ -698,8 +740,7 @@ export const brief = {
       label: "Demo",
       prompt: {
         label: "What do you want to walk through?",
-        placeholder:
-          "A similar build, how we work, or a specific question.",
+        placeholder: "A similar build, how we work, or a specific question.",
       },
     },
   ],
@@ -711,6 +752,58 @@ export const brief = {
     },
     name: { label: "Name", placeholder: "" },
     email: { label: "Email", placeholder: "" },
+    phone: {
+      label: "Phone",
+      placeholder: "+1 415 555 0100",
+    },
+    budget: {
+      label: "Budget range",
+      placeholder: "Select a range",
+      /* Demo has no dropdown — a walkthrough is $0, so asking for a range
+         would be a lie. The other three goals don't share a scale: a site
+         and a redesign sit in the same thousands, an audit does not. */
+      byGoal: {
+        "new-site": [
+          { id: "under-700", label: "Under $700" },
+          { id: "700-1k", label: "$700\u2013$1,000" },
+          { id: "1k-1.5k", label: "$1,000\u2013$1,500" },
+          { id: "1.5k-2.5k", label: "$1,500\u2013$2,500" },
+          { id: "2.5k-4k", label: "$2,500\u2013$4,000" },
+          { id: "4k-6k", label: "$4,000\u2013$6,000" },
+          { id: "6k-plus", label: "$6,000+" },
+        ],
+        redesign: [
+          { id: "under-1k", label: "Under $1,000" },
+          { id: "1k-1.5k", label: "$1,000\u2013$1,500" },
+          { id: "1.5k-2.5k", label: "$1,500\u2013$2,500" },
+          { id: "2.5k-4k", label: "$2,500\u2013$4,000" },
+          { id: "4k-6k", label: "$4,000\u2013$6,000" },
+          { id: "6k-plus", label: "$6,000+" },
+        ],
+        audit: [
+          { id: "audit-free", label: "Free (mini audit)" },
+          { id: "300-500", label: "$300\u2013$500" },
+          { id: "500-1k", label: "$500\u2013$1,000" },
+          { id: "1k-2k", label: "$1,000\u2013$2,000" },
+          { id: "2k-plus", label: "$2,000+" },
+        ],
+      },
+    },
+    source: {
+      label: "How did you hear about us?",
+      placeholder: "Select one",
+      options: [
+        { id: "friend", label: "A friend or colleague" },
+        { id: "instagram", label: "Instagram" },
+        { id: "google", label: "Google" },
+        { id: "linkedin", label: "LinkedIn" },
+        { id: "other", label: "Somewhere else" },
+      ],
+      other: {
+        label: "Where was that?",
+        placeholder: "A directory, a talk, a newsletter",
+      },
+    },
   },
   errors: {
     goal: "Pick one so we know where to start.",
@@ -718,8 +811,12 @@ export const brief = {
     name: "We would rather not open with \u201cHi there\u201d.",
     email: "We need somewhere to reply.",
     emailFormat: "That address is missing something.",
-    submit:
-      "That did not send. Try again, or email contact@twinvstudio.com.",
+    phone: "Add a number we can call.",
+    phoneFormat: "That number needs a few more digits.",
+    budget: "Pick the range that is closest.",
+    source: "Pick one \u2014 it helps us know what is working.",
+    sourceOther: "A few words on where you found us.",
+    submit: "That did not send. Try again, or email contact@twinvstudio.com.",
   },
   submit: "Send the brief",
   sending: "Sending\u2026",
@@ -736,6 +833,8 @@ export const footer = {
   email: "contact@twinvstudio.com",
   blurb:
     "A web design and development studio building sites that carry their weight.",
+  /** Same action as `work.close.cta`, under the email so it is on every page. */
+  cta: work.close.cta,
   /* The Services links used to be six identical `#services` anchors — every
      one of them scrolled to the same spot on the homepage. Now that
      /services/[slug] pages exist (see the `slug` field above), each link

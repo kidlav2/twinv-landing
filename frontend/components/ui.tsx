@@ -19,14 +19,17 @@ export function ButtonPrimary({
   href,
   children,
   className = "",
+  external = false,
 }: {
   href: string;
   children: ReactNode;
   className?: string;
+  external?: boolean;
 }) {
   return (
     <Link
       href={href}
+      {...(external ? { target: "_blank", rel: "noreferrer" } : {})}
       className={`btn-primary rounded-btn inline-flex items-center justify-center px-6 py-4 text-body font-medium transition-colors duration-200 ${className}`}
     >
       {children}
@@ -38,14 +41,17 @@ export function ButtonGhost({
   href,
   children,
   className = "",
+  external = false,
 }: {
   href: string;
   children: ReactNode;
   className?: string;
+  external?: boolean;
 }) {
   return (
     <Link
       href={href}
+      {...(external ? { target: "_blank", rel: "noreferrer" } : {})}
       className={`btn-ghost rounded-btn-sharp inline-flex items-center justify-center border-[1.5px] px-6 py-4 text-body font-medium transition-colors duration-200 ${className}`}
     >
       {children}
@@ -79,17 +85,22 @@ export function SectionLabel({ children }: { children: ReactNode }) {
 export function TextLink({
   href,
   children,
+  external = false,
 }: {
   href: string;
   children: ReactNode;
+  /** Opens in a new tab. The arrow becomes ↗ so the destination is not
+   *  mistaken for another page on this site. */
+  external?: boolean;
 }) {
   return (
     <Link
       href={href}
-      className="text-fg decoration-line hover:decoration-current inline-flex items-center gap-2 text-body-sm font-medium underline underline-offset-4 transition-colors"
+      {...(external ? { target: "_blank", rel: "noreferrer" } : {})}
+      className="text-fg decoration-line hover:decoration-current inline-flex min-h-11 items-center gap-2 text-body-sm font-medium underline underline-offset-4 transition-colors"
     >
       {children}
-      <span aria-hidden>→</span>
+      <span aria-hidden>{external ? "↗" : "→"}</span>
     </Link>
   );
 }
