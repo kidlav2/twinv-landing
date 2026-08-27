@@ -144,6 +144,9 @@ export const pillars = {
  *   to find themselves in the grid. The old tags ("SaaS · Redesign") sorted the
  *   work by how WE built it, which is the single axis a buyer does not care
  *   about.
+ *
+ *   `image` is the still on the homepage card. Swap the files in `public/work/`
+ *   for real screenshots; the path is the only thing the card reads.
  */
 export const work = {
   headline: "Selected work",
@@ -159,6 +162,7 @@ export const work = {
       sector: "SaaS",
       year: "2026",
       type: "Website",
+      image: "/work/saas-marketing-site.png",
       summary:
         "Nine landing pages cut down to three, the hero rewritten around the buyer's actual trigger, and signup moved above the fold.",
       metric: { value: "+142%", label: "trial starts" },
@@ -195,6 +199,7 @@ export const work = {
       sector: "E-commerce",
       year: "2025",
       type: "Growth",
+      image: "/work/storefront-performance.png",
       summary:
         "A plugin-heavy theme replaced with a custom build: 80% of the JavaScript gone and the product page rebuilt from scratch.",
       metric: { value: "1.1s", label: "largest contentful paint" },
@@ -231,6 +236,7 @@ export const work = {
       sector: "Brand",
       year: "2025",
       type: "Website",
+      image: "/work/studio-brand-launch.png",
       summary:
         "Identity, site, and content model for a new practice — from nothing to live and indexed inside a month.",
       metric: { value: "3 wks", label: "empty repo to live" },

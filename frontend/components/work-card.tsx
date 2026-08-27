@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { work } from "@/lib/content";
 import { Tag } from "./ui";
@@ -48,29 +49,58 @@ function Metric({ item }: { item: Item }) {
 /* No "View project →" affordance on either card. The whole surface is the
    link, and the site already took that arrow back off the service cards for
    the same reason — a card that is entirely clickable does not need a smaller
-   thing inside it claiming to be the click target. The underline on the title
-   carries hover and focus instead. */
+   thing inside it claiming to be the click target. */
 
-/** Compact card — the homepage teaser track, where cards sit side by side in
- *  a fixed-width scroller. */
+function TeaserRest({ item }: { item: Item }) {
+  return (
+    <div className="work-card-rest flex h-full flex-col">
+      <div className="bg-ash relative min-h-0 flex-1 overflow-hidden">
+        <Image
+          src={item.image}
+          alt=""
+          fill
+          sizes="(min-width: 640px) 420px, 85vw"
+          className="object-cover"
+        />
+      </div>
+      <div className="flex flex-col gap-4 p-6">
+        <h3 className="font-display text-heading-sm">{item.title}</h3>
+        <Tag className="self-start">{item.type}</Tag>
+      </div>
+    </div>
+  );
+}
+
+function TeaserHover({ item }: { item: Item }) {
+  return (
+    <div className="work-card-hover flex h-full flex-col p-8">
+      <Kicker item={item} />
+      <div className="mt-8">
+        <Metric item={item} />
+      </div>
+      <h3 className="font-display mt-8 text-heading-sm">{item.title}</h3>
+      <p className="text-muted mt-4 flex-1 text-body">{item.summary}</p>
+      <div className="mt-8">
+        <Tag>{item.type}</Tag>
+      </div>
+    </div>
+  );
+}
+
+/** Compact card — the homepage teaser track.
+ *
+ *  At rest it is the still: photo, title, type. On hover it becomes the
+ *  previous card — kicker, metric, title, summary, tag — the two faces share
+ *  one grid cell so the track does not jump when the swap happens. */
 export function WorkCard({ item }: { item: Item }) {
   return (
     <Link
       href={`/work/${item.slug}`}
       data-card
-      className="reveal work-card bg-paper rounded-card group flex w-[85vw] shrink-0 snap-start flex-col p-8 sm:w-[420px]"
+      className="reveal work-card work-card-teaser bg-paper rounded-card w-[85vw] shrink-0 snap-start overflow-hidden sm:w-[420px]"
     >
-      <Kicker item={item} />
-      <div className="mt-8">
-        <Metric item={item} />
-      </div>
-      <h3 className="font-display mt-8 text-heading-sm group-hover:underline group-focus-visible:underline underline-offset-[6px]">
-        {item.title}
-      </h3>
-      <p className="text-muted mt-4 flex-1 text-body">{item.summary}</p>
-      <div className="mt-8">
-        <Tag>{item.type}</Tag>
-      </div>
+      <TeaserRest item={item} />
+      <TeaserHover item={item} />
     </Link>
   );
 }

@@ -293,6 +293,42 @@
     background-size: 12px 8px;
     padding-inline-end: 2.75rem;
   }
+
+  /* Homepage work teaser: two faces in one grid cell. Fine pointers swap
+     to the metric card on hover/focus; a tap on a phone follows the link
+     and never leaves a stuck hover. */
+  .work-card-teaser {
+    display: grid;
+  }
+
+  .work-card-teaser .work-card-rest,
+  .work-card-teaser .work-card-hover {
+    grid-area: 1 / 1;
+    transition: opacity 0.35s ease;
+  }
+
+  .work-card-teaser .work-card-hover {
+    opacity: 0;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .work-card-teaser:hover .work-card-rest,
+    .work-card-teaser:focus-visible .work-card-rest {
+      opacity: 0;
+    }
+
+    .work-card-teaser:hover .work-card-hover,
+    .work-card-teaser:focus-visible .work-card-hover {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .work-card-teaser .work-card-rest,
+    .work-card-teaser .work-card-hover {
+      transition: none;
+    }
+  }
 }
 
 /* The nav floats above whichever zone is under it. ScrollPanel stamps
