@@ -250,12 +250,23 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* Display type is uppercase by contract — never mixed case. */
+  /* Display type is uppercase by contract — never mixed case.
+     `balance` evenes a wrapping headline across its lines; one-word
+     display titles (Traffic, Gap) are a no-op. */
   .font-display,
   h1,
   h2,
   h3 {
     text-transform: uppercase;
+    text-wrap: balance;
+  }
+
+  /* Marketing paragraphs that wrap three-plus lines. `pretty` stops a
+     short last-line orphan; line-height stays the design-token values
+     (Krehel wants ≥1.4 on wrapping body, DESIGN.md holds 1.25 / 1.35). */
+  .text-lead,
+  .text-sub-lg {
+    text-wrap: pretty;
   }
 
   ::selection {
@@ -268,6 +279,19 @@
   .shell {
     width: 100%;
     padding-inline: var(--shell-padding);
+  }
+
+  /* Native <select> matching the brief text inputs. The OS paints the
+     option list; this only restyles the closed control so it does not
+     introduce a second dropdown language. Chevron is a data-URI so the
+     control stays one element (hit area is the whole field). */
+  .brief-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' viewBox='0 0 12 8'%3E%3Cpath stroke='%23444444' stroke-linecap='square' stroke-width='1.5' d='m1 1.5 5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 12px 8px;
+    padding-inline-end: 2.75rem;
   }
 }
 
@@ -529,18 +553,28 @@
 }
 
 /* The laptop is drawn at one fixed design size (see macbook-body.tsx) and
-   scaled to fit, because a full-size machine is 895px tall and does not fit a
-   768px laptop screen. Scaling the whole deck rather than re-proportioning it
-   is what lets the keycaps stay ~40px with legible legends at every size.
+   scaled to fit, because a full-size machine is 935 design-px tall and does
+   not fit a 768px laptop screen. Scaling the whole deck rather than
+   re-proportioning it is what lets the keycaps stay ~40px with legible
+   legends at every size.
    Steps, not a fluid clamp: `scale()` needs a unitless number and a viewport
    ratio in CSS can only be produced in px. about-stage.tsx reads this same
-   variable, so the lid's geometry and the deck can never disagree. */
+   variable, so the lid's geometry and the deck can never disagree.
+   Each step leaves ≳50px of leftover height for TOP_SHARE and the tilted
+   lid (935 × k must stay under 100dvh). The first bump used to wait until
+   820px, so a typical 13" browser chrome (~760–800px) sat on the 0.68
+   floor and the machine looked like a miniature. */
 .macbook-only {
-  --machine-k: 0.68;
+  --machine-k: 0.72;
 }
-@media (min-height: 820px) {
+@media (min-height: 760px) {
   .macbook-only {
-    --machine-k: 0.82;
+    --machine-k: 0.78;
+  }
+}
+@media (min-height: 860px) {
+  .macbook-only {
+    --machine-k: 0.88;
   }
 }
 @media (min-height: 1000px) {
@@ -636,11 +670,142 @@
   }
 }
 
-/* Portfolio cards are wholly clickable, so the focus ring has to be drawn on
-   the card rather than on something inside it. `--color-fg`, not a fixed
-   colour: the index sits on canvas and the ring must survive if a card is ever
-   placed in a dark zone. */
-.work-card:focus-visible {
+/* Portfolio chapters are wholly clickable, so the focus ring has to be drawn
+   on the chapter rather than on something inside it. `--color-fg`, not a
+   fixed colour: the index sits on canvas and the ring must survive if a
+   chapter is ever placed in a dark zone. */
+.work-chapter:focus-visible {
   outline: 2px solid var(--color-fg);
   outline-offset: 4px;
+}
+
+/* ============================================================
+   Studio ledger — internal finance app at /studio
+   Same tokens, denser layout. No shadows. No new colours.
+   ============================================================ */
+
+.studio-app {
+  min-height: 100dvh;
+  background: var(--color-canvas);
+  color: var(--color-fg);
+  color-scheme: light;
+}
+
+.studio-app.tone-dark {
+  background: var(--color-carbon);
+  color-scheme: dark;
+}
+
+.studio-card {
+  background: var(--color-paper);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card-sm);
+}
+
+.studio-app.tone-dark .studio-card {
+  background: var(--color-graphite);
+}
+
+.studio-field {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-btn);
+  background-color: var(--color-paper);
+  color: var(--color-fg);
+  padding: 0.65rem 0.9rem;
+  font-size: var(--text-body-sm);
+  font-family: var(--font-sans);
+}
+
+.studio-app.tone-dark .studio-field {
+  background-color: var(--color-carbon);
+}
+
+/* Chevron is a CSS triangle on the wrap, not a repeating background-image.
+   A `background` shorthand on the closed control used to reset repeat/size
+   and tile the SVG — that read as a wavy fill in dark mode. */
+.studio-select-wrap {
+  position: relative;
+  display: block;
+}
+
+.studio-select-wrap::after {
+  content: "";
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid var(--color-muted);
+  border-bottom: 1.5px solid var(--color-muted);
+  transform: translateY(-70%) rotate(45deg);
+  pointer-events: none;
+}
+
+.studio-select {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-btn);
+  background-color: var(--color-paper);
+  background-image: none;
+  color: var(--color-fg);
+  padding: 0.65rem 2.5rem 0.65rem 0.9rem;
+  font-size: var(--text-body-sm);
+  font-family: var(--font-sans);
+  cursor: pointer;
+}
+
+.studio-app.tone-dark .studio-select {
+  background-color: var(--color-graphite);
+  background-image: none;
+}
+
+.studio-select option {
+  background-color: var(--color-paper);
+  color: var(--color-fg);
+}
+
+.studio-app.tone-dark .studio-select option {
+  background-color: var(--color-graphite);
+  color: var(--color-fg);
+}
+
+.studio-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: var(--text-caption--letter-spacing);
+  text-transform: uppercase;
+  color: var(--color-faint);
+}
+
+.studio-fall-track {
+  height: 6px;
+  background: var(--color-line);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.studio-fall-fill {
+  display: block;
+  height: 100%;
+  background: var(--color-fg);
+  transform-origin: left center;
+}
+
+.studio-nav-link[aria-current="page"] {
+  color: var(--color-fg);
+}
+
+.studio-nav-link[aria-current="page"]::after {
+  content: "";
+  display: block;
+  height: 1.5px;
+  margin-top: 3px;
+  background: currentColor;
 }
