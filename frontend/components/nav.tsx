@@ -11,19 +11,21 @@ export function Nav() {
   const pathname = usePathname();
 
   /**
-   * Only real routes can be "current", with one exception: Home is `/#top`,
-   * a hash by necessity (see content.ts), but it is still the landing, so
-   * it has to mark when `pathname` is `/`. The other homepage anchors stay
-   * unmarked — a section scrolled into view is not a page you are on, and
-   * marking one would put two current items in the bar at once.
+   * Only real routes can be "current", with one hash exception: Home is
+   * `/#top`, a hash by necessity (see content.ts), but it is still the
+   * landing, so it has to mark when `pathname` is `/`.
+   *
+   * Services is a child route (`/services/website-design` today). Any
+   * `/services/*` page counts as that item, so the bar still reads as "you
+   * are in Services" when you pager to another offering.
    *
    * Compared against the path only, so a trailing hash never breaks the match.
    * A child route counts as its parent: on /work/some-project the Work item
-   * stays marked, because the visitor is inside that section and a bar with
-   * nothing current gives them no read on where they are.
+   * stays marked.
    */
   const isCurrent = (href: string) => {
     if (href === "/#top") return pathname === "/";
+    if (href.startsWith("/services")) return pathname.startsWith("/services");
     return (
       !href.includes("#") &&
       (href === pathname || pathname.startsWith(`${href}/`))

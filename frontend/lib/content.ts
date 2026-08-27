@@ -4,24 +4,16 @@
  */
 
 /**
- * Order MUST match the vertical order sections actually appear in on the page
- * (see app/page.tsx) — Home (the landing's top), then Process, then Work,
- * then Stack, then Services, then About. A menu that jumps backwards is worse
- * than no menu. This list is genuinely coupled to app/page.tsx's section
- * order — if you reorder one, reorder the other.
+ * Short global nav: destinations, not every homepage section. Process and
+ * Stack stay on the landing and are reached by scroll.
  *
  * Home is `/#top`, not `/`. A bare `/` from another route would land the
  * homepage wherever the new SmoothScroll wrapper happened to open; the hash
- * is what the smoother honours as an explicit scrollTo. It is also why
- * Process cannot do this job: from /about, `/#process` is a correct jump
- * that skips the hero, and that is the thing a visitor clicking the first
- * item to "go back" actually wanted to see.
+ * is what the smoother honours as an explicit scrollTo.
  *
- * When service pages become real routes (`/services/x`) this scheme changes:
- * an anchor like `#process` only works from the homepage, so cross-page nav
- * items will need to become `/#process` and "Services" likely becomes a real
- * link to a services index rather than an anchor. Flagged, not solved here —
- * there are no subpages yet to design against.
+ * Services points at the first service page (`services.items[0]`), not the
+ * homepage `#services` teaser. A hash next to real routes was the mix that
+ * made the bar feel broken. When a services index ships, change this href.
  */
 export const nav = {
   brand: "Twin V Studio",
@@ -30,14 +22,12 @@ export const nav = {
      click handler only resolves against the CURRENT page — would append
      harmlessly to /about or /services/x and scroll nowhere. The homepage's
      own components (Pillars, ServicesGrid, Brief…) can still use bare `#id`,
-     because they only ever render on `/`. /about is a real route now that
-     the page exists. */
+     because they only ever render on `/`. */
   links: [
     { label: "Home", href: "/#top" },
-    { label: "Process", href: "/#process" },
     { label: "Work", href: "/work" },
-    { label: "Stack", href: "/#stack" },
-    { label: "Services", href: "/#services" },
+    /* First entry in `services.items` below. Keep in sync if that order changes. */
+    { label: "Services", href: "/services/website-design" },
     { label: "About", href: "/about" },
   ],
   cta: { label: "Book a demo", href: "/#contact" },
@@ -100,17 +90,17 @@ export const pillars = {
     {
       title: "Design",
       body: "Positioning, structure, and interface for a site that argues its case. Wireframes to final UI, in your brand or a new one.",
-      href: "#contact",
+      href: "/services/website-design",
     },
     {
       title: "Build",
       body: "Production Next.js, accessible and fast. Real CMS your team can edit, Core Web Vitals in the green, deployed on your infrastructure.",
-      href: "#contact",
+      href: "/services/redesign",
     },
     {
       title: "Grow",
       body: "After launch: testing, iteration, and new pages as the offer changes. A retainer that ships, not one that bills for meetings.",
-      href: "#contact",
+      href: "/services/care-growth",
     },
   ],
 };
@@ -763,9 +753,8 @@ export const footer = {
       title: "Studio",
       links: [
         { label: "Home", href: "/#top" },
-        { label: "Process", href: "/#process" },
         { label: "Work", href: "/work" },
-        { label: "Stack", href: "/#stack" },
+        { label: "Services", href: "/services/website-design" },
         { label: "About", href: "/about" },
       ],
     },
