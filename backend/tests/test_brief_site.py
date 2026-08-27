@@ -32,6 +32,9 @@ def test_site_form_payload_is_saved_to_sqlite():
         "message": "Traffic dropped after the last redesign",
         "name": "Site Autotest",
         "email": marker,
+        "phone": "+1 415 555 0100",
+        "budget": "500-1k",
+        "source": "google",
     }
 
     response = httpx.post(SITE_BRIEF_URL, json=payload, timeout=5.0)

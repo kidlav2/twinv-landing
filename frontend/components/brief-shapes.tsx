@@ -176,9 +176,13 @@ export function BriefShapes() {
   );
 
   return (
-    <div ref={scope} className="w-full">
+    <div ref={scope} className="mx-auto w-full max-w-[36rem]">
       {/* Abstract shapes tell a screen reader nothing. */}
-      <svg viewBox="0 0 440 480" className="h-auto w-full" aria-hidden>
+      <svg
+        viewBox="0 0 440 480"
+        className="mx-auto block h-auto w-full max-h-[calc(100dvh-var(--nav-height)-5rem)]"
+        aria-hidden
+      >
         {SHAPES.map((s) =>
           s.kind === "ring" ? (
             <path

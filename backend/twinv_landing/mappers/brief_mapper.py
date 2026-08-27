@@ -14,6 +14,10 @@ class BriefMapper:
             message=dto.message,
             name=dto.name,
             email=dto.email,
+            phone=dto.phone,
+            budget=dto.budget,
+            source=dto.source,
+            source_other=dto.source_other,
         )
 
     @staticmethod

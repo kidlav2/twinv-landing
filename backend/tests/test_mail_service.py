@@ -20,6 +20,9 @@ BRIEF = BriefDTO(
     message="Traffic dropped after the last redesign",
     name="Ada",
     email="ada@example.com",
+    phone="+1 415 555 0100",
+    budget="500-1k",
+    source="google",
     created_at=datetime(2026, 8, 25, tzinfo=UTC),
 )
 
@@ -43,6 +46,9 @@ def test_build_message_carries_the_brief():
     body = message.get_payload()
     assert "example.com" in body
     assert "Traffic dropped after the last redesign" in body
+    assert "+1 415 555 0100" in body
+    assert "500-1k" in body
+    assert "google" in body
     assert "brief_id: abc" in body
 
 
@@ -67,6 +73,8 @@ def test_create_saves_brief_even_when_mail_fails(monkeypatch: pytest.MonkeyPatch
         message="Book a walkthrough",
         name="Ada",
         email="ada@example.com",
+        phone="+1 415 555 0100",
+        source="friend",
     )
 
     with Session(engine) as session:
@@ -90,6 +98,9 @@ def test_create_sends_mail_after_save():
         message="Need a new marketing site",
         name="Ada",
         email="ada@example.com",
+        phone="+1 415 555 0100",
+        budget="1.5k-2.5k",
+        source="google",
     )
 
     with Session(engine) as session:

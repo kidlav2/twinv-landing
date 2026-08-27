@@ -74,19 +74,27 @@ class GmailMailService:
         message["Reply-To"] = brief.email
         message.set_content(
             "\n".join(
-                (
+                [
                     f"Goal:    {brief.goal.value}",
                     f"Site:    {brief.site or '—'}",
+                    *(
+                        [f"Budget:  {brief.budget.value}"]
+                        if brief.budget
+                        else []
+                    ),
                     f"Name:    {brief.name}",
                     f"Email:   {brief.email}",
+                    f"Phone:   {brief.phone}",
+                    f"Heard:   {brief.source.value}"
+                    + (f" — {brief.source_other}" if brief.source_other else ""),
                     "",
                     "Message:",
                     brief.message,
                     "",
                     f"brief_id: {brief.brief_id}",
                     f"received: {brief.created_at.isoformat()}",
-                )
-            )
+                ]
+            ),
         )
         return base64.urlsafe_b64encode(message.as_bytes()).decode()
 

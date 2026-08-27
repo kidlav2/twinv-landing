@@ -1,17 +1,14 @@
-import type { BriefPayload } from "@/lib/brief";
+import { isValidBrief } from "@/lib/brief";
 import { readBriefMailConfig, sendBriefMail } from "@/lib/brief-mail";
 
 /**
  * Same-origin intake: the browser posts here, this route either emails the
  * brief via Gmail (production on Vercel) or forwards to FastAPI (local).
  *
- * Body contract is `BriefPayload` in lib/brief.ts:
- *   { goal: "new-site" | "redesign" | "audit" | "demo",
- *     site?: string, message: string, name: string, email: string }
- *
- * Gmail is preferred when TWINV_GOOGLE_* + TWINV_MAIL_TO are set, so Vercel
- * does not need a second Python host. BRIEF_FORWARD_URL remains the fallback
- * — in `next dev` that defaults to uvicorn on :8000.
+ * Body contract is `BriefPayload` in lib/brief.ts. Gmail is preferred when
+ * TWINV_GOOGLE_* + TWINV_MAIL_TO are set, so Vercel does not need a second
+ * Python host. BRIEF_FORWARD_URL remains the fallback — in `next dev` that
+ * defaults to uvicorn on :8000.
  */
 
 const DEFAULT_FORWARD_URL = "http://127.0.0.1:8000/api/brief";
@@ -20,22 +17,6 @@ const FORWARD_URL =
   process.env.BRIEF_FORWARD_URL ??
   (process.env.NODE_ENV === "development" ? DEFAULT_FORWARD_URL : undefined);
 
-function isValid(body: unknown): body is BriefPayload {
-  if (typeof body !== "object" || body === null) return false;
-  const b = body as Record<string, unknown>;
-  const goals = ["new-site", "redesign", "audit", "demo"];
-  return (
-    typeof b.goal === "string" &&
-    goals.includes(b.goal) &&
-    typeof b.message === "string" &&
-    b.message.trim().length > 0 &&
-    typeof b.name === "string" &&
-    b.name.trim().length > 0 &&
-    typeof b.email === "string" &&
-    b.email.includes("@") &&
-    (b.site === undefined || typeof b.site === "string")
-  );
-}
 
 export async function POST(request: Request) {
   let body: unknown;
@@ -47,7 +28,7 @@ export async function POST(request: Request) {
 
   // Revalidated here rather than trusting the form: this route is a public
   // URL, and the form's checks are a courtesy to the person filling it in.
-  if (!isValid(body)) {
+  if (!isValidBrief(body)) {
     return Response.json({ error: "Invalid brief" }, { status: 400 });
   }
 

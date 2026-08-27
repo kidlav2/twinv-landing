@@ -2,17 +2,20 @@ from datetime import UTC, datetime
 
 from twinv_landing.dto.brief_dto import BriefCreateDTO
 from twinv_landing.mappers.brief_mapper import BriefMapper
-from twinv_landing.models.brief import BriefGoal
+from twinv_landing.models.brief import BriefBudget, BriefGoal, BriefSource
+
+REQUIRED = {
+    "message": "Need a new marketing site",
+    "name": "Ada",
+    "email": "ada@example.com",
+    "phone": "+1 415 555 0100",
+    "budget": "1.5k-2.5k",
+    "source": "google",
+}
 
 
 def test_brief_to_model_maps_form_fields():
-    dto = BriefCreateDTO(
-        goal="new-site",
-        site="vandv.studio",
-        message="Need a new marketing site",
-        name="Ada",
-        email="ada@example.com",
-    )
+    dto = BriefCreateDTO(goal="new-site", site="vandv.studio", **REQUIRED)
     brief = BriefMapper.to_model(dto, brief_id="fixed-id")
 
     assert brief.brief_id == "fixed-id"
@@ -21,27 +24,24 @@ def test_brief_to_model_maps_form_fields():
     assert brief.message == "Need a new marketing site"
     assert brief.name == "Ada"
     assert brief.email == "ada@example.com"
+    assert brief.phone == "+1 415 555 0100"
+    assert brief.budget is BriefBudget.FROM_1_5K_TO_2_5K
+    assert brief.source is BriefSource.GOOGLE
+    assert brief.source_other is None
 
 
 def test_site_is_optional_and_blank_becomes_none():
-    dto = BriefCreateDTO(
-        goal="demo",
-        site="",
-        message="Book a walkthrough",
-        name="Ada",
-        email="ada@example.com",
-    )
+    dto = BriefCreateDTO(goal="demo", site="", **REQUIRED)
     brief = BriefMapper.to_model(dto)
     assert brief.goal is BriefGoal.DEMO
     assert brief.site is None
+    assert brief.budget is None
 
 
 def test_brief_to_dto_round_trip():
     dto = BriefCreateDTO(
         goal="redesign",
-        message="The current site is slow",
-        name="Ada",
-        email="ada@example.com",
+        **{**REQUIRED, "message": "The current site is slow"},
     )
     brief = BriefMapper.to_model(dto, brief_id="abc")
     brief.created_at = datetime(2026, 8, 25, tzinfo=UTC)
@@ -53,3 +53,6 @@ def test_brief_to_dto_round_trip():
     assert out.message == "The current site is slow"
     assert out.name == "Ada"
     assert out.email == "ada@example.com"
+    assert out.phone == "+1 415 555 0100"
+    assert out.budget is BriefBudget.FROM_1_5K_TO_2_5K
+    assert out.source is BriefSource.GOOGLE

@@ -52,18 +52,45 @@ function goalLabel(goal: BriefPayload["goal"]) {
   return brief.goals.find((g) => g.id === goal)?.label ?? goal;
 }
 
+function budgetLabel(id: NonNullable<BriefPayload["budget"]>) {
+  const lists = Object.values(brief.fields.budget.byGoal);
+  for (const options of lists) {
+    const hit = options.find((o) => o.id === id);
+    if (hit) return hit.label;
+  }
+  return id;
+}
+
+function sourceLabel(payload: BriefPayload) {
+  const picked =
+    brief.fields.source.options.find((o) => o.id === payload.source)?.label ??
+    payload.source;
+  if (payload.source === "other" && payload.sourceOther?.trim()) {
+    return `${picked} — ${payload.sourceOther.trim()}`;
+  }
+  return picked;
+}
+
 function buildMime(payload: BriefPayload, to: string[]) {
   const site = payload.site?.trim() || "—";
   const subject = `Brief: ${goalLabel(payload.goal)} — ${payload.name}`;
-  const body = [
+  const lines = [
     `Goal:    ${goalLabel(payload.goal)}`,
     `Site:    ${site}`,
+  ];
+  if (payload.budget) {
+    lines.push(`Budget:  ${budgetLabel(payload.budget)}`);
+  }
+  lines.push(
     `Name:    ${payload.name}`,
     `Email:   ${payload.email}`,
+    `Phone:   ${payload.phone}`,
+    `Heard:   ${sourceLabel(payload)}`,
     "",
     "Message:",
     payload.message,
-  ].join("\r\n");
+  );
+  const body = lines.join("\r\n");
 
   // No From: Gmail fills the authorised mailbox, same as the FastAPI sender.
   return [

@@ -17,6 +17,9 @@ def test_brief_service_persists_to_sqlite():
         message="Traffic dropped after the last redesign",
         name="Ada",
         email="ada@example.com",
+        phone="+1 415 555 0100",
+        budget="500-1k",
+        source="google",
     )
 
     with Session(engine) as session:
@@ -31,4 +34,5 @@ def test_brief_service_persists_to_sqlite():
         assert loaded.message == "Traffic dropped after the last redesign"
         assert loaded.name == "Ada"
         assert loaded.email == "ada@example.com"
+        assert loaded.phone == "+1 415 555 0100"
         assert loaded.created_at is not None
