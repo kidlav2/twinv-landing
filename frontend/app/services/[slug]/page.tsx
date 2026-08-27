@@ -5,7 +5,7 @@ import { services } from "@/lib/content";
 import { PageShell } from "@/components/page-shell";
 import { Reveal } from "@/components/reveal";
 import { ScrollPanel } from "@/components/scroll-panel";
-import { ButtonPrimary, Tag } from "@/components/ui";
+import { ButtonPrimary } from "@/components/ui";
 import { AdjacentPager } from "@/components/adjacent-pager";
 import { ServiceBlobs } from "@/components/service-blobs";
 import { ServiceIncluded } from "@/components/service-included";
@@ -150,9 +150,6 @@ export default async function ServicePage({
               <p className="reveal text-fg max-w-[34ch] text-lead">
                 {service.body}
               </p>
-              <div className="reveal mt-8">
-                <Tag>{service.meta}</Tag>
-              </div>
             </div>
           </div>
         </Reveal>

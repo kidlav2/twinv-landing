@@ -374,7 +374,6 @@ export const services = {
       slug: "website-design",
       title: "Web Design & Development",
       body: "From concept to launch.",
-      meta: "From 4 weeks",
       intro:
         "Custom websites designed around your business, built for performance, clarity, and conversion.",
       included: [
@@ -400,7 +399,6 @@ export const services = {
       slug: "redesign",
       title: "Website Redesign",
       body: "Make your existing site work harder.",
-      meta: "From 3 weeks",
       intro:
         "We rethink structure, UX, design, and performance while preserving what already works.",
       included: [
@@ -426,7 +424,6 @@ export const services = {
       slug: "digital-products",
       title: "Digital Products",
       body: "From idea to working product.",
-      meta: "From 6 weeks",
       intro:
         "Web apps, dashboards, portals, and custom digital experiences designed and built around your users.",
       included: [
@@ -452,7 +449,6 @@ export const services = {
       slug: "brand-identity",
       title: "Brand & Identity",
       body: "A system, not just a logo.",
-      meta: "From 3 weeks",
       intro:
         "Identity, typography, colour, and visual direction built to work across your brand and website.",
       included: [
@@ -478,7 +474,6 @@ export const services = {
       slug: "care-growth",
       title: "Care & Growth",
       body: "Your website doesn't stop at launch.",
-      meta: "Monthly",
       intro:
         "Ongoing design, development, optimization, and improvements through a monthly partnership.",
       included: [
@@ -504,7 +499,6 @@ export const services = {
       slug: "digital-solutions",
       title: "Digital Solutions",
       body: "Connect the pieces. Automate the work.",
-      meta: "From 5 weeks",
       intro:
         "Custom integrations, APIs, automation, and digital tools that make your business run better.",
       included: [

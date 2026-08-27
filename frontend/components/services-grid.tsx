@@ -183,10 +183,7 @@ export function ServicesGrid() {
               title underlines on hover and focus, the same cue the pillar
               cards use, and `auto-rows-fr` keeps the cards a matched height
               now that nothing pins their bottoms. */}
-          <span className="text-faint font-mono text-caption uppercase">
-            {s.meta}
-          </span>
-          <h3 className="service-title font-display text-fg mt-4 text-heading-sm">
+          <h3 className="service-title font-display text-fg text-heading-sm">
             {s.title}
           </h3>
           <p className="text-muted mt-3 text-pretty text-body-sm leading-[1.45]">
