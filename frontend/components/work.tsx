@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { work } from "@/lib/content";
+import { teaserItems } from "@/lib/work";
 import { Reveal } from "./reveal";
 import { WorkCard } from "./work-card";
 
@@ -12,11 +13,12 @@ function cardStep(track: HTMLDivElement) {
 }
 
 /**
- * The homepage teaser. It shows the same three entries as `/work` but in the
- * compact card, and its job is to prove there is work rather than to be the
- * portfolio — the index owns that, and this section links to it.
+ * The homepage teaser. It shows three compact cards, not the full index —
+ * the index owns the portfolio, and this section links to it. `work.teaser`
+ * is the list; a four-product engagement is one card, not four.
  */
 export function Work() {
+  const teasers = teaserItems();
   const trackRef = useRef<HTMLDivElement>(null);
   const [atStart, setAtStart] = useState(true);
   const [atEnd, setAtEnd] = useState(false);
@@ -116,14 +118,14 @@ export function Work() {
             paddingInlineEnd: "var(--shell-padding)",
           }}
         >
-          {work.items.map((item) => (
+          {teasers.map((item) => (
             <WorkCard key={item.slug} item={item} />
           ))}
         </div>
 
-        {scrollable && work.items.length > 1 && (
+        {scrollable && teasers.length > 1 && (
           <div className="mt-8 flex justify-center gap-2" role="tablist">
-            {work.items.map((item, i) => (
+            {teasers.map((item, i) => (
               <button
                 key={item.slug}
                 type="button"

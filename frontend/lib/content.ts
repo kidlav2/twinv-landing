@@ -136,11 +136,16 @@ export const pillars = {
  *   percentage with no client behind it is the one lie a visitor can catch
  *   from the outside.
  *
- *   `type` is the outcome — Website / Automation / Growth — not the craft. The
- *   studio sells business change, so someone who arrived needing automation has
- *   to find themselves in the grid. The old tags ("SaaS · Redesign") sorted the
- *   work by how WE built it, which is the single axis a buyer does not care
- *   about.
+ *   `type` is the outcome — Website / Automation / Growth / App — not the
+ *   craft. The studio sells business change, so someone who arrived needing
+ *   automation has to find themselves in the grid. The old tags ("SaaS ·
+ *   Redesign") sorted the work by how WE built it, which is the single axis a
+ *   buyer does not care about.
+ *
+ *   `family` groups several cases from one engagement. The hub lives in
+ *   `families` (a table of contents, not a fifth timeline). Children point at
+ *   that slug. The homepage teaser reads `teaser`, not the full `items` list —
+ *   a four-product engagement must not occupy the whole track.
  *
  *   `url` is the live site. The case page treats the screenshot as that
  *   link; an empty string would be a click into nowhere, so every entry
@@ -163,7 +168,7 @@ export const pillars = {
  */
 export const work = {
   headline: "Selected work",
-  sub: "Three projects, and what changed because of them.",
+  sub: "The work, and what changed because of it.",
   /** Label for the link from the homepage teaser to the full index. */
   more: "All work",
   /** External link on `/work/[slug]`. The screenshot is the same action. */
@@ -181,15 +186,316 @@ export const work = {
     prev: "Previous project",
     next: "Next project",
   },
+  /** Hub layer switcher — mint tag active, ash tags idle. */
+  layers: {
+    legend: "Surfaces",
+  },
   /** Closing panel on `/work` and each case study. */
   close: {
     headline: "Tell us what you need to move",
     body: "Send the URL and the number you want to change. We'll come back with an honest read on whether we can help.",
     cta: { label: "Start a project", href: "/#contact" },
   },
+  /**
+   * Homepage `#work` track. Deliberately not `items` — otherwise a
+   * four-product engagement would be the whole teaser.
+   */
+  teaser: [
+    "velocult",
+    "saas-product",
+    "studio-brand-launch",
+  ],
+  /**
+   * One engagement, several surfaces. The hub is `/work/[slug]`; each child
+   * slug is a full case in `items`.
+   */
+  families: [
+    {
+      slug: "velocult",
+      title: "Give an e-bike shop a SaaS so the public site and the CRM stop being two different stories",
+      summary:
+        "VeloCult sells, rents, and services e-bikes. We built that as one SaaS — the public website and the CRM as two doors into the same product, not a brochure that dumps everything on a desk.",
+      kind: "client",
+      client: "VeloCult",
+      sector: "E-commerce",
+      year: "2026",
+      type: "SaaS",
+      image: "",
+      gallery: [],
+      metric: { value: "2", label: "doors into one SaaS" },
+      role: "Strategy, design, frontend, backend",
+      stack: [
+        "React",
+        "Vite",
+        "Tailwind CSS",
+        "FastAPI",
+        "PostgreSQL",
+      ],
+      url: "https://вело-культ.рф",
+      task: "VeloCult is a shop that sells e-bikes, rents them, and books workshop time. Those are different jobs, and a brochure homepage plus one phone number cannot hold them. A visit arrived with an intent and had nowhere on the page that matched it, so every request collapsed into the same inbox — and the floor reconstructed the job from a blob of text.",
+      approach: [
+        {
+          label: "One product, two doors",
+          body: "The SaaS is the shop's operating system. The public site is how a visitor starts a job; the CRM is how the floor finishes it. They are not two tools that happen to share a logo.",
+        },
+        {
+          label: "A public site that can take the intent",
+          body: "Buy, rent, service, shop, and parts each submit from the page that creates them. The contact block is not the dump for every job, and the catalogs do not mix a frame with a bottle cage.",
+        },
+        {
+          label: "A CRM so the floor is not one inbox",
+          body: "The form already named the job. The CRM keeps those leads in separate queues, with a status and an owner, so a rental is not filed as a parts request.",
+        },
+      ],
+      outcome:
+        "One SaaS, two doors: visitors finish a job on the site, and staff see it already named in the CRM — the same product, not a brochure and a spreadsheet that do not talk.",
+      outcomeFacts: [
+        { value: "2", label: "doors into one SaaS" },
+        { value: "5", label: "named lead types" },
+        { value: "1", label: "inbox they no longer share" },
+      ],
+      children: [
+        "velocult-site",
+        "velocult-catalog",
+        "velocult-crm",
+        "velocult-android",
+      ],
+      layers: [
+        { id: "saas", label: "SaaS" },
+        { id: "website", label: "Website", slug: "velocult-site" },
+        { id: "crm", label: "CRM", slug: "velocult-crm" },
+      ],
+    },
+    {
+      slug: "saas-product",
+      title: "Ship a SaaS as one product, not a site, an app, a landing, and a bot that do not share an account",
+      summary:
+        "Four doors into one product: the marketing site, the app, a campaign landing, and a Telegram bot. We built them as one SaaS so a trial started in any of those places is the same account.",
+      kind: "client",
+      client: "Client name",
+      sector: "SaaS",
+      year: "2026",
+      type: "SaaS",
+      image: "",
+      gallery: [],
+      metric: { value: "4", label: "doors into one product" },
+      role: "Strategy, design, frontend, backend, android",
+      stack: [
+        "Next.js",
+        "TypeScript",
+        "Tailwind CSS",
+        "FastAPI",
+        "PostgreSQL",
+        "Kotlin",
+        "Telegram Bot API",
+      ],
+      url: "https://example.com/saas-product",
+      task: "The company sold one product and owned four ways in — a marketing site, an app, a landing for ads, and a Telegram bot — that did not share an account. A trial started in ads did not exist in the app. A chat in Telegram was a second inbox. Traffic was fine. The product was four products.",
+      approach: [
+        {
+          label: "One account, four doors",
+          body: "A trial is the same record whether it starts on the site, in the app, on a campaign landing, or in Telegram. None of those surfaces is allowed to open a parallel product.",
+        },
+        {
+          label: "The site argues. The app does the job",
+          body: "The marketing site and the landing exist to start the trial. The app is where the product runs. Mixing those jobs is how a homepage becomes a dashboard and a dashboard becomes a brochure.",
+        },
+        {
+          label: "Telegram is a door, not a second support pile",
+          body: "The bot files the same account the CRM already knows. A chat that cannot see the trial is how the original four-product problem comes back as five.",
+        },
+      ],
+      outcome:
+        "Four surfaces, one product: a trial started on any door is the account the app already runs, and Telegram is looking at that account rather than a parallel inbox.",
+      outcomeFacts: [
+        { value: "4", label: "doors into one product" },
+        { value: "1", label: "account every door writes" },
+        { value: "9 → 3", label: "marketing pages kept" },
+      ],
+      children: [
+        "saas-marketing-site",
+        "saas-product-app",
+        "saas-product-landing",
+        "saas-product-tgbot",
+      ],
+      layers: [
+        { id: "saas", label: "SaaS" },
+        { id: "website", label: "Website", slug: "saas-marketing-site" },
+        { id: "app", label: "App", slug: "saas-product-app" },
+        { id: "landing", label: "Landing", slug: "saas-product-landing" },
+        { id: "tgbot", label: "Tgbot", slug: "saas-product-tgbot" },
+      ],
+    },
+  ],
   items: [
     {
+      slug: "velocult-site",
+      family: "velocult",
+      short: "Site",
+      title: "Rebuild an e-bike shop so buy, rent, and service stop sharing one inbox",
+      kind: "client",
+      client: "VeloCult",
+      sector: "E-commerce",
+      year: "2026",
+      type: "Website",
+      image: "",
+      gallery: [],
+      summary:
+        "Rebuilt VeloCult’s public site so buy, rent, service, shop, and parts each submit as their own lead from the page that creates the intent.",
+      metric: { value: "5", label: "lead types on one origin" },
+      role: "Strategy, design, frontend, backend",
+      stack: ["React", "Vite", "Tailwind CSS", "FastAPI", "PostgreSQL", "SQLAlchemy"],
+      url: "https://вело-культ.рф",
+      task: "The shop sells e-bikes, rents them, books workshop time, and stocks parts. Those are different decisions, and a brochure homepage plus one phone number cannot hold them. A visit arrived with a job and had nowhere on the page that matched it, so every intent collapsed into the same inbox.",
+      approach: [
+        {
+          label: "A form per intent, not one inbox",
+          body: "Buy, rent, service, shop checkout, and parts request each post to their own endpoint from the surface where the decision happens. The contact block is not the dump for every job.",
+        },
+        {
+          label: "Find us is a page. Booking is a form",
+          body: "The utility bar goes to /location. Service booking opens a form. The landing map stays a map. One nav item no longer pretends to be directions, a workshop slot, and a catalog.",
+        },
+        {
+          label: "One origin, five jobs",
+          body: "Storefront, catalogs, and ops sit on one public origin so a buyer does not bounce between a site, a form tool, and a phone number to finish what they came to do.",
+        },
+      ],
+      outcome:
+        "Five distinct lead types now leave the page they were decided on, on one public origin, instead of sharing a generic contact dump.",
+      outcomeFacts: [
+        { value: "5", label: "lead types on one origin" },
+        { value: "7", label: "public storefront routes" },
+        { value: "1", label: "origin for every public job" },
+      ],
+    },
+    {
+      slug: "velocult-catalog",
+      family: "velocult",
+      short: "Catalog",
+      title: "Split e-bikes and accessories so a frame is never next to a bottle cage",
+      kind: "client",
+      client: "VeloCult",
+      sector: "E-commerce",
+      year: "2026",
+      type: "Website",
+      image: "",
+      gallery: [],
+      summary:
+        "Two catalogs with one job each: e-bikes at /bikes, accessories at /shop, instead of one list that mixed a purchase with a spare part.",
+      metric: { value: "2", label: "separate catalogs" },
+      role: "Design, frontend, backend",
+      stack: ["React", "Vite", "Tailwind CSS", "FastAPI", "PostgreSQL"],
+      url: "https://вело-культ.рф",
+      task: "E-bikes and accessories lived in one list. A buyer comparing a frame to a bottle cage is not browsing; they are lost. The shop needed two catalogs because those are two different decisions, not two filters on the same page.",
+      approach: [
+        {
+          label: "Two catalogs for two jobs",
+          body: "E-bikes live at /bikes. Accessories live at /shop. Mixing them made a buyer compare a frame to a bottle cage. Split the catalogs so each list has one job.",
+        },
+        {
+          label: "A product page that sells one thing",
+          body: "Each item opens a page built for that decision — a bike to ride or a part to fit — not a generic card that pretends every SKU is the same kind of purchase.",
+        },
+        {
+          label: "The list is not the homepage",
+          body: "The catalogs are routes with a job, not a gallery dumped under the hero. A visitor who came to browse parts does not have to reconstruct the shop from the landing page.",
+        },
+      ],
+      outcome:
+        "Two catalogs, two jobs: a bike buyer and a parts buyer each land on a list that only contains what they came for.",
+      outcomeFacts: [
+        { value: "2", label: "separate catalogs" },
+        { value: "/bikes", label: "e-bike catalog" },
+        { value: "/shop", label: "accessories catalog" },
+      ],
+    },
+    {
+      slug: "velocult-crm",
+      family: "velocult",
+      short: "CRM",
+      title: "Give the floor five queues so a rental is not a parts request",
+      kind: "client",
+      client: "VeloCult",
+      sector: "E-commerce",
+      year: "2026",
+      type: "Automation",
+      image: "",
+      gallery: [],
+      summary:
+        "A CRM that keeps buy, rent, service, shop, and parts as separate queues — with status and an owner — instead of one inbox the public site poured everything into.",
+      metric: { value: "5", label: "queues for five lead types" },
+      role: "Strategy, backend",
+      stack: ["FastAPI", "PostgreSQL", "SQLAlchemy", "React"],
+      url: "https://вело-культ.рф",
+      task: "The public site could name five jobs and still dump them on the same desk. Staff opened one inbox and reconstructed the intent from a blob of text. A rental, a service slot, and a parts request are not the same ticket, and treating them as one is how work gets lost.",
+      approach: [
+        {
+          label: "A queue per lead type",
+          body: "Buy, rent, service, shop, and parts each land in their own queue. The form already named the job; the CRM does not make someone re-tag it.",
+        },
+        {
+          label: "Status instead of a thread",
+          body: "A lead has a state the floor can see — new, in progress, done — so work is not reconstructed from the last email in a pile.",
+        },
+        {
+          label: "An owner on every ticket",
+          body: "Someone is responsible for the lead. A queue without an owner is still an inbox, just with nicer columns.",
+        },
+      ],
+      outcome:
+        "Five lead types arrive already named, in five queues, with a status and an owner — the public form and the floor are looking at the same job.",
+      outcomeFacts: [
+        { value: "5", label: "queues for five lead types" },
+        { value: "1", label: "owner per ticket" },
+        { value: "3", label: "states a lead can be in" },
+      ],
+    },
+    {
+      slug: "velocult-android",
+      family: "velocult",
+      short: "App",
+      title: "Put rent and service on the floor, not in a browser tab",
+      kind: "client",
+      client: "VeloCult",
+      sector: "E-commerce",
+      year: "2026",
+      type: "App",
+      image: "",
+      gallery: [],
+      summary:
+        "A native Android app for the jobs that happen in the shop — rent and service — talking to the same CRM, not a second inbox on a phone.",
+      metric: { value: "1", label: "native client on the floor" },
+      role: "Design, android",
+      stack: ["Kotlin", "Jetpack Compose", "FastAPI", "PostgreSQL"],
+      url: "https://вело-культ.рф",
+      task: "Rent and workshop work happen on the floor, not at a desk browser. Opening the public site on a phone is still a brochure: the wrong chrome, the wrong forms, and a second place for the same leads to hide.",
+      approach: [
+        {
+          label: "Native, not a wrap of the site",
+          body: "The app is Kotlin on the device, not a WebView of the storefront. Floor work needs the platform, not a squeezed marketing page.",
+        },
+        {
+          label: "The jobs that happen in the shop",
+          body: "Rent and service are the screens. The brochure, the bike catalog, and the contact block stay on the public site, where a visitor actually needs them.",
+        },
+        {
+          label: "The same leads as the CRM",
+          body: "What the app files is the same ticket the CRM already knows. A phone that starts a second inbox is how the original problem comes back.",
+        },
+      ],
+      outcome:
+        "Floor staff file rent and service on the device they are holding, into the same queues the CRM already runs — not into a parallel inbox.",
+      outcomeFacts: [
+        { value: "1", label: "native client on the floor" },
+        { value: "2", label: "floor jobs in the app" },
+        { value: "0", label: "second inbox on the phone" },
+      ],
+    },
+    {
       slug: "saas-marketing-site",
+      family: "saas-product",
+      short: "Website",
       title: "Rebuilt a SaaS marketing site around one job",
       kind: "client",
       client: "Client name",
@@ -229,7 +535,132 @@ export const work = {
       ],
     },
     {
+      slug: "saas-product-app",
+      family: "saas-product",
+      short: "App",
+      title: "Put the product in an app that is not a squeezed marketing site",
+      kind: "client",
+      client: "Client name",
+      sector: "SaaS",
+      year: "2026",
+      type: "App",
+      image: "",
+      gallery: [],
+      summary:
+        "The logged-in product lives in the app. The marketing site argues; the app does the job — same account a trial already opened on any other door.",
+      metric: { value: "1", label: "account the app already knows" },
+      role: "Design, android, backend",
+      stack: ["Kotlin", "Jetpack Compose", "FastAPI", "PostgreSQL"],
+      url: "https://example.com/saas-product",
+      task: "The 'app' was a WebView of the marketing site. Logged-in work happened in the same chrome as the brochure, so a trial that started on a landing page had nowhere product-shaped to land, and a phone was a second place for the same account to hide.",
+      approach: [
+        {
+          label: "Native for the job, not a wrap of the site",
+          body: "The app is the product on the device. A squeezed homepage is still a homepage, and it is the wrong chrome for someone who already signed up.",
+        },
+        {
+          label: "The account already exists",
+          body: "A trial started on the site, a landing, or Telegram opens here as the same user. The app does not create a parallel login because the other doors looked different.",
+        },
+        {
+          label: "Brochure stays on the site",
+          body: "Pricing, the argument, and the campaign landing stay public. The app does not grow a second marketing site inside a tab bar.",
+        },
+      ],
+      outcome:
+        "The product runs in the app, on the account every other door already wrote — not in a WebView of the page that was supposed to sell it.",
+      outcomeFacts: [
+        { value: "1", label: "account the app already knows" },
+        { value: "0", label: "second login on the phone" },
+        { value: "1", label: "job the app is for" },
+      ],
+    },
+    {
+      slug: "saas-product-landing",
+      family: "saas-product",
+      short: "Landing",
+      title: "Give paid traffic one page that starts the same trial the site already runs",
+      kind: "client",
+      client: "Client name",
+      sector: "SaaS",
+      year: "2026",
+      type: "Website",
+      image: "",
+      gallery: [],
+      summary:
+        "A campaign landing with one job: start a trial into the existing product. It is not a fifth marketing site, and the account it opens is the one the app already knows.",
+      metric: { value: "1", label: "job the landing is for" },
+      role: "Strategy, design, build",
+      stack: ["Next.js", "TypeScript", "Tailwind", "Vercel"],
+      url: "https://example.com/saas-product",
+      task: "Each campaign grew its own landing that argued a different product and dumped signups into a spreadsheet. Paid traffic was buying a parallel trial, not the one the app and the site already shared.",
+      approach: [
+        {
+          label: "One page, one decision",
+          body: "The landing names the trigger the ad already used and offers the trial. It does not grow a second sitemap, a second pricing table, or a second blog.",
+        },
+        {
+          label: "Signup is the same trial",
+          body: "The form writes the account the SaaS already runs. A campaign that cannot see the product is just another inbox with nicer type.",
+        },
+        {
+          label: "The rest of the argument stays on the site",
+          body: "Deep pages, comparisons, and the long case live on the marketing site. The landing is a door, not a duplicate of the company.",
+        },
+      ],
+      outcome:
+        "Paid traffic starts the same trial the marketing site already sells, on one page whose only job is that start — not a fifth product with its own backlog.",
+      outcomeFacts: [
+        { value: "1", label: "job the landing is for" },
+        { value: "1", label: "trial every campaign writes" },
+        { value: "0", label: "spreadsheet of parallel signups" },
+      ],
+    },
+    {
+      slug: "saas-product-tgbot",
+      family: "saas-product",
+      short: "Tgbot",
+      title: "Put Telegram on the same account, not on a second support pile",
+      kind: "client",
+      client: "Client name",
+      sector: "SaaS",
+      year: "2026",
+      type: "Automation",
+      image: "",
+      gallery: [],
+      summary:
+        "A Telegram bot that can start or continue the same trial the site, the landing, and the app already share — not a chat that becomes a fifth inbox.",
+      metric: { value: "1", label: "account the bot can see" },
+      role: "Strategy, backend",
+      stack: ["FastAPI", "PostgreSQL", "Telegram Bot API"],
+      url: "https://example.com/saas-product",
+      task: "Customers already lived in Telegram. The bot answered as a stranger: it could not see the trial, could not open one, and every chat became a ticket that did not exist in the product. Support was a second company with a worse memory.",
+      approach: [
+        {
+          label: "The bot is a door",
+          body: "Start a trial, pick up an existing one, or ask a status the product already knows. A bot that only chats is a helpdesk with extra steps.",
+        },
+        {
+          label: "Same account as the app",
+          body: "Identity in Telegram maps to the SaaS user. A message that cannot see the trial is how the four-door product becomes five inboxes.",
+        },
+        {
+          label: "No parallel queue",
+          body: "What the bot files is visible in the same place the site and the app already write. Support does not keep a Telegram-only pile.",
+        },
+      ],
+      outcome:
+        "Telegram is looking at the same account the rest of the product runs — a door, not a second company that happens to share a logo.",
+      outcomeFacts: [
+        { value: "1", label: "account the bot can see" },
+        { value: "0", label: "Telegram-only ticket pile" },
+        { value: "3", label: "jobs the bot can start" },
+      ],
+    },
+    {
       slug: "storefront-performance",
+      family: "",
+      short: "",
       title: "Took a storefront from four seconds to one",
       kind: "self",
       client: "",
@@ -270,6 +701,8 @@ export const work = {
     },
     {
       slug: "studio-brand-launch",
+      family: "",
+      short: "",
       title: "Launched a studio brand from an empty repo",
       kind: "self",
       client: "",

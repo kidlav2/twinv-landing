@@ -1,7 +1,11 @@
 import { work } from "@/lib/content";
 import { WorkStill } from "./work-still";
 
-type Item = (typeof work.items)[number];
+type LiveItem = {
+  slug: string;
+  url: string;
+  image: string;
+};
 
 export function hostOf(url: string) {
   try {
@@ -24,9 +28,13 @@ export function hostOf(url: string) {
 export function WorkLive({
   item,
   className = "",
+  reveal = true,
 }: {
-  item: Item;
+  item: LiveItem;
   className?: string;
+  /** Hub stage already owns entrance; a nested `.reveal` would pre-hide
+   *  the still and freeze it if the swap remounts off the original batch. */
+  reveal?: boolean;
 }) {
   const host = hostOf(item.url);
 
@@ -36,7 +44,7 @@ export function WorkLive({
       target="_blank"
       rel="noreferrer"
       aria-label={`${work.visit} ${host}`}
-      className={`reveal group block max-lg:-mx-[var(--shell-padding)] max-lg:w-[calc(100%+var(--shell-padding)*2)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current ${className}`}
+      className={`${reveal ? "reveal " : ""}group block max-lg:-mx-[var(--shell-padding)] max-lg:w-[calc(100%+var(--shell-padding)*2)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current ${className}`}
     >
       <div className="rounded-card max-lg:rounded-none bg-carbon overflow-hidden">
         <div className="flex min-h-11 items-center justify-between gap-4 px-4 py-3 sm:px-5">

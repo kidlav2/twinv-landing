@@ -5,6 +5,7 @@ import { Reveal } from "@/components/reveal";
 import { ScrollPanel } from "@/components/scroll-panel";
 import { ButtonPrimary } from "@/components/ui";
 import { WorkTile } from "@/components/work-card";
+import { indexTiles } from "@/lib/work";
 
 export const metadata: Metadata = {
   title: "Work",
@@ -37,7 +38,8 @@ export const metadata: Metadata = {
  * read as one site.
  */
 export default function WorkIndexPage() {
-  const wideFirst = work.items.length % 2 === 1;
+  const tiles = indexTiles();
+  const wideFirst = tiles.length % 2 === 1;
 
   /* flushFooter: the closing panel already ends on its own section padding, so
      the footer's default `pt-section` stacked on top of it reads as an empty
@@ -62,7 +64,7 @@ export default function WorkIndexPage() {
               caption sits directly under its picture, so with equal gaps the
               tile below reads as part of the caption above it. */}
           <div className="grid gap-y-20 lg:grid-cols-2 lg:gap-x-12 lg:gap-y-28">
-            {work.items.map((item, i) => {
+            {tiles.map((item, i) => {
               const feature = wideFirst && i === 0;
               return (
                 <WorkTile

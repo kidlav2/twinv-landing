@@ -63,17 +63,42 @@ export function ButtonGhost({
 export function Tag({
   children,
   className = "",
+  muted = false,
+  onClick,
+  selected,
+  id,
+  tabIndex,
 }: {
   children: ReactNode;
   className?: string;
+  muted?: boolean;
+  onClick?: () => void;
+  selected?: boolean;
+  id?: string;
+  tabIndex?: number;
 }) {
-  return (
-    <span
-      className={`bg-mint text-carbon rounded-tag font-mono inline-flex items-center px-4 py-2 text-caption uppercase ${className}`}
-    >
-      {children}
-    </span>
-  );
+  const tone = muted
+    ? "bg-ash text-carbon hover:bg-slate"
+    : "bg-mint text-carbon";
+  const shape = `rounded-tag font-mono inline-flex items-center px-4 py-2 text-caption uppercase ${tone} ${className}`;
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        id={id}
+        role="tab"
+        aria-selected={selected}
+        tabIndex={tabIndex}
+        onClick={onClick}
+        className={`cursor-pointer ${shape}`}
+      >
+        {children}
+      </button>
+    );
+  }
+
+  return <span className={shape}>{children}</span>;
 }
 
 export function SectionLabel({ children }: { children: ReactNode }) {

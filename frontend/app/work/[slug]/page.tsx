@@ -1,7 +1,14 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { work } from "@/lib/content";
+import {
+  allWorkSlugs,
+  familyOf,
+  findCase,
+  findFamily,
+  layerIdFor,
+} from "@/lib/work";
 import { PageShell } from "@/components/page-shell";
 import { Reveal } from "@/components/reveal";
 import { ScrollPanel } from "@/components/scroll-panel";
@@ -10,16 +17,12 @@ import { WorkLive, hostOf } from "@/components/work-live";
 import { CaseBeat, CaseTimeline } from "@/components/case-timeline";
 import { CaseGallery } from "@/components/case-gallery";
 import { AdjacentPager } from "@/components/adjacent-pager";
+import { WorkHub } from "@/components/work-hub";
 
 type Params = { slug: string };
-type Project = (typeof work.items)[number];
 
 export function generateStaticParams(): Params[] {
-  return work.items.map((p) => ({ slug: p.slug }));
-}
-
-function findProject(slug: string): Project | undefined {
-  return work.items.find((p) => p.slug === slug);
+  return allWorkSlugs();
 }
 
 export async function generateMetadata({
@@ -27,7 +30,10 @@ export async function generateMetadata({
 }: {
   params: Promise<Params>;
 }): Promise<Metadata> {
-  const project = findProject((await params).slug);
+  const slug = (await params).slug;
+  const family = findFamily(slug);
+  if (family) return { title: family.title, description: family.summary };
+  const project = findCase(slug);
   if (!project) return {};
   return { title: project.title, description: project.summary };
 }
@@ -88,17 +94,34 @@ export default async function ProjectPage({
 }: {
   params: Promise<Params>;
 }) {
-  const project = findProject((await params).slug);
+  const slug = (await params).slug;
+  const family = findFamily(slug);
+  if (family) {
+    return (
+      <PageShell flushFooter footerTone="dark">
+        <WorkHub family={family} />
+      </PageShell>
+    );
+  }
+
+  const project = findCase(slug);
   if (!project) notFound();
+
+  const engagement = familyOf(project);
+  if (engagement) {
+    const layer = layerIdFor(project, engagement);
+    redirect(
+      layer && layer !== "website"
+        ? `/work/${engagement.slug}#${layer}`
+        : `/work/${engagement.slug}`,
+    );
+  }
 
   const total = work.items.length;
   const index = work.items.findIndex((p) => p.slug === project.slug);
   const prev = work.items[(index - 1 + total) % total];
   const next = work.items[(index + 1) % total];
 
-  // Self-initiated work leads with that fact instead of its sector. See the
-  // rules on `kind` in lib/content.ts — this is the one label that must never
-  // be softened, because it is the claim a visitor can check from outside.
   const lead = project.kind === "self" ? "Self-initiated" : project.sector;
   const host = hostOf(project.url);
 

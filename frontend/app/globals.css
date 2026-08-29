@@ -349,6 +349,17 @@
     pointer-events: none;
   }
 
+  /* Every teaser title occupies two lines so a long case name cannot
+     stretch one card past its neighbours. */
+  .work-card-title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    min-height: calc(var(--text-heading-sm) * var(--text-heading-sm--line-height) * 2);
+  }
+
   @media (hover: hover) and (pointer: fine) {
     .work-card-teaser:hover .work-card-still,
     .work-card-teaser:focus-visible .work-card-still {

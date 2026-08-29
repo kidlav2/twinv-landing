@@ -1,10 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { work } from "@/lib/content";
+import type { WorkCase, WorkTileItem } from "@/lib/work";
 import { Tag } from "./ui";
 import { WorkStill } from "./work-still";
-
-type Item = (typeof work.items)[number];
 
 /**
  * The line that opens a card. It answers "whose was this, and when" before
@@ -16,37 +14,13 @@ type Item = (typeof work.items)[number];
  * and a visitor who finds it out later stops believing the rest of the page.
  * See the rules on `kind` in lib/content.ts.
  */
-function Kicker({ item }: { item: Item }) {
+function Kicker({ item }: { item: WorkTileItem | WorkCase }) {
   const lead = item.kind === "self" ? "Self-initiated" : item.sector;
   return (
     <p className="text-faint font-mono text-caption uppercase">
       {lead} · {item.year}
+      {item.client ? ` · ${item.client}` : ""}
     </p>
-  );
-}
-
-/**
- * The loud face of the teaser's hover state: a number in display type with a
- * mono line naming what it measures.
- *
- * The label is load-bearing rather than decorative. It is what lets `+142%`
- * and `1.1s` sit in the same slot on adjacent cards without the second one
- * borrowing the authority of the first — the reader is told which kind of
- * claim they are looking at, in the same breath as the figure.
- *
- * Only the teaser uses this. The `/work` index deliberately does not — see
- * the note on `metric` in lib/content.ts.
- */
-function Metric({ item }: { item: Item }) {
-  return (
-    <div>
-      <p className="font-display text-display leading-none">
-        {item.metric.value}
-      </p>
-      <p className="text-faint mt-3 font-mono text-caption uppercase">
-        {item.metric.label}
-      </p>
-    </div>
   );
 }
 
@@ -61,7 +35,7 @@ function Metric({ item }: { item: Item }) {
  *  same-size overlay carries the title and translates by its own height
  *  (`-100%`), so nothing — not `cqw`, not grid rows — is interpolated as
  *  layout. The summary is out of flow and cannot shove the tag. */
-export function WorkCard({ item }: { item: Item }) {
+export function WorkCard({ item }: { item: WorkCase }) {
   return (
     <Link
       href={`/work/${item.slug}`}
@@ -71,18 +45,30 @@ export function WorkCard({ item }: { item: Item }) {
       <div className="work-card-pin">
         <div className="work-card-still">
           <div className="work-card-still-inner">
-            <Image
-              src={item.image}
-              alt=""
-              fill
-              sizes="(min-width: 640px) 420px, 85vw"
-              className="object-cover"
-            />
+            {item.image ? (
+              <Image
+                src={item.image}
+                alt=""
+                fill
+                sizes="(min-width: 640px) 420px, 85vw"
+                className="object-cover"
+              />
+            ) : (
+              <WorkStill
+                slug={item.slug}
+                image={item.image}
+                size="lg"
+                bleed={false}
+                className="rounded-none"
+              />
+            )}
           </div>
         </div>
         <div className="work-card-mover">
           <div className="work-card-shift px-6 pt-6">
-            <h3 className="font-display text-heading-sm">{item.title}</h3>
+            <h3 className="work-card-title font-display text-heading-sm">
+              {item.title}
+            </h3>
             <div className="work-card-lede px-6">
               <Kicker item={item} />
               <p className="text-muted mt-4 text-body">{item.summary}</p>
@@ -92,7 +78,9 @@ export function WorkCard({ item }: { item: Item }) {
       </div>
 
       <div className="work-card-title-slot px-6 pt-6" aria-hidden>
-        <h3 className="font-display text-heading-sm">{item.title}</h3>
+        <h3 className="work-card-title font-display text-heading-sm">
+          {item.title}
+        </h3>
       </div>
 
       <div className="work-card-foot px-6 pt-4 pb-6">
@@ -117,7 +105,7 @@ function Caption({
   feature,
   className = "",
 }: {
-  item: Item;
+  item: WorkTileItem;
   feature: boolean;
   className?: string;
 }) {
@@ -146,7 +134,7 @@ function Caption({
           row of tiles whose tags each land at a different height reads as
           three unrelated blocks rather than one row. */}
       <div className="mt-auto pt-6">
-        <Tag>{item.type}</Tag>
+        {item.type ? <Tag>{item.type}</Tag> : null}
       </div>
     </div>
   );
@@ -172,15 +160,17 @@ export function WorkTile({
   item,
   feature = false,
   className = "",
+  reveal = true,
 }: {
-  item: Item;
+  item: WorkTileItem;
   feature?: boolean;
   className?: string;
+  reveal?: boolean;
 }) {
   return (
     <Link
       href={`/work/${item.slug}`}
-      className={`reveal group flex flex-col ${
+      className={`${reveal ? "reveal " : ""}group flex flex-col ${
         feature ? "lg:grid lg:grid-cols-12 lg:items-center lg:gap-12" : ""
       } ${className}`}
     >
