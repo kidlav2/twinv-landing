@@ -26,6 +26,7 @@ type Errors = Partial<Record<FieldName, string>>;
 
 /**
  * The closing section: artwork on the left, the brief form on the right.
+ * The split starts at `xl` so a laptop still gets both, not only a 27" monitor.
  *
  * It carries `id="contact"` because it IS the contact section now. It replaced
  * a pair of cards — "Start a project" and "About us" — that sat here before.
@@ -160,18 +161,15 @@ export function Brief() {
   return (
     <section
       id="contact"
-      className="py-8 lg:flex lg:min-h-[calc(100dvh-var(--nav-height))] lg:flex-col lg:justify-center lg:py-4"
+      className="py-section lg:flex lg:min-h-[calc(100dvh-var(--nav-height))] lg:flex-col lg:justify-center"
     >
-      {/* Padding is tight on purpose: landing on #contact should show the
-          whole brief in one viewport (below the nav), not a form you have
-          to scroll through to submit. py-section made it a second page. */}
       <Reveal className="shell">
-        <div className="grid items-center gap-10 2xl:grid-cols-2 2xl:gap-12">
-          {/* Art first in the DOM so it sits left without order utilities. It
-              is aria-hidden and holds nothing focusable, so reading order and
-              tab order are unaffected. Only from 2xl — on a 13–15" laptop the
-              form has to own the whole width or it will not fit in 100dvh. */}
-          <div className="reveal hidden 2xl:block">
+        <div className="grid items-center gap-10 xl:grid-cols-2 xl:gap-12">
+          {/* Art first in the DOM so it sits left. Hidden only below xl —
+              a 13–15" laptop is 1280–1512px, which is xl, not 2xl; parking
+              the shapes behind 2xl left the form full-bleed on those
+              screens and dropped the only motion in the section. */}
+          <div className="reveal hidden xl:block">
             <BriefShapes />
           </div>
 
@@ -262,7 +260,7 @@ export function Brief() {
                     <FieldError id="brief-message-e" message={errors.message} />
                   </div>
 
-                  <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2">
                     <div>
                       <label htmlFor="brief-site" className={label}>
                         {brief.fields.site.label}{" "}

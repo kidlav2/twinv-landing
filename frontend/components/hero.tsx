@@ -68,7 +68,9 @@ export function Hero() {
             </h1>
 
             <div className="mt-8 max-w-[46ch] lg:mt-20">
-              <p className="hero-sub text-muted text-sub-lg">{hero.sub}</p>
+              <p className="hero-sub text-muted text-sub-lg leading-[1.35]">
+                {hero.sub}
+              </p>
             </div>
           </div>
 
