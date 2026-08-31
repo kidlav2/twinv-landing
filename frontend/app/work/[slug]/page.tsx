@@ -159,7 +159,16 @@ export default async function ProjectPage({
             <div className="lg:col-span-5">
               <p className="reveal text-faint font-mono text-caption uppercase">
                 {lead} · {project.year}
-                {project.client ? ` · ${project.client}` : ""}
+                {project.client ? (
+                  <>
+                    {" · "}
+                    <span className="bg-voltage text-carbon px-1">
+                      {project.client}
+                    </span>
+                  </>
+                ) : (
+                  ""
+                )}
               </p>
 
               {/* `text-heading-lg` beside the still, not `text-display`.

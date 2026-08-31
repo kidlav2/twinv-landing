@@ -19,7 +19,14 @@ function Kicker({ item }: { item: WorkTileItem | WorkCase }) {
   return (
     <p className="text-faint font-mono text-caption uppercase">
       {lead} · {item.year}
-      {item.client ? ` · ${item.client}` : ""}
+      {item.client ? (
+        <>
+          {" · "}
+          <span className="bg-voltage text-carbon px-1">{item.client}</span>
+        </>
+      ) : (
+        ""
+      )}
     </p>
   );
 }

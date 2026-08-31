@@ -84,6 +84,36 @@ function StudioStill() {
   );
 }
 
+function TaskStill() {
+  return (
+    <div className="bg-carbon text-paper flex h-full min-h-0 flex-col justify-between p-[8%]">
+      <div>
+        <p className="font-mono text-[clamp(0.5rem,2.2cqi,0.7rem)] uppercase opacity-50">
+          Month 1
+        </p>
+        <p className="font-display mt-[0.25em] text-[clamp(1.6rem,9cqi,3.75rem)] leading-[0.9]">
+          Get set up
+        </p>
+      </div>
+      <div className="flex flex-col gap-[6%]">
+        {THREE.map((i) => (
+          <div
+            key={i}
+            className="bg-paper/10 rounded-btn flex items-center gap-[6%] p-[6%]"
+          >
+            <span
+              className={`size-[clamp(0.6rem,3cqi,1rem)] shrink-0 rounded-full ${
+                i === 0 ? "bg-mint" : "bg-paper/20"
+              }`}
+            />
+            <div className="bg-paper/15 h-[0.6em] flex-1 rounded-sm" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function GenericStill() {
   return (
     <div className="bg-paper flex h-full min-h-0 flex-col justify-end p-[10%]">
@@ -286,6 +316,8 @@ function StillFor({ slug }: { slug: string }) {
       return <SaasProductLandingStill />;
     case "saas-product-tgbot":
       return <SaasProductTgbotStill />;
+    case "arrivalio":
+      return <TaskStill />;
     default:
       return <GenericStill />;
   }
@@ -333,6 +365,7 @@ export function WorkStill({
   image,
   size = "lg",
   bleed,
+  fit = "cover",
   className = "",
 }: {
   slug: string;
@@ -342,6 +375,11 @@ export function WorkStill({
    *  off for the index sizes, which sit inside a grid that already owns the
    *  margin. Pass false when a parent (WorkLive) is the thing that bleeds. */
   bleed?: boolean;
+  /** `cover` fills the frame and crops — right for a card/tile whose frame
+   *  sets the aspect ratio. `contain` never crops, for a frame (like the
+   *  case gallery's `fit` size) whose own aspect ratio is arbitrary and
+   *  where the point is seeing the whole screenshot. */
+  fit?: "cover" | "contain";
   className?: string;
 }) {
   const phoneBleed = bleed ?? size === "lg";
@@ -365,7 +403,7 @@ export function WorkStill({
             alt=""
             fill
             sizes={SIZES[size]}
-            className="object-cover"
+            className={fit === "contain" ? "object-contain" : "object-cover"}
           />
         ) : (
           <StillFor slug={slug} />
