@@ -887,7 +887,7 @@ export const services = {
     {
       slug: "android-development",
       title: "Android development",
-      body: "Not just an app, but a complete product. Native development, interface, performance, and functionality working seamlessly across all devices.",
+      body: "A native app, not a wrapped site.",
       intro:
         "An APK is not a product. We build the native Android app as the thing people actually use — the interface, the performance on the phones they own, and the features that have to work the same way on a cheap handset and a flagship, not a demo that only holds on the device it was designed on.",
       included: [
