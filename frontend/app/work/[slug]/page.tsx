@@ -219,9 +219,9 @@ export default async function ProjectPage({
                 <p className="text-fg max-w-[46ch] text-body">
                   {project.outcome}
                 </p>
-                {project.outcomeFacts.map((fact) => (
+                {project.outcomeFacts.map((fact, i) => (
                   <div
-                    key={fact.label}
+                    key={`${fact.value}-${fact.label}-${i}`}
                     className="border-line mt-10 max-w-[46ch] border-t pt-8 first-of-type:mt-12"
                   >
                     <p className="font-display text-heading-lg">{fact.value}</p>
