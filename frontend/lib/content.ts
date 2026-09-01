@@ -200,11 +200,7 @@ export const work = {
    * Homepage `#work` track. Deliberately not `items` — otherwise a
    * four-product engagement would be the whole teaser.
    */
-  teaser: [
-    "velocult",
-    "saas-product",
-    "studio-brand-launch",
-  ],
+  teaser: ["velocult", "saas-product", "studio-brand-launch"],
   /**
    * One engagement, several surfaces. The hub is `/work/[slug]`; each child
    * slug is a full case in `items`.
@@ -262,7 +258,8 @@ export const work = {
     },
     {
       slug: "saas-product",
-      title: "Ship a SaaS as one product, not a site, an app, a landing, and a bot that do not share an account",
+      title:
+        "Ship a SaaS as one product, not a site, an app, a landing, and a bot that do not share an account",
       summary:
         "Four doors into one product: the marketing site, the app, a campaign landing, and a Telegram bot. We built them as one SaaS so a trial started in any of those places is the same account.",
       kind: "client",
@@ -326,7 +323,8 @@ export const work = {
       slug: "velocult-site",
       family: "velocult",
       short: "Site",
-      title: "Split buy, rent, service, and parts onto their own pages and forms",
+      title:
+        "Split buy, rent, service, and parts onto their own pages and forms",
       kind: "client",
       client: "VeloCult",
       sector: "Logistics",
@@ -367,7 +365,8 @@ export const work = {
       slug: "velocult-catalog",
       family: "velocult",
       short: "Catalog",
-      title: "Split e-bikes and accessories so a frame is never next to a bottle cage",
+      title:
+        "Split e-bikes and accessories so a frame is never next to a bottle cage",
       kind: "client",
       client: "VeloCult",
       sector: "E-commerce",
@@ -573,7 +572,8 @@ export const work = {
       slug: "saas-product-landing",
       family: "saas-product",
       short: "Landing",
-      title: "Give paid traffic one page that starts the same trial the site already runs",
+      title:
+        "Give paid traffic one page that starts the same trial the site already runs",
       kind: "client",
       client: "Client name",
       sector: "SaaS",
@@ -1058,63 +1058,142 @@ export const about = {
   cta: { label: "Start a project", href: "/#contact" },
 };
 
+/**
+ * The two legal documents, rendered by `components/legal-page.tsx`.
+ *
+ * `body` is an array of paragraphs, not one string: a legal clause that runs
+ * five lines is unreadable as a single block, and splitting it in the content
+ * file keeps the decision about where a thought ends with the words rather
+ * than in the markup. `list` is for the clauses that are genuinely an
+ * enumeration — what the form asks for, what you may not do — because those
+ * are scanned, not read.
+ *
+ * `id` is the anchor the side rail links to, so it must stay stable: an
+ * external page or an email may cite /terms#the-brief-form.
+ *
+ * `highlights` is the at-a-glance panel beside the intro. Three plain-language
+ * answers to the questions people actually open these pages with. Keep them
+ * true to the sections below — a highlight that overstates the document is
+ * worse than no panel at all.
+ */
 export const legal = {
   updated: "26 August 2026",
+  contactEmail: "contact@twinvstudio.com",
   terms: {
     title: "Terms of Service",
+    kicker: "Legal",
     intro:
       "These terms cover the use of vandv.studio and any brief you submit through it. They don't cover a signed client contract or statement of work — where one exists, its terms govern.",
+    highlights: [
+      "A brief is not an order",
+      "Engagements are agreed in writing",
+      "Signed contracts override this page",
+    ],
     sections: [
       {
+        id: "using-this-site",
         title: "Using this site",
-        body: "This site is informational and exists to describe Twin V Studio's work and to receive project briefs through the form at the bottom of the homepage. Don't use it to submit anything unlawful, anything you don't have the right to send, or anything intended to disrupt the site or the people running it.",
+        body: [
+          "This site is informational. It exists to describe Twin V Studio's work and to receive project briefs through the form at the bottom of the homepage.",
+          "There is no account to create and nothing to buy here. What you may not do is short:",
+        ],
+        list: [
+          "Submit anything unlawful.",
+          "Submit anything you don't hold the rights to send.",
+          "Attempt to disrupt the site or the people running it.",
+        ],
       },
       {
+        id: "the-brief-form",
         title: "The brief form",
-        body: "Submitting a brief is a request for a conversation, not an order, invoice, or binding commitment on either side. We reply to every brief we receive; a reply isn't an acceptance of work. Actual engagements are agreed separately, in writing, before any work starts.",
+        body: [
+          "Submitting a brief is a request for a conversation — not an order, an invoice, or a binding commitment on either side.",
+          "We reply to every brief we receive, and a reply is not an acceptance of work. Actual engagements are agreed separately, in writing, before anything starts.",
+        ],
       },
       {
+        id: "content-and-ownership",
         title: "Content and ownership",
-        body: "The design, copy, and code of this site belong to Twin V Studio unless credited otherwise. Case studies and names shown here are used with permission. Deliverables from a paid engagement are covered by that engagement's own agreement, not by these terms.",
+        body: [
+          "The design, copy, and code of this site belong to Twin V Studio unless credited otherwise. Case studies and client names shown here are used with permission.",
+          "Deliverables from a paid engagement are covered by that engagement's own agreement, not by this page.",
+        ],
       },
       {
+        id: "no-warranty",
         title: "No warranty",
-        body: "This site is provided as-is. We've tried to keep it accurate and working, but we don't promise it will be uninterrupted, error-free, or fit for a particular purpose beyond what it plainly does.",
+        body: [
+          "This site is provided as-is. We've tried to keep it accurate and working, but we don't promise it will be uninterrupted, error-free, or fit for a particular purpose beyond what it plainly does.",
+        ],
       },
       {
+        id: "changes",
         title: "Changes",
-        body: "We may update these terms as the site or the studio's practices change. The date at the top of this page reflects the last revision.",
+        body: [
+          "We may update these terms as the site or the studio's practices change. The date at the top of this page reflects the last revision.",
+        ],
       },
       {
+        id: "contact",
         title: "Contact",
-        body: "Questions about these terms can go to contact@twinvstudio.com.",
+        body: [
+          "Questions about these terms are answered at the address below.",
+        ],
       },
     ],
   },
   privacy: {
     title: "Privacy Statement",
+    kicker: "Legal",
     intro:
-      "This is a short statement because there isn't much to disclose: this site doesn't run analytics, doesn't set tracking cookies, and doesn't share anything with an ad network. The only data it collects is what you type into the brief form, and the only reason we keep it is to reply to you.",
+      "This is a short statement because there isn't much to disclose. This site doesn't run analytics, doesn't set tracking cookies, and doesn't share anything with an ad network. The only data it collects is what you type into the brief form, and the only reason we keep it is to reply to you.",
+    highlights: [
+      "No cookies, no analytics",
+      "Nothing sold or shared",
+      "Deleted on request, any time",
+    ],
     sections: [
       {
+        id: "what-we-collect",
         title: "What we collect",
-        body: "The brief form asks for your name, email, phone number, what you need, how you heard about the studio, optionally your current site's URL, and a budget range unless you asked for a demo. That's the whole set — see the form itself for the exact fields. We don't collect anything passively: no cookies, no analytics pixels, no third-party scripts on this site.",
+        body: ["Only what the brief form asks for:"],
+        list: [
+          "Your name, email, and phone number.",
+          "What you need, and how you heard about the studio.",
+          "Optionally, your current site's URL.",
+          "A budget range — unless you asked for a demo, which has none.",
+        ],
+        after: [
+          "That's the whole set; the form itself is the exact list. Nothing is collected passively: no cookies, no analytics pixels, no third-party scripts on this site.",
+        ],
       },
       {
+        id: "how-we-use-it",
         title: "How we use it",
-        body: "To read your brief and reply by email or phone. Nothing is added to a marketing list, and nothing is sold or shared with a third party.",
+        body: [
+          "To read your brief and reply by email or phone. Nothing is added to a marketing list, and nothing is sold or shared with a third party.",
+        ],
       },
       {
+        id: "how-long-we-keep-it",
         title: "How long we keep it",
-        body: "Brief submissions are kept as long as they're useful to the conversation they started — typically the length of an active discussion or engagement — and deleted when they're not.",
+        body: [
+          "Brief submissions are kept as long as they're useful to the conversation they started — typically the length of an active discussion or engagement — and deleted when they're not.",
+        ],
       },
       {
+        id: "your-rights",
         title: "Your rights",
-        body: "You can ask what we hold about you, ask us to correct it, or ask us to delete it, at any time, by writing to contact@twinvstudio.com.",
+        body: [
+          "At any time, and without giving a reason, you can ask what we hold about you, ask us to correct it, or ask us to delete it. One email is enough.",
+        ],
       },
       {
+        id: "changes",
         title: "Changes",
-        body: "If this statement changes in a way that matters — for example, if the no-cookies, no-analytics line above stops being true — the date at the top of this page will move and we'll say what changed.",
+        body: [
+          "If this statement changes in a way that matters — for example, if the no-cookies, no-analytics line above stops being true — the date at the top of this page will move and we'll say what changed.",
+        ],
       },
     ],
   },
