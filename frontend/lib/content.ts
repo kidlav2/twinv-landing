@@ -1077,7 +1077,7 @@ export const about = {
  * worse than no panel at all.
  */
 export const legal = {
-  updated: "26 August 2026",
+  updated: "31 August 2026",
   contactEmail: "contact@twinvstudio.com",
   terms: {
     title: "Terms of Service",
