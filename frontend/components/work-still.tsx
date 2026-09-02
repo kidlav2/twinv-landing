@@ -227,7 +227,7 @@ function SaasProductHubStill() {
   return (
     <div className="bg-carbon text-paper flex h-full min-h-0 flex-col justify-between p-[8%]">
       <p className="font-display text-[clamp(1.4rem,8cqi,3.25rem)] leading-[0.9]">
-        Four doors
+        One record
       </p>
       <div className="grid grid-cols-2 gap-[4%]">
         {["Site", "App", "Landing", "Bot"].map((label) => (
@@ -294,6 +294,8 @@ function StillFor({ slug }: { slug: string }) {
   switch (slug) {
     case "saas-marketing-site":
       return <SaasStill />;
+    case "petpassport-website":
+      return <SaasStill />;
     case "storefront-performance":
       return <StoreStill />;
     case "studio-brand-launch":
@@ -310,14 +312,25 @@ function StillFor({ slug }: { slug: string }) {
       return <VeloCultAndroidStill />;
     case "saas-product":
       return <SaasProductHubStill />;
+    case "petpassport":
+      return <SaasProductHubStill />;
     case "saas-product-app":
+      return <SaasProductAppStill />;
+    case "petpassport-app":
       return <SaasProductAppStill />;
     case "saas-product-landing":
       return <SaasProductLandingStill />;
+    case "petpassport-landing":
+      return <SaasProductLandingStill />;
     case "saas-product-tgbot":
       return <SaasProductTgbotStill />;
+<<<<<<< HEAD
     case "arrivalio":
       return <TaskStill />;
+=======
+    case "petpassport-tgbot":
+      return <SaasProductTgbotStill />;
+>>>>>>> 3d00a01 (feat(works): Заполнил контентом хаб PetPassport)
     default:
       return <GenericStill />;
   }
