@@ -13,9 +13,9 @@ function cardStep(track: HTMLDivElement) {
 }
 
 /**
- * The homepage teaser. It shows three compact cards, not the full index —
- * the index owns the portfolio, and this section links to it. `work.teaser`
- * is the list; a four-product engagement is one card, not four.
+ * The homepage teaser. It shows the cards in `work.teaser`, not the full
+ * index — the index owns the portfolio, and this section links to it. A
+ * four-product engagement is one card, not four.
  */
 export function Work() {
   const teasers = teaserItems();

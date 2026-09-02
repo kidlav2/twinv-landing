@@ -203,6 +203,7 @@ export const work = {
   teaser: [
     "velocult",
     "petpassport",
+    "arrivalio",
     "studio-brand-launch",
   ],
   /**
