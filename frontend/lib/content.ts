@@ -200,15 +200,11 @@ export const work = {
    * Homepage `#work` track. Deliberately not `items` — otherwise a
    * four-product engagement would be the whole teaser.
    */
-<<<<<<< HEAD
-  teaser: ["velocult", "saas-product", "studio-brand-launch"],
-=======
   teaser: [
     "velocult",
     "petpassport",
     "studio-brand-launch",
   ],
->>>>>>> 3d00a01 (feat(works): Заполнил контентом хаб PetPassport)
   /**
    * One engagement, several surfaces. The hub is `/work/[slug]`; each child
    * slug is a full case in `items`.
@@ -265,14 +261,8 @@ export const work = {
       ],
     },
     {
-<<<<<<< HEAD
-      slug: "saas-product",
-      title:
-        "Ship a SaaS as one product, not a site, an app, a landing, and a bot that do not share an account",
-=======
       slug: "petpassport",
       title: "Put a pet's health on one record, not a calendar, a note, and a paper folder",
->>>>>>> 3d00a01 (feat(works): Заполнил контентом хаб PetPassport)
       summary:
         "PetPassport is one SaaS for the care an owner already does: history, reminders, and a card they can hand over. Four doors — site, app, landing, Telegram — write the same record, so a vaccine is not a note in one place and a blank stare in another.",
       kind: "self",
@@ -576,18 +566,10 @@ export const work = {
       slug: "petpassport-landing",
       family: "petpassport",
       short: "Landing",
-<<<<<<< HEAD
-      title:
-        "Give paid traffic one page that starts the same trial the site already runs",
-      kind: "client",
-      client: "Client name",
-      sector: "SaaS",
-=======
       title: "Give the fear of a missed vaccine one page that starts the same record",
       kind: "self",
       client: "",
       sector: "Pet care",
->>>>>>> 3d00a01 (feat(works): Заполнил контентом хаб PetPassport)
       year: "2026",
       type: "Website",
       image: "",

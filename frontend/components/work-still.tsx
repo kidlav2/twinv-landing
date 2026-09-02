@@ -324,13 +324,10 @@ function StillFor({ slug }: { slug: string }) {
       return <SaasProductLandingStill />;
     case "saas-product-tgbot":
       return <SaasProductTgbotStill />;
-<<<<<<< HEAD
-    case "arrivalio":
-      return <TaskStill />;
-=======
     case "petpassport-tgbot":
       return <SaasProductTgbotStill />;
->>>>>>> 3d00a01 (feat(works): Заполнил контентом хаб PetPassport)
+    case "arrivalio":
+      return <TaskStill />;
     default:
       return <GenericStill />;
   }
