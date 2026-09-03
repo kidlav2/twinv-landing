@@ -38,10 +38,14 @@ function Kicker({ item }: { item: WorkTileItem | WorkCase }) {
 
 /** Compact card — the homepage teaser track.
  *
- *  Height is the rest layout and never changes. The still stays in flow; a
- *  same-size overlay carries the title and translates by its own height
- *  (`-100%`), so nothing — not `cqw`, not grid rows — is interpolated as
- *  layout. The summary is out of flow and cannot shove the tag. */
+ *  Height is the rest layout and never changes, and neither does the position
+ *  of anything the visitor reads. The title sits in normal flow under the
+ *  still and stays there; hovering only cross-fades the still for the kicker
+ *  and summary, inside the image box. Both of those are out of flow, so
+ *  neither can shove the title or the tag.
+ *
+ *  This replaced a version that slid the title and summary up by the full
+ *  height of the image on hover — see the note in globals.css. */
 export function WorkCard({ item }: { item: WorkCase }) {
   return (
     <Link
@@ -71,20 +75,16 @@ export function WorkCard({ item }: { item: WorkCase }) {
             )}
           </div>
         </div>
-        <div className="work-card-mover">
-          <div className="work-card-shift px-6 pt-6">
-            <h3 className="work-card-title font-display text-heading-sm">
-              {item.title}
-            </h3>
-            <div className="work-card-lede px-6">
-              <Kicker item={item} />
-              <p className="text-muted mt-4 text-body">{item.summary}</p>
-            </div>
-          </div>
+        <div className="work-card-reveal justify-between p-6">
+          <Kicker item={item} />
+          <p className="text-muted text-pretty text-body leading-[1.45]">
+            {item.summary}
+          </p>
         </div>
       </div>
 
-      <div className="work-card-title-slot px-6 pt-6" aria-hidden>
+      {/* The real title now, not a spacer — it is what stays put. */}
+      <div className="px-6 pt-6">
         <h3 className="work-card-title font-display text-heading-sm">
           {item.title}
         </h3>

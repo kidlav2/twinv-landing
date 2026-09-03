@@ -294,9 +294,16 @@
     padding-inline-end: 2.75rem;
   }
 
-  /* Homepage work teaser. The pin is the still's box; the mover is the
-     same size and only ever translates by -100% of itself. Card height is
-     still + title slot + tag and does not change on hover. */
+  /* Homepage work teaser. Card height is still + title + tag and does not
+     change on hover; nothing in the card translates on the vertical axis
+     any more.
+
+     The previous version slid a same-size overlay up by -100% of itself, so
+     the title AND the summary travelled the height of the image on every
+     hover. It read as the whole card lurching, and the title — the one thing
+     a visitor is trying to read — was the part that moved furthest. Now the
+     title never leaves its slot: only the still and the summary cross-fade
+     in place, inside the image box. */
   .work-card-teaser {
     contain: layout;
   }
@@ -315,38 +322,22 @@
     aspect-ratio: 4 / 3;
   }
 
-  .work-card-mover {
+  /* Sits exactly over the still and inherits the card's own paper surface
+     as the still fades out, so no background of its own is needed — one
+     less colour to keep in sync with the card. */
+  .work-card-reveal {
     position: absolute;
     inset: 0;
-    transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .work-card-shift {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    left: 0;
-  }
-
-  .work-card-lede {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    left: 0;
-    /* Absolute children ignore the shift's padding, so the lede carries
-       the same 1.5rem inset as the title and tag. */
-    padding-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
     opacity: 0;
-    transform: translateY(-0.4rem);
+    /* 6px, not the old 100% of the image height. Enough to read as arriving
+       rather than blinking on; small enough that nothing appears to travel. */
+    transform: translateY(6px);
     transition:
-      transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
-      opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-    transition-delay: 0s;
-  }
-
-  .work-card-title-slot {
-    visibility: hidden;
-    pointer-events: none;
+      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   /* Every teaser title occupies two lines so a long case name cannot
@@ -357,7 +348,9 @@
     -webkit-line-clamp: 2;
     line-clamp: 2;
     overflow: hidden;
-    min-height: calc(var(--text-heading-sm) * var(--text-heading-sm--line-height) * 2);
+    min-height: calc(
+      var(--text-heading-sm) * var(--text-heading-sm--line-height) * 2
+    );
   }
 
   @media (hover: hover) and (pointer: fine) {
@@ -366,23 +359,18 @@
       opacity: 0;
     }
 
-    .work-card-teaser:hover .work-card-mover,
-    .work-card-teaser:focus-visible .work-card-mover {
-      transform: translateY(-100%);
-    }
-
-    .work-card-teaser:hover .work-card-lede,
-    .work-card-teaser:focus-visible .work-card-lede {
+    .work-card-teaser:hover .work-card-reveal,
+    .work-card-teaser:focus-visible .work-card-reveal {
       opacity: 1;
       transform: none;
-      transition-delay: 0.22s;
+      /* Behind the still's fade so the two do not wash each other out. */
+      transition-delay: 0.12s;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .work-card-still,
-    .work-card-mover,
-    .work-card-lede {
+    .work-card-reveal {
       transition: none;
     }
   }
