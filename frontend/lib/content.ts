@@ -200,7 +200,7 @@ export const work = {
    * Homepage `#work` track. Deliberately not `items` — otherwise a
    * four-product engagement would be the whole teaser.
    */
-  teaser: ["velocult", "petpassport", "arrivalio"],
+  teaser: ["velocult", "petpassport", "arrivalio", "thechistka-crm"],
   /**
    * Written but not published. A slug here is filtered out of `findCase`,
    * the `/work` index and `generateStaticParams` (see lib/work.ts), so the
@@ -213,7 +213,7 @@ export const work = {
    * honest way to hold it is to not serve it. Delete the slug to publish;
    * nothing else has to change.
    */
-  drafts: ["thechistka-crm"],
+  drafts: [] as string[],
   /**
    * One engagement, several surfaces. The hub is `/work/[slug]`; each child
    * slug is a full case in `items`.
@@ -752,18 +752,19 @@ export const work = {
         { value: "Solo", label: "design + build" },
       ],
     },
-    /* DRAFT — listed in `drafts` above, so nothing renders it yet.
-       Before publishing, two things have to land:
+    /* The business numbers are missing on purpose — the administrator had not
+       started on the system when this shipped, so there is nothing to measure
+       yet. `outcomeFacts` is empty (the beat then renders prose alone) and
+       `metric` carries no value, which the teaser card checks for before it
+       draws a figure. Do NOT fill either with a technical fact: the rule at the
+       top of this block gives client work the business number, and a permission
+       count dressed as a result is the same trade in reverse.
 
-         1. `outcome` + `outcomeFacts` — the business numbers. Two of them
-            the CRM counts itself on its Analytics screen (orders through the
-            pipeline in the first month; share of enquiries that arrived via
-            the public form) so they need no reconstruction from memory. The
-            third — how long it now takes to log an enquiry, against waiting
-            for the owner to be free — has to be asked of the administrator on
-            the day she starts, not a month later.
-         2. `image` + `gallery` — five frames, shot wide (>=1600px across),
-            into public/work/thechistka/. */
+       Three numbers to collect after the first month. Two the CRM counts itself
+       on its Analytics screen — orders through the pipeline, and the share of
+       enquiries that arrived via the public form. The third, how long it now
+       takes to log an enquiry against waiting for the owner to be free, has to
+       be asked of the administrator on the day she starts. */
     {
       slug: "thechistka-crm",
       family: "",
@@ -777,14 +778,20 @@ export const work = {
          the thing. The nearest neighbour in this file, velocult-crm, is
          typed the same way. */
       type: "Automation",
-      image: "",
-      gallery: [],
+      /* Shot on the demo stand, not the live install: production holds real
+         customers' phone numbers, addresses and payments, none of which
+         belongs in a public portfolio. Same build, invented data. */
+      image: "/work/thechistka/card_image.png",
+      gallery: [
+        "/work/thechistka/01-intake.png",
+        "/work/thechistka/02-order.png",
+        "/work/thechistka/03-technician-mobile.png",
+        "/work/thechistka/04-calendar.png",
+        "/work/thechistka/05-public-form.png",
+      ],
       summary:
         "An order pipeline for a mobile upholstery-cleaning company in Kokshetau, Kazakhstan \u2014 built around the administrator who uses it forty times a day, not the owner who checks it twice.",
-      metric: {
-        value: "\u2014",
-        label: "orders through the pipeline, first month",
-      },
+      metric: { value: "", label: "" },
       role: "Research, design, build",
       stack: [
         "Next.js",
@@ -821,15 +828,9 @@ export const work = {
           body: "The public intake form asks for a phone number and what needs cleaning, in the customer's own words, with up to five photos. It doesn't ask them to pick a line item from a price list \u2014 the difference between a three-seater and a large corner sofa is the technician's job, not theirs. The enquiry lands in the pipeline and pushes a notification to the administrator's phone.",
         },
       ],
-      outcome: "",
-      outcomeFacts: [
-        { value: "\u2014", label: "orders through the pipeline, first month" },
-        { value: "\u2014", label: "of enquiries arrived through the form" },
-        {
-          value: "\u2014",
-          label: "to log an enquiry, against waiting for the owner",
-        },
-      ],
+      outcome:
+        "Built, deployed, and handed over. The price list, the order history, and the payment record now sit in one system the administrator opens from her phone, instead of a rented CRM plus a sheet retyped by hand. Figures from the first month of live use will follow.",
+      outcomeFacts: [],
     },
   ],
 };
