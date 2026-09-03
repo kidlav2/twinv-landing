@@ -91,9 +91,11 @@ export function LegalPage({ doc }: { doc: LegalDoc }) {
       {/* Clauses */}
       <section className="pt-14 pb-section lg:pt-20">
         <Reveal className="shell">
-          <div className="lg:grid lg:grid-cols-12 lg:gap-8">
+          <div data-legal-grid className="lg:grid lg:grid-cols-12 lg:gap-8">
+            {/* col-span stays on this wrapper so GSAP's pin cannot steal the
+                column — the same guard the case timeline uses. */}
             <div className="hidden lg:col-span-3 lg:block">
-              <div className="sticky top-[calc(var(--nav-height)+24px)]">
+              <div>
                 <LegalToc
                   sections={doc.sections.map((s) => ({
                     id: s.id,
