@@ -75,11 +75,28 @@ export function WorkCard({ item }: { item: WorkCase }) {
             )}
           </div>
         </div>
-        <div className="work-card-reveal justify-between p-6">
+        <div className="work-card-reveal p-6">
           <Kicker item={item} />
-          <p className="text-muted text-pretty text-body leading-[1.45]">
+          <p className="text-muted mt-4 text-pretty text-body leading-[1.45]">
             {item.summary}
           </p>
+
+          {/* The metric's documented home. lib/content.ts says it "sits only
+              on the homepage teaser hover", and nothing was rendering it —
+              so the panel had a hole under the summary and the number had
+              nowhere to be. `mt-auto` anchors it to the foot of the still,
+              which is what closes the gap. `label` names what the number is
+              rather than captioning it, so it reads under the value. */}
+          {item.metric?.value ? (
+            <div className="mt-auto pt-6">
+              <p className="font-display text-fg text-heading leading-[0.9]">
+                {item.metric.value}
+              </p>
+              <p className="text-faint mt-2 font-mono text-caption uppercase">
+                {item.metric.label}
+              </p>
+            </div>
+          ) : null}
         </div>
       </div>
 
