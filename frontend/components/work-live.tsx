@@ -58,8 +58,9 @@ export function WorkLive({
         <WorkStill
           slug={item.slug}
           image={item.image}
-          size="lg"
+          size="hero"
           bleed={false}
+          fit="contain"
           className="rounded-none"
         />
       </div>

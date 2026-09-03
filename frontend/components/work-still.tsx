@@ -350,6 +350,15 @@ function StillFor({ slug }: { slug: string }) {
  */
 const FRAME = {
   lg: "aspect-[4/3] w-full",
+  /** The case-page hero, inside WorkLive's browser chrome. 16:9 and paired
+   *  with `fit="contain"` at the call site, because the sources are not one
+   *  shape: the screenshots on this site run from 1.50 to 2.01, and a phone
+   *  shot is 0.46. Cropping a spread that wide to a fixed frame cuts real
+   *  interface — a 1.50 screenshot in the old 4:3 frame lost 11% off each
+   *  side, which on a CRM is exactly where the sidebar and the totals panel
+   *  live. Contain never cuts; the leftover is carbon inside carbon chrome,
+   *  so it reads as a mat rather than a gap. */
+  hero: "aspect-[16/9] w-full",
   wide: "aspect-[3/2] w-full",
   tile: "aspect-[3/2] w-full",
   full: "aspect-[3/2] w-full",
@@ -364,6 +373,7 @@ const BLEED =
 
 const SIZES = {
   lg: "(min-width: 1024px) 58vw, 100vw",
+  hero: "(min-width: 1024px) 58vw, 100vw",
   wide: "(min-width: 1024px) 56vw, 100vw",
   tile: "(min-width: 1024px) 48vw, 100vw",
   full: "(min-width: 1024px) 92vw, 100vw",
