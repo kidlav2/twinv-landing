@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+} from "react";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -66,7 +72,9 @@ function CaseBeats({ project }: { project: WorkCase }) {
               className="border-line border-t py-8 first:border-t-0 first:pt-0 last:pb-0"
             >
               <h3 className="font-display text-heading-sm">{step.label}</h3>
-              <p className="text-muted mt-4 max-w-[46ch] text-body">{step.body}</p>
+              <p className="text-muted mt-4 max-w-[46ch] text-body">
+                {step.body}
+              </p>
             </div>
           ))}
         </CaseBeat>
@@ -124,8 +132,8 @@ export function WorkHub({ family }: { family: WorkFamily }) {
   const skipTween = useRef(true);
 
   const targets = () =>
-    [stageRef.current, beatsRef.current].filter(
-      (el): el is HTMLDivElement => Boolean(el),
+    [stageRef.current, beatsRef.current].filter((el): el is HTMLDivElement =>
+      Boolean(el),
     );
 
   useEffect(() => {
@@ -230,8 +238,7 @@ export function WorkHub({ family }: { family: WorkFamily }) {
   const layer = layers[active];
   if (!layer) return null;
   const project = layer.project;
-  const kicker =
-    family.kind === "self" ? "Self-initiated" : family.sector;
+  const kicker = family.kind === "self" ? "Self-initiated" : family.sector;
   const host = hostOf(project.url);
 
   return (
@@ -264,7 +271,16 @@ export function WorkHub({ family }: { family: WorkFamily }) {
             <div className="lg:col-span-5">
               <p className="text-faint font-mono text-caption uppercase">
                 {kicker} · {family.year}
-                {family.client ? ` · ${family.client}` : ""}
+                {family.client ? (
+                  <>
+                    {" · "}
+                    <span className="bg-voltage text-carbon px-1">
+                      {family.client}
+                    </span>
+                  </>
+                ) : (
+                  ""
+                )}
               </p>
               <h1 className="font-display mt-6 max-w-[16ch] text-heading-lg">
                 {project.title}
