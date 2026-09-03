@@ -753,7 +753,7 @@ export const work = {
       ],
     },
     /* DRAFT — listed in `drafts` above, so nothing renders it yet.
-       Before publishing, three things have to land:
+       Before publishing, two things have to land:
 
          1. `outcome` + `outcomeFacts` — the business numbers. Two of them
             the CRM counts itself on its Analytics screen (orders through the
@@ -762,11 +762,7 @@ export const work = {
             third — how long it now takes to log an enquiry, against waiting
             for the owner to be free — has to be asked of the administrator on
             the day she starts, not a month later.
-         2. `url` — the demo stand, NOT the public intake form. That form
-            writes real enquiries into the live database and pushes a
-            notification to the administrator's phone; a link to it from a
-            portfolio is a queue of orders from people who do not exist.
-         3. `image` + `gallery` — five frames, shot wide (>=1600px across),
+         2. `image` + `gallery` — five frames, shot wide (>=1600px across),
             into public/work/thechistka/. */
     {
       slug: "thechistka-crm",
@@ -799,7 +795,13 @@ export const work = {
         "Auth.js",
         "Vercel",
       ],
-      url: "https://example.com/thechistka-demo",
+      /* The demo stand, deliberately not the public intake form: that form
+         writes real enquiries into the live database and pushes a
+         notification to the administrator's phone, so a link to it from a
+         portfolio is a queue of orders from people who do not exist. The
+         stand lands on a sign-in screen, but it hands over the three role
+         logins and the password on that same screen, above the fold. */
+      url: "https://thechistka-demo.vercel.app",
       task: "A three-person cleaning business ran on HelloClient, a WhatsApp thread, and the owner's memory, with every order typed in by hand. Prices lived in one person's head, so an administrator who needed a quote at 9am waited for him to be free. Nobody could say what a customer had paid last spring, which technician had been to their apartment, or how many enquiries never became jobs.",
       approach: [
         {
