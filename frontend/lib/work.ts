@@ -52,8 +52,21 @@ export function findFamily(slug: string) {
   return work.families.find((family) => family.slug === slug);
 }
 
+/**
+ * A slug listed in `work.drafts` is written but not published — see the note
+ * on that list in lib/content.ts. Held in one predicate rather than a field on
+ * the entry: `WorkCase` is a union of the literal item types, so a `draft`
+ * property on one member would have to be repeated on all eighteen before it
+ * could be read off the union at all.
+ */
+function isPublished(slug: string) {
+  return !work.drafts.includes(slug);
+}
+
+/** Drafts are invisible here too, which is what makes the case page 404:
+ *  app/work/[slug] calls `notFound()` on a miss. */
 export function findCase(slug: string) {
-  return work.items.find((item) => item.slug === slug);
+  return work.items.find((item) => item.slug === slug && isPublished(slug));
 }
 
 export function teaserItems(): WorkCase[] {
@@ -100,7 +113,10 @@ export function familyLayers(family: WorkFamily): WorkLayer[] {
   }));
 }
 
-export function layerIdFor(item: WorkCase, family: WorkFamily): string | undefined {
+export function layerIdFor(
+  item: WorkCase,
+  family: WorkFamily,
+): string | undefined {
   const match = familyLayers(family).find(
     (layer) => layer.project.slug === item.slug,
   );
@@ -144,13 +160,13 @@ function tileFromFamily(family: WorkFamily): WorkTileItem {
  * Surfaces are reached from the hub tags, not as a second row of tiles.
  */
 export function indexTiles(): WorkTileItem[] {
-  const nested = new Set(
-    work.families.flatMap((family) => family.children),
-  );
+  const nested = new Set(work.families.flatMap((family) => family.children));
   const tiles: WorkTileItem[] = work.families.map(tileFromFamily);
 
   for (const item of work.items) {
-    if (!nested.has(item.slug)) tiles.push(tileFromCase(item));
+    if (!nested.has(item.slug) && isPublished(item.slug)) {
+      tiles.push(tileFromCase(item));
+    }
   }
 
   return tiles;
@@ -159,6 +175,8 @@ export function indexTiles(): WorkTileItem[] {
 export function allWorkSlugs(): { slug: string }[] {
   return [
     ...work.families.map((family) => ({ slug: family.slug })),
-    ...work.items.map((item) => ({ slug: item.slug })),
+    ...work.items
+      .filter((item) => isPublished(item.slug))
+      .map((item) => ({ slug: item.slug })),
   ];
 }

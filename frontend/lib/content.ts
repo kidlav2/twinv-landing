@@ -200,12 +200,20 @@ export const work = {
    * Homepage `#work` track. Deliberately not `items` — otherwise a
    * four-product engagement would be the whole teaser.
    */
-  teaser: [
-    "velocult",
-    "petpassport",
-    "arrivalio",
-    "studio-brand-launch",
-  ],
+  teaser: ["velocult", "petpassport", "arrivalio"],
+  /**
+   * Written but not published. A slug here is filtered out of `findCase`,
+   * the `/work` index and `generateStaticParams` (see lib/work.ts), so the
+   * entry can be drafted, reviewed and committed in full while the case page
+   * 404s and no tile appears anywhere.
+   *
+   * This exists because of the rule twenty lines up: client work takes the
+   * business number. A commissioned case whose "What changed" has nothing
+   * under it is not a cautious case, it is an unfinished one — and the only
+   * honest way to hold it is to not serve it. Delete the slug to publish;
+   * nothing else has to change.
+   */
+  drafts: ["thechistka-crm"],
   /**
    * One engagement, several surfaces. The hub is `/work/[slug]`; each child
    * slug is a full case in `items`.
@@ -263,7 +271,8 @@ export const work = {
     },
     {
       slug: "petpassport",
-      title: "Put a pet's health on one record, not a calendar, a note, and a paper folder",
+      title:
+        "Put a pet's health on one record, not a calendar, a note, and a paper folder",
       summary:
         "PetPassport is one SaaS for the care an owner already does: history, reminders, and a card they can hand over. Four doors — site, app, landing, Telegram — write the same record, so a vaccine is not a note in one place and a blank stare in another.",
       kind: "self",
@@ -485,7 +494,8 @@ export const work = {
       slug: "petpassport-website",
       family: "petpassport",
       short: "Website",
-      title: "Give the public site one job: start the same health record the product already runs",
+      title:
+        "Give the public site one job: start the same health record the product already runs",
       kind: "self",
       client: "",
       sector: "Pet care",
@@ -567,7 +577,8 @@ export const work = {
       slug: "petpassport-landing",
       family: "petpassport",
       short: "Landing",
-      title: "Give the fear of a missed vaccine one page that starts the same record",
+      title:
+        "Give the fear of a missed vaccine one page that starts the same record",
       kind: "self",
       client: "",
       sector: "Pet care",
