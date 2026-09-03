@@ -752,6 +752,83 @@ export const work = {
         { value: "Solo", label: "design + build" },
       ],
     },
+    /* DRAFT — listed in `drafts` above, so nothing renders it yet.
+       Before publishing, three things have to land:
+
+         1. `outcome` + `outcomeFacts` — the business numbers. Two of them
+            the CRM counts itself on its Analytics screen (orders through the
+            pipeline in the first month; share of enquiries that arrived via
+            the public form) so they need no reconstruction from memory. The
+            third — how long it now takes to log an enquiry, against waiting
+            for the owner to be free — has to be asked of the administrator on
+            the day she starts, not a month later.
+         2. `url` — the demo stand, NOT the public intake form. That form
+            writes real enquiries into the live database and pushes a
+            notification to the administrator's phone; a link to it from a
+            portfolio is a queue of orders from people who do not exist.
+         3. `image` + `gallery` — five frames, shot wide (>=1600px across),
+            into public/work/thechistka/. */
+    {
+      slug: "thechistka-crm",
+      family: "",
+      short: "",
+      title: "Turned HelloClient and hand-entered data into one order pipeline",
+      kind: "client",
+      client: "TheChistka",
+      sector: "Cleaning",
+      year: "2026",
+      /* Automation, not "Web App": `type` is the outcome, not the shape of
+         the thing. The nearest neighbour in this file, velocult-crm, is
+         typed the same way. */
+      type: "Automation",
+      image: "",
+      gallery: [],
+      summary:
+        "An order pipeline for a mobile upholstery-cleaning company in Kokshetau, Kazakhstan \u2014 built around the administrator who uses it forty times a day, not the owner who checks it twice.",
+      metric: {
+        value: "\u2014",
+        label: "orders through the pipeline, first month",
+      },
+      role: "Research, design, build",
+      stack: [
+        "Next.js",
+        "TypeScript",
+        "Postgres",
+        "Drizzle",
+        "Tailwind",
+        "Auth.js",
+        "Vercel",
+      ],
+      url: "https://example.com/thechistka-demo",
+      task: "A three-person cleaning business ran on HelloClient, a WhatsApp thread, and the owner's memory, with every order typed in by hand. Prices lived in one person's head, so an administrator who needed a quote at 9am waited for him to be free. Nobody could say what a customer had paid last spring, which technician had been to their apartment, or how many enquiries never became jobs.",
+      approach: [
+        {
+          label: "Designed for the person who uses it, not the person who pays",
+          body: "The owner opens the system twice a week. The administrator opens it forty times a day, from her phone, often away from the office. Every screen was measured at 390 points before it was measured wide, and no field is required that doesn't come up in a real phone call with a customer.",
+        },
+        {
+          label: "Permissions that survive a hidden button",
+          body: "Twenty permissions across three roles, checked on the server in the data layer rather than by hiding controls \u2014 a hidden button still sends the same request. Two rights are never delegated by design: whoever creates staff accounts can grant themselves anything, and whoever can edit the audit log can hide having done it.",
+        },
+        {
+          label: "Prices that don't rewrite history",
+          body: "A closed order stores the price it was sold at, not a pointer to today's price list. The owner can raise rates on Monday without changing what last month's jobs earned. Balances and payment status are computed from payment records, never stored as a field, so the number on screen always equals the rows beneath it.",
+        },
+        {
+          label: "A form the customer can actually fill in",
+          body: "The public intake form asks for a phone number and what needs cleaning, in the customer's own words, with up to five photos. It doesn't ask them to pick a line item from a price list \u2014 the difference between a three-seater and a large corner sofa is the technician's job, not theirs. The enquiry lands in the pipeline and pushes a notification to the administrator's phone.",
+        },
+      ],
+      outcome: "",
+      outcomeFacts: [
+        { value: "\u2014", label: "orders through the pipeline, first month" },
+        { value: "\u2014", label: "of enquiries arrived through the form" },
+        {
+          value: "\u2014",
+          label: "to log an enquiry, against waiting for the owner",
+        },
+      ],
+    },
   ],
 };
 
