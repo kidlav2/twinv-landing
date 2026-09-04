@@ -174,7 +174,7 @@ export function LegalPage({ doc }: { doc: LegalDoc }) {
                   </p>
                   <a
                     href={`mailto:${legal.contactEmail}`}
-                    className="font-display text-mint mt-3 block text-heading-sm break-all underline decoration-transparent underline-offset-4 transition-colors duration-200 hover:decoration-current"
+                    className="font-display text-paper mt-3 block text-heading-sm break-all underline decoration-transparent underline-offset-4 transition-colors duration-200 hover:decoration-current"
                   >
                     {legal.contactEmail}
                   </a>

@@ -34,10 +34,12 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
  * anchor clicks, and `scroll-margin-top` in globals.css keeps the heading clear
  * of the fixed bar — do not add `scroll-behavior: smooth` to make this work.
  *
- * Voltage marks the active and hovered item. That is inside the token's rule
- * rather than an exception to it: the yellow lands on a 2px rule and a small
- * number, never on a filled surface behind the label — a yellow block behind
- * the row would be exactly the large-surface use the system forbids.
+ * The active and hovered item is marked in `fg`, not voltage. Yellow was
+ * inside the token's rule — it landed on a 2px rule and a two-digit number,
+ * never on a surface — but being permitted is not the same as being legible:
+ * #fff100 on the #e5e5e5 canvas is a contrast ratio under 1.3:1, so the one
+ * number the rail was using to tell you where you are was the hardest thing
+ * on the page to read. Black rule, black number, grey for the rest.
  *
  * No `isDocumentVisible()` guard here, unlike the reveals: this component
  * hides nothing. If the bundle never runs, the rail is simply a plain list in
@@ -117,7 +119,7 @@ export function LegalToc({
   return (
     <div ref={scope}>
       <nav aria-label="On this page" className="flex flex-col">
-        <p className="text-faint mb-5 font-mono text-caption uppercase">
+        <p className="text-fg mb-5 font-mono text-caption uppercase">
           On this page
         </p>
         {sections.map((s, i) => {
@@ -127,15 +129,23 @@ export function LegalToc({
               key={s.id}
               href={`#${s.id}`}
               aria-current={on ? "true" : undefined}
-              className={`group border-line -ml-px flex items-baseline gap-3 border-l py-2.5 pl-4 font-mono text-body-sm uppercase transition-colors duration-200 ${
+              /* The border colour is set in exactly ONE of the two branches
+                 and never on the base class. `border-line` on the base plus
+                 `border-fg` in the active branch is two utilities painting
+                 the same property at the same specificity, and which one wins
+                 is decided by Tailwind's own output order, not by the order
+                 they are written here — the active rule lost, and the rail
+                 stayed ash. Same lesson as the nav in AGENTS.md: remove the
+                 competition rather than try to outrank it. */
+              className={`group -ml-px flex items-baseline gap-3 border-l py-2.5 pl-4 font-mono text-body-sm uppercase transition-colors duration-200 ${
                 on
-                  ? "border-voltage text-fg"
-                  : "text-faint hover:border-voltage hover:text-fg"
+                  ? "border-fg text-fg"
+                  : "border-line text-faint hover:border-fg hover:text-fg"
               }`}
             >
               <span
                 className={`shrink-0 text-caption transition-colors duration-200 ${
-                  on ? "text-voltage" : "group-hover:text-voltage"
+                  on ? "text-fg" : "group-hover:text-fg"
                 }`}
               >
                 {String(i + 1).padStart(2, "0")}
