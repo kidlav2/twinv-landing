@@ -23,10 +23,6 @@ export function Work() {
   const [atStart, setAtStart] = useState(true);
   const [atEnd, setAtEnd] = useState(false);
   const [active, setActive] = useState(0);
-  // On a wide viewport all cards fit centered and there's nothing to scroll
-  // to — dots implying otherwise (and a stuck "card 1 active" state) would be
-  // dishonest, so they only render once scrolling is actually possible.
-  const [scrollable, setScrollable] = useState(false);
 
   const sync = useCallback(() => {
     const el = trackRef.current;
@@ -35,7 +31,6 @@ export function Work() {
     // Sub-pixel widths make an exact comparison unreliable; allow a small slop.
     setAtEnd(el.scrollLeft >= el.scrollWidth - el.clientWidth - 4);
     setActive(Math.round(el.scrollLeft / cardStep(el)));
-    setScrollable(el.scrollWidth - el.clientWidth > 4);
   }, []);
 
   useEffect(() => {
@@ -112,7 +107,7 @@ export function Work() {
             effect, so the native scroll/snap behaviour is unchanged there. */}
         <div
           ref={trackRef}
-          className="mt-12 flex snap-x snap-mandatory items-start gap-6 overflow-x-auto pb-4 [scrollbar-width:none] lg:justify-center [&::-webkit-scrollbar]:hidden"
+          className="mt-12 flex snap-x snap-mandatory items-stretch gap-6 overflow-x-auto pb-4 [scrollbar-width:none] lg:justify-center [&::-webkit-scrollbar]:hidden"
           style={{
             paddingInlineStart: "var(--shell-padding)",
             paddingInlineEnd: "var(--shell-padding)",
@@ -123,7 +118,16 @@ export function Work() {
           ))}
         </div>
 
-        {scrollable && teasers.length > 1 && (
+        {/* Always rendered, which is a deliberate exception rather than an
+            oversight. These used to appear only once the row actually
+            overflowed, on the argument that a pager promising pages that do
+            not exist is dishonest. Three 420px cards fit whole from about
+            1600px wide, so on a large monitor the dots vanished and the
+            section stopped reading as something you could page through at
+            all — which is its own kind of wrong, and the one a visitor
+            actually notices. Asked for explicitly; the arrows above still
+            disable themselves honestly at either end. */}
+        {teasers.length > 1 && (
           <div className="mt-8 flex justify-center gap-2" role="tablist">
             {teasers.map((item, i) => (
               <button

@@ -45,7 +45,15 @@ function Kicker({ item }: { item: WorkTileItem | WorkCase }) {
  *  neither can shove the title or the tag.
  *
  *  This replaced a version that slid the title and summary up by the full
- *  height of the image on hover — see the note in globals.css. */
+ *  height of the image on hover — see the note in globals.css.
+ *
+ *  Every card in the track is the same height. Two things enforce that,
+ *  because they fail in different ways: the still is `tile` (3:2) on BOTH
+ *  branches — a project with no screenshot used to fall back to `lg`'s 4:3
+ *  and stand 35px taller than its neighbours — and the track itself
+ *  stretches (see work.tsx), so a future title or tag that runs long lifts
+ *  the whole row rather than one card. `mt-auto` on the foot is what spends
+ *  the stretched slack at the bottom instead of leaving it under the tag. */
 export function WorkCard({ item }: { item: WorkCase }) {
   return (
     <Link
@@ -68,7 +76,7 @@ export function WorkCard({ item }: { item: WorkCase }) {
               <WorkStill
                 slug={item.slug}
                 image={item.image}
-                size="lg"
+                size="tile"
                 bleed={false}
                 className="rounded-none"
               />
@@ -107,7 +115,7 @@ export function WorkCard({ item }: { item: WorkCase }) {
         </h3>
       </div>
 
-      <div className="work-card-foot px-6 pt-4 pb-6">
+      <div className="work-card-foot mt-auto px-6 pt-4 pb-6">
         <Tag className="self-start">{item.type}</Tag>
       </div>
     </Link>
