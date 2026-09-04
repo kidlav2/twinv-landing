@@ -657,48 +657,6 @@ export const work = {
       ],
     },
     {
-      slug: "storefront-performance",
-      family: "",
-      short: "",
-      title: "Took a storefront from four seconds to one",
-      kind: "self",
-      client: "",
-      sector: "E-commerce",
-      year: "2025",
-      type: "Growth",
-      image: "/work/storefront-performance.png",
-      gallery: [],
-      summary:
-        "A plugin-heavy theme replaced with a custom build: 80% of the JavaScript gone and the product page rebuilt from scratch.",
-      metric: { value: "1.1s", label: "largest contentful paint" },
-      role: "Design, build",
-      stack: ["Next.js", "TypeScript", "PostgreSQL", "Vercel"],
-      /* Placeholder — replace with the live site. */
-      url: "https://example.com/storefront-performance",
-      task: "The store loaded in four seconds on a mid-range phone, and most of that was theme plugins doing work nobody had asked for since launch. Every fix so far had been another plugin.",
-      approach: [
-        {
-          label: "Audit before rewrite",
-          body: "We measured what each plugin cost in bytes and blocking time before deciding anything, so the rewrite replaced known weight rather than assumed weight.",
-        },
-        {
-          label: "Custom build, owned as code",
-          body: "The theme became a custom front end the team can read and change — no builder to renew, and nothing that breaks on a plugin's own release schedule.",
-        },
-        {
-          label: "The product page first",
-          body: "The page that converts got rebuilt before anything decorative, because a fast homepage in front of a slow product page moves no revenue.",
-        },
-      ],
-      outcome:
-        "Load time dropped from roughly four seconds to just over one on the same connection, and the JavaScript bundle shrank by about 80%.",
-      outcomeFacts: [
-        { value: "1.1s", label: "largest contentful paint" },
-        { value: "−80%", label: "JavaScript shipped" },
-        { value: "4s → 1.1s", label: "load on mid-range mobile" },
-      ],
-    },
-    {
       slug: "arrivalio",
       family: "",
       short: "",

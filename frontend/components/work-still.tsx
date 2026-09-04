@@ -49,40 +49,7 @@ function SaasStill() {
   );
 }
 
-function StoreStill() {
-  return (
-    <div className="bg-paper flex h-full min-h-0 flex-col p-[8%]">
-      <div className="bg-ash rounded-card-sm flex min-h-0 flex-1 items-end p-[8%]">
-        <div className="bg-carbon rounded-btn h-[28%] w-[26%]" />
-      </div>
-      <div className="mt-[6%] flex items-end justify-between gap-[4%]">
-        <span className="bg-ash h-[0.55em] w-[30%] rounded-sm" />
-        <p className="font-display text-carbon text-[clamp(1.4rem,7cqi,2.5rem)] leading-none">
-          48
-        </p>
-      </div>
-      <div className="bg-carbon text-paper rounded-btn mt-[5%] py-[3.5%] text-center font-mono text-[clamp(0.5rem,2cqi,0.7rem)] uppercase">
-        Add to bag
-      </div>
-    </div>
-  );
-}
 
-function StudioStill() {
-  return (
-    <div className="bg-paper flex h-full min-h-0 p-[6%]">
-      <div className="bg-canvas relative flex min-h-0 flex-1 flex-col justify-end overflow-hidden rounded-card-sm p-[10%]">
-        <span className="bg-voltage absolute top-[12%] right-[12%] size-[clamp(0.5rem,2.5cqi,0.85rem)] rounded-full" />
-        <p className="font-display text-carbon text-[clamp(2rem,12cqi,5rem)] leading-[0.85]">
-          Twin V
-        </p>
-        <p className="text-muted mt-[0.8em] max-w-[14ch] text-[clamp(0.6rem,2.4cqi,0.85rem)] leading-snug">
-          Empty repo to live
-        </p>
-      </div>
-    </div>
-  );
-}
 
 function TaskStill() {
   return (
@@ -292,14 +259,8 @@ function SaasProductTgbotStill() {
 
 function StillFor({ slug }: { slug: string }) {
   switch (slug) {
-    case "saas-marketing-site":
-      return <SaasStill />;
     case "petpassport-website":
       return <SaasStill />;
-    case "storefront-performance":
-      return <StoreStill />;
-    case "studio-brand-launch":
-      return <StudioStill />;
     case "velocult":
       return <VeloCultHubStill />;
     case "velocult-site":
