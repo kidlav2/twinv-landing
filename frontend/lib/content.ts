@@ -11,9 +11,11 @@
  * homepage wherever the new SmoothScroll wrapper happened to open; the hash
  * is what the smoother honours as an explicit scrollTo.
  *
- * Services points at the first service page (`services.items[0]`), not the
- * homepage `#services` teaser. A hash next to real routes was the mix that
- * made the bar feel broken. When a services index ships, change this href.
+ * Services points at `/services`, the index — not the homepage `#services`
+ * teaser, because a hash next to real routes was the mix that made the bar
+ * feel broken, and not at `services.items[0]` either, which is where it
+ * pointed while no index existed. That index now ships (app/services/page.tsx)
+ * and this is the href it was waiting for.
  */
 export const nav = {
   brand: "Twin V Studio",
@@ -26,8 +28,7 @@ export const nav = {
   links: [
     { label: "Home", href: "/#top" },
     { label: "Work", href: "/work" },
-    /* First entry in `services.items` below. Keep in sync if that order changes. */
-    { label: "Services", href: "/services/website-design" },
+    { label: "Services", href: "/services" },
     { label: "About", href: "/about" },
   ],
   cta: { label: "Book a demo", href: "/#contact" },
@@ -847,6 +848,14 @@ export const stack = {
 export const services = {
   headline: "Services",
   sub: "Pick the one that matches where you are.",
+  /* Closing panel on the /services index only. The homepage section has the
+     brief form under it and needs no close of its own; the index has nothing
+     after it but the footer. */
+  close: {
+    headline: "Not sure which one you need",
+    body: "Tell us where the site is now and what has to change. We'll say which of these it is — or that it is none of them.",
+    cta: { label: "Start a project", href: "/#contact" },
+  },
   pager: {
     prev: "Previous service",
     next: "Next service",
@@ -1408,7 +1417,7 @@ export const footer = {
       links: [
         { label: "Home", href: "/#top" },
         { label: "Work", href: "/work" },
-        { label: "Services", href: "/services/website-design" },
+        { label: "Services", href: "/services" },
         { label: "About", href: "/about" },
       ],
     },
