@@ -19,8 +19,20 @@ import { ButtonPrimary } from "./ui";
  *
  * `flush` drops the top padding so a full-bleed block immediately above
  * sits directly against the footer's first rule.
+ *
+ * `cta` exists for one situation: a page whose own closing panel is already a
+ * "start a project" button, a screen-height above this one. Two identical
+ * yellow pills that far apart do not read as emphasis, they read as the site
+ * repeating itself — so /work turns this one off. Default on, because every
+ * other route ends on something that is not a CTA and needs it.
  */
-export function Footer({ flush = false }: { flush?: boolean }) {
+export function Footer({
+  flush = false,
+  cta = true,
+}: {
+  flush?: boolean;
+  cta?: boolean;
+}) {
   return (
     <footer className={`${flush ? "" : "pt-section"} pb-[max(2rem,env(safe-area-inset-bottom))] sm:pb-[max(2.5rem,env(safe-area-inset-bottom))]`}>
       {/* Full-bleed rules. The border lives on its own element OUTSIDE
@@ -45,11 +57,13 @@ export function Footer({ flush = false }: { flush?: boolean }) {
             >
               {footer.email}
             </a>
-            <div className="mt-5 sm:mt-6">
-              <ButtonPrimary href={footer.cta.href}>
-                {footer.cta.label}
-              </ButtonPrimary>
-            </div>
+            {cta ? (
+              <div className="mt-5 sm:mt-6">
+                <ButtonPrimary href={footer.cta.href}>
+                  {footer.cta.label}
+                </ButtonPrimary>
+              </div>
+            ) : null}
           </div>
 
           {footer.columns.map((col) => {

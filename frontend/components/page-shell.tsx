@@ -17,9 +17,12 @@ import { FooterZone } from "./footer-zone";
 export function PageShell({
   children,
   flushFooter = false,
+  footerCta = true,
   footerTone = "dark",
 }: {
   children: ReactNode;
+  /** Passed straight through to `Footer` — see the note on `cta` there. */
+  footerCta?: boolean;
   /** Pass when the page's last block is full-bleed and should meet the
    *  footer's first rule directly, with no section-sized gap between them. */
   flushFooter?: boolean;
@@ -44,7 +47,7 @@ export function PageShell({
       <SmoothScroll>
         <main>{children}</main>
         <FooterZone dark={dark}>
-          <Footer flush={flushFooter} />
+          <Footer flush={flushFooter} cta={footerCta} />
         </FooterZone>
       </SmoothScroll>
     </>
