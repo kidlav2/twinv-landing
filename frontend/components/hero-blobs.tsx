@@ -6,7 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { MorphSVGPlugin } from "gsap/MorphSVGPlugin";
 import { useGSAP } from "@gsap/react";
 import { isDocumentVisible, MOTION_OK } from "@/lib/motion";
-import { blobPath } from "@/lib/blob";
+import { blobPath, blobRadii } from "@/lib/blob";
 import { pointerField } from "@/lib/pointer-field";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, MorphSVGPlugin);
@@ -91,6 +91,85 @@ const BLOBS = [
 const restPath = (b: (typeof BLOBS)[number]) =>
   blobPath(b.shapes[0], b.cx, b.cy, b.base);
 
+/**
+ * Everything below this line is the per-reload variation, and all of it runs
+ * AFTER mount for one reason: the five paths and their fills are rendered on
+ * the server. Anything random in the markup itself is a hydration mismatch.
+ * So the server always emits the same authored composition, and the client
+ * re-deals it once the entrance is already at opacity 0 — the swap is never
+ * on screen.
+ *
+ * The three neutrals swap among the three LARGEST blobs only. Mint and
+ * voltage stay pinned to b4 and b5, the two smallest, because the palette
+ * rule in AGENTS.md is about surface area, not about which shape is which:
+ * shuffling them into the 140-unit blob would put mint on a large surface.
+ */
+const NEUTRALS = ["#000000", "#ffffff", "#c6c6c6"] as const;
+
+/** Fisher-Yates on a copy. Three items, so this is a shuffle, not a science. */
+function shuffled<T>(items: readonly T[]): T[] {
+  const out = items.slice();
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+/**
+ * How the five paths arrive. Three of them, drawn at random, so a reload is a
+ * different load-in rather than the same one replayed.
+ *
+ * `from` is a whole vars object per variant rather than a couple of tweaked
+ * numbers: the variants differ in which property carries the motion (scale,
+ * y, rotation) and in stagger origin, and a shared object with three
+ * overrides reads as one animation with a dial on it. These are three.
+ */
+const ENTRANCES = [
+  {
+    /* The original: everything swells into place at once from the middle. */
+    from: { scale: 0.88, opacity: 0 },
+    stagger: { each: 0.08 },
+  },
+  {
+    /* Drops in top-down. Small y, because the blobs sit in a tight column and
+       a long fall reads as a page still loading. */
+    from: { y: 46, scale: 0.96, opacity: 0 },
+    stagger: { each: 0.1, from: "start" as const },
+  },
+  {
+    /* Unwinds outward from the centre of the group. */
+    from: { scale: 0.7, rotation: -14, opacity: 0 },
+    stagger: { each: 0.09, from: "center" as const },
+  },
+];
+
+/**
+ * The character of the shapes themselves, re-drawn on every load.
+ *
+ * Randomising the radii alone was not enough, and the reason is worth writing
+ * down: eight points in a 0.74–1.28 swing is one silhouette with the dial
+ * turned, so every draw produced a different array of numbers and the same
+ * blob to look at. Point count is what actually changes the character — six
+ * gives broad slow lobes, ten gives a smoother, busier edge — and the swing
+ * has to move with it, because a wide swing over ten points is spikes and a
+ * narrow one over eight is the rounded octagon lib/blob.ts warns about.
+ *
+ * `speed` rides along because a shape with fewer, larger lobes travelling at
+ * the same rate reads as faster than it is.
+ *
+ * `max` stays at or under 1.28 in every mood: the layout is measured against
+ * `base * 1.3` and these five blobs sit close together in a 440×520 box.
+ */
+const MOODS = [
+  /* Few, broad lobes — the slowest and the most liquid. */
+  { points: 6, min: 0.78, max: 1.26, speed: 1.2 },
+  /* The authored character, unchanged. */
+  { points: 8, min: 0.74, max: 1.28, speed: 1 },
+  /* Smoother outline, more of it moving, and quicker with it. */
+  { points: 10, min: 0.88, max: 1.16, speed: 0.85 },
+];
+
 export function HeroBlobs() {
   const scope = useRef<HTMLDivElement>(null);
 
@@ -105,21 +184,54 @@ export function HeroBlobs() {
 
         const loops: gsap.core.Timeline[] = [];
 
+        // One seed for the whole composition, so the five blobs are a set
+        // drawn together rather than five independent dice rolls.
+        const seed = (Math.random() * 0xffffffff) >>> 0;
+        const entrance = ENTRANCES[Math.floor(Math.random() * ENTRANCES.length)];
+        const neutrals = shuffled(NEUTRALS);
+        const mood = MOODS[Math.floor(Math.random() * MOODS.length)];
+
         BLOBS.forEach((b, i) => {
           const el = scope.current?.querySelector(`#${b.id}`);
           if (!el) return;
 
+          // Only the three big ones are in the deal; b4/b5 keep mint and
+          // voltage. Set, not tweened — the entrance has these at opacity 0.
+          if (i < 3) gsap.set(el, { fill: neutrals[i] });
+
+          /* Three shapes, all generated, at this load's point count. The
+             authored `shapes[0]` is deliberately NOT one of them any more.
+             It used to close the cycle so the loop returned to the shape in
+             the markup, but that pinned every load to eight points — and the
+             point count is the thing that makes one reload look different
+             from the last. blobRadii still guarantees what MorphSVG needs
+             within a cycle: same count, same winding, same start point across
+             all three. See lib/blob.ts. */
+          const cycle = [0, 1, 2].map((n) =>
+            blobPath(
+              blobRadii(seed + i * 1013 + n * 7919, mood.points, mood.min, mood.max),
+              b.cx,
+              b.cy,
+              b.base,
+            ),
+          );
+
+          /* The one crossing between eight points and this load's count, done
+             instantly rather than tweened. A timeline set to `repeat: -1`
+             replays from the values it recorded on its first pass, so if this
+             transition lived inside the loop the shape would snap back to the
+             SSR path once per cycle — a visible pop every twenty seconds.
+             Invisible here: the entrance tween below is a `from`, so opacity
+             is already 0 in this same tick. */
+          gsap.set(el, {
+            morphSVG: { shape: cycle[0], type: "rotational", origin: "50% 50%" },
+          });
+
           const tl = gsap.timeline({ repeat: -1, paused: true });
-          // …shapes[1], [2], then back to [0] so the loop closes on the shape
-          // that is actually authored in the markup.
-          [b.shapes[1], b.shapes[2], b.shapes[0]].forEach((radii) => {
+          [cycle[1], cycle[2], cycle[0]].forEach((shape) => {
             tl.to(el, {
-              morphSVG: {
-                shape: blobPath(radii, b.cx, b.cy, b.base),
-                type: "rotational",
-                origin: "50% 50%",
-              },
-              duration: 5.5 + i * 0.6,
+              morphSVG: { shape, type: "rotational", origin: "50% 50%" },
+              duration: (5.5 + i * 0.6) * mood.speed,
               ease: "sine.inOut",
             });
           });
@@ -132,12 +244,11 @@ export function HeroBlobs() {
         let releasePointer: (() => void) | null = null;
 
         gsap.from(scope.current?.querySelectorAll("path") ?? [], {
-          scale: 0.88,
-          opacity: 0,
+          ...entrance.from,
           transformOrigin: "50% 50%",
           duration: 0.9,
           ease: "power3.out",
-          stagger: 0.08,
+          stagger: entrance.stagger,
           // Behind the headline's own timeline (delay 0.15) so type still leads.
           delay: 0.35,
           onComplete: () => {

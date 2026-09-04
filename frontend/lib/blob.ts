@@ -59,12 +59,25 @@ export function blobPath(
  * the same guarantees for free: same seed, same numbers, on the server and on
  * the client, so the inline `d` never trips a hydration mismatch.
  *
- * Range 0.74–1.28 matches the hand-authored set. A narrower swing reads as a
- * rounded octagon rather than a drop, and the upper bound is what keeps a
- * blob inside `base * 1.3` — the figure every layout below is measured
+ * The default range 0.74–1.28 matches the hand-authored set. A narrower swing
+ * reads as a rounded octagon rather than a drop, and the upper bound is what
+ * keeps a blob inside `base * 1.3` — the figure every layout below is measured
  * against.
+ *
+ * `min`/`max` are overridable because the hero re-deals its own character on
+ * every load (see components/hero-blobs.tsx): the swing and the point count
+ * together are what make a shape read as a pebble or as a splat, and holding
+ * both fixed is why randomising only the numbers produced blobs that were
+ * different on paper and identical to look at. Callers that widen the swing
+ * are responsible for the `base * max` their layout can afford; every caller
+ * that does not pass these gets the authored range unchanged.
  */
-export function blobRadii(seed: number, count = 8): number[] {
+export function blobRadii(
+  seed: number,
+  count = 8,
+  min = 0.74,
+  max = 1.28,
+): number[] {
   // mulberry32 — small, fast, and stable across engines, which matters more
   // here than statistical quality.
   let s = seed >>> 0;
@@ -80,7 +93,7 @@ export function blobRadii(seed: number, count = 8): number[] {
   for (let i = 0; i < count; i++) {
     // Rounded to match blobPath's own 2-decimal output — no point carrying
     // precision the path string throws away.
-    out.push(Number((0.74 + rand() * 0.54).toFixed(2)));
+    out.push(Number((min + rand() * (max - min)).toFixed(2)));
   }
   return out;
 }
