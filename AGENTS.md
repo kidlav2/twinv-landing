@@ -191,8 +191,10 @@ repo root in full, then follow it.** Do not write a commit message from this
 summary or from memory. That file is the source; this section is only the
 reminder to open it, plus two project facts it does not cover:
 
-- Scopes in use: `about`, `hero`, `nav`, `footer`, `motion`, `tokens`,
-  `content`, `services`, `work`. Omit the scope for repo-wide chores.
+- Scopes in use: `about`, `hero`, `nav`, `footer`, `legal`, `motion`,
+  `tokens`, `content`, `services`, `work`. Omit the scope for repo-wide
+  chores. `legal` covers `/terms` and `/privacy` and the components they
+  share (`legal-page.tsx`, `legal-toc.tsx`).
 - **Author identity matters for deploys.** Vercel is on a Hobby plan, which only
   accepts deployments whose commit author has access to the project — the account
   is `kidlav2`. Commits made as `kidlav` (`valdik20032944@gmail.com`) are blocked
