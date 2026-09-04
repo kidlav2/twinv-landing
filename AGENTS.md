@@ -1,4 +1,4 @@
-# V&V Studio — marketing site
+# Twin V Studio — marketing site
 
 Before applying any external design skills, read the global rules at
 `~/.ai-studio-playbook.md` (repo copy:
