@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { services } from "@/lib/content";
 import { HOVER_OK, MOTION_OK } from "@/lib/motion";
+import { ServiceIcon } from "./service-icon";
 
 gsap.registerPlugin(useGSAP);
 
@@ -168,9 +169,10 @@ export function ServicesGrid() {
           key={s.title}
           href={`/services/${s.slug}`}
           data-service-card
-          className="service-card border-line-strong rounded-card relative flex flex-col border p-7 transition-colors duration-300 sm:p-8"
+          className="service-card @container border-line-strong rounded-card relative flex items-center justify-between gap-6 border p-7 transition-colors duration-300 sm:p-8"
         >
-          {/* Role utilities only. When the card is marked `tone-dark` every
+          <div className="flex flex-col">
+            {/* Role utilities only. When the card is marked `tone-dark` every
               one of these flips at once — no per-element `group-hover:` colour
               pairs to keep in sync, and `:focus-visible` turns white by
               itself — the same mechanism ScrollPanel uses for a whole zone,
@@ -179,16 +181,24 @@ export function ServicesGrid() {
               There is deliberately no "Learn more →" line. Six identical
               call-to-action rows under six cards is the generic filler this
               project already stripped out of Problem/Pillars/Services once
-              (see Restraint in AGENTS.md). The whole card is the link; the
-              title underlines on hover and focus, the same cue the pillar
-              cards use, and `auto-rows-fr` keeps the cards a matched height
-              now that nothing pins their bottoms. */}
-          <h3 className="service-title font-display text-fg text-heading-sm">
-            {s.title}
-          </h3>
-          <p className="text-muted mt-3 line-clamp-3 text-pretty text-body-sm leading-[1.45]">
-            {s.body}
-          </p>
+              (see Restraint in AGENTS.md). The whole card is the link, and
+              there is no underline on the title either: the card already
+              inverts to black and lights its mark on hover, which is a far
+              louder answer to "is this clickable" than a 2px rule. A second
+              cue on top of that reads as decoration. `auto-rows-fr` keeps the
+              cards a matched height now that nothing pins their bottoms. */}
+            <h3 className="font-display text-fg text-heading-sm">
+              {s.title}
+            </h3>
+            <p className="text-muted mt-3 max-w-[46ch] line-clamp-3 text-pretty text-body-sm leading-[1.45]">
+              {s.body}
+            </p>
+          </div>
+
+          {/* Right of the type, not above it: the whole point is the width
+              that was going unused. `justify-between` on the card parks it
+              against the far edge, which is where the emptiness was. */}
+          <ServiceIcon slug={s.slug} />
         </a>
       ))}
     </div>

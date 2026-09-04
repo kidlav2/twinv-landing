@@ -576,18 +576,6 @@
    block that answers a hover is gated behind prefers-reduced-motion, so
    without this a reduced-motion user gets a card that is a link and never
    says so. This replaced a "Learn more →" row on every card. */
-.service-card .service-title {
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-underline-offset: 6px;
-  text-decoration-thickness: 2px;
-  transition: text-decoration-color 0.25s ease;
-}
-.service-card:hover .service-title,
-.service-card:focus-visible .service-title {
-  text-decoration-color: currentColor;
-}
-
 /* Buttons read their fill from the zone tone — also unlayered, same reason. */
 .btn-primary {
   background-color: var(--btn-bg);
@@ -618,6 +606,43 @@
 .services-grid:not([data-slider]) .service-card:hover {
   background-color: var(--color-carbon);
   border-color: var(--color-carbon);
+}
+
+/* The one colour in a service mark that is not `currentColor`. Everything else
+   in those SVGs rides the card's `text-fg` and flips to white with the tone;
+   this is the shape that lights up instead.
+
+   Both selectors again, for the same reason the block above carries both: the
+   scripted path adds `.tone-dark` to the card, the no-JS / reduced-motion /
+   no-hover path is the `:hover` branch, and a mark that only lit up on one of
+   them would be a second thing to keep in sync by hand.
+
+   Voltage and nothing else. Mint is reserved for tags and links (AGENTS.md)
+   and the system has no third accent, so the six marks differ by drawing, not
+   by hue. Ash at rest keeps the accent shape legible as a shape while the
+   card is still on the canvas — it is a lighter part of the mark, not a
+   missing one. */
+.service-card {
+  --icon-accent: var(--color-ash);
+}
+
+.service-card.tone-dark,
+.services-grid:not([data-slider]) .service-card:hover {
+  --icon-accent: var(--color-voltage);
+}
+
+/* A custom property cannot itself be transitioned, so the fade has to sit on
+   the shapes that resolve it. Matches the card's own 300ms. */
+.service-icon * {
+  transition:
+    fill 0.3s ease,
+    stroke 0.3s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .service-icon * {
+    transition: none;
+  }
 }
 
 /* The About page's laptop and its stand-in are exact complements of
