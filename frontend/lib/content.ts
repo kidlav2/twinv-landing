@@ -167,6 +167,25 @@ export const pillars = {
  *   the CSS drawing for that slug. Shoot wide — about 3:2 and at least 1600px
  *   across — since the index crops to 3:2 and the case page to 4:3.
  */
+/** Every shot in `public/work/velocult/`. Hub Selected frames is
+ *  `[image, ...gallery]`, so each layer lists the rest and skips its hero. */
+const velocultFrames = [
+  "/work/velocult/velocult_main.png",
+  "/work/velocult/velo_cult.jpg",
+  "/work/velocult/velocult_shop.jpg",
+  "/work/velocult/velocult_shop2.jpg",
+  "/work/velocult/velocult_lk.jpg",
+  "/work/velocult/velocult_lk2.jpg",
+  "/work/velocult/velo_cult_lk3.jpg",
+  "/work/velocult/velo_cult_adm.jpg",
+  "/work/velocult/velo_cult_adm2.jpg",
+  "/work/velocult/velo_cult_adm_shop.jpg",
+] as const;
+
+function velocultGallery(hero: (typeof velocultFrames)[number]) {
+  return velocultFrames.filter((src) => src !== hero);
+}
+
 export const work = {
   headline: "Selected work",
   sub: "The work, and what changed because of it.",
@@ -229,9 +248,9 @@ export const work = {
       client: "VeloCult",
       sector: "Logistics",
       year: "2026",
-      type: "SaaS",
-      image: "",
-      gallery: [],
+      type: "B2C-platform",
+      image: "/work/velocult/velocult_main.png",
+      gallery: velocultGallery("/work/velocult/velocult_main.png"),
       metric: { value: "3", label: "jobs on one record" },
       role: "Strategy, product, design, build",
       stack: ["Python", "FastAPI", "React", "SQLite", "SQLAlchemy"],
@@ -265,7 +284,7 @@ export const work = {
         "velocult-android",
       ],
       layers: [
-        { id: "saas", label: "SaaS" },
+        { id: "saas", label: "B2C-platform" },
         { id: "website", label: "Website", slug: "velocult-site" },
         { id: "crm", label: "CRM", slug: "velocult-crm" },
       ],
@@ -336,8 +355,8 @@ export const work = {
       sector: "Logistics",
       year: "2026",
       type: "Website",
-      image: "",
-      gallery: [],
+      image: "/work/velocult/velo_cult.jpg",
+      gallery: velocultGallery("/work/velocult/velo_cult.jpg"),
       summary:
         "Rebuilt the public site so buy, rent, service, shop, and parts each submit from the page that creates the intent. Two catalogs, a find-us page, one origin. The site is the public door into the product.",
       metric: { value: "5", label: "lead types on one origin" },
@@ -419,8 +438,8 @@ export const work = {
       sector: "Logistics",
       year: "2026",
       type: "Automation",
-      image: "",
-      gallery: [],
+      image: "/work/velocult/velo_cult_adm.jpg",
+      gallery: velocultGallery("/work/velocult/velo_cult_adm.jpg"),
       summary:
         "Gave the floor separate queues for buy, rent, repair, and shop. The site form already names the job. Shop tickets move on a status line with signed history, not a chat dump.",
       metric: { value: "4", label: "floor queues by job type" },

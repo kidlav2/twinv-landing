@@ -13,11 +13,11 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { work } from "@/lib/content";
 import { isDocumentVisible, MOTION_OK } from "@/lib/motion";
 import type { WorkCase, WorkFamily } from "@/lib/work";
-import { familyLayers } from "@/lib/work";
+import { familyLayers, hostOf } from "@/lib/work";
 import { Reveal } from "./reveal";
 import { ScrollPanel } from "./scroll-panel";
 import { ButtonGhost, ButtonPrimary, Tag, TextLink } from "./ui";
-import { WorkLive, hostOf } from "./work-live";
+import { WorkLive } from "./work-live";
 import { CaseBeat, CaseTimeline } from "./case-timeline";
 import { CaseGallery } from "./case-gallery";
 

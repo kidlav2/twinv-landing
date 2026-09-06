@@ -317,8 +317,8 @@ const FRAME = {
    *  shot is 0.46. Cropping a spread that wide to a fixed frame cuts real
    *  interface — a 1.50 screenshot in the old 4:3 frame lost 11% off each
    *  side, which on a CRM is exactly where the sidebar and the totals panel
-   *  live. Contain never cuts; the leftover is carbon inside carbon chrome,
-   *  so it reads as a mat rather than a gap. */
+   *  live. Contain never cuts; WorkLive paints the leftover with the photo's
+   *  own ground so the chrome and the mat are one surface. */
   hero: "aspect-[16/9] w-full",
   wide: "aspect-[3/2] w-full",
   tile: "aspect-[3/2] w-full",
@@ -356,10 +356,9 @@ export function WorkStill({
    *  off for the index sizes, which sit inside a grid that already owns the
    *  margin. Pass false when a parent (WorkLive) is the thing that bleeds. */
   bleed?: boolean;
-  /** `cover` fills the frame and crops — right for a card/tile whose frame
-   *  sets the aspect ratio. `contain` never crops, for a frame (like the
-   *  case gallery's `fit` size) whose own aspect ratio is arbitrary and
-   *  where the point is seeing the whole screenshot. */
+  /** `cover` fills the frame and crops. `contain` never crops — used on the
+   *  homepage/`/work` tiles so a full screenshot sits inside the 3:2 frame,
+   *  and on the case gallery's `fit` size whose aspect is arbitrary. */
   fit?: "cover" | "contain";
   className?: string;
 }) {
@@ -379,13 +378,25 @@ export function WorkStill({
           means reduced-motion users get a still picture. */}
       <div className="motion-safe:group-hover:scale-[1.03] relative h-full w-full transition-transform duration-500 ease-out">
         {image ? (
-          <Image
-            src={image}
-            alt=""
-            fill
-            sizes={SIZES[size]}
-            className={fit === "contain" ? "object-contain" : "object-cover"}
-          />
+          fit === "contain" && (size === "tile" || size === "wide") ? (
+            <div className="absolute inset-3">
+              <Image
+                src={image}
+                alt=""
+                fill
+                sizes={SIZES[size]}
+                className="object-contain"
+              />
+            </div>
+          ) : (
+            <Image
+              src={image}
+              alt=""
+              fill
+              sizes={SIZES[size]}
+              className={fit === "contain" ? "object-contain" : "object-cover"}
+            />
+          )
         ) : (
           <StillFor slug={slug} />
         )}

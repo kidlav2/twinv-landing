@@ -1,6 +1,9 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import type { WorkCase, WorkTileItem } from "@/lib/work";
+import { usePhotoMat } from "./photo-mat";
 import { Tag } from "./ui";
 import { WorkStill } from "./work-still";
 
@@ -55,6 +58,8 @@ function Kicker({ item }: { item: WorkTileItem | WorkCase }) {
  *  the whole row rather than one card. `mt-auto` on the foot is what spends
  *  the stretched slack at the bottom instead of leaving it under the tag. */
 export function WorkCard({ item }: { item: WorkCase }) {
+  const mat = usePhotoMat(item.image);
+
   return (
     <Link
       href={`/work/${item.slug}`}
@@ -63,15 +68,20 @@ export function WorkCard({ item }: { item: WorkCase }) {
     >
       <div className="work-card-pin">
         <div className="work-card-still">
-          <div className="work-card-still-inner">
+          <div
+            className={`work-card-still-inner ${mat ? "" : "bg-carbon"}`}
+            style={mat ? { backgroundColor: mat.hex } : undefined}
+          >
             {item.image ? (
-              <Image
-                src={item.image}
-                alt=""
-                fill
-                sizes="(min-width: 640px) 420px, 85vw"
-                className="object-cover"
-              />
+              <div className="absolute inset-3">
+                <Image
+                  src={item.image}
+                  alt=""
+                  fill
+                  sizes="(min-width: 640px) 420px, 85vw"
+                  className="object-contain"
+                />
+              </div>
             ) : (
               <WorkStill
                 slug={item.slug}
@@ -210,7 +220,8 @@ export function WorkTile({
         slug={item.slug}
         image={item.image}
         size={feature ? "wide" : "tile"}
-        className={feature ? "lg:col-span-7" : ""}
+        fit="contain"
+        className={`bg-carbon ${feature ? "lg:col-span-7" : ""}`}
       />
       <Caption
         item={item}

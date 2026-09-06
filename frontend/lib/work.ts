@@ -22,6 +22,21 @@ export type WorkLayer = {
   project: WorkCase;
 };
 
+/** Hostname as authored. `URL.hostname` is punycode for IDN, so a Unicode
+ *  href (вело-культ.рф) must not become xn--…. */
+export function hostOf(url: string) {
+  try {
+    const authored = url
+      .replace(/^https?:\/\//i, "")
+      .split("/")[0]
+      ?.replace(/^www\./, "");
+    if (authored && /[^\x00-\x7F]/.test(authored)) return authored;
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
+}
+
 /** High-level engagement case: lives on the family hub, not as a child slug. */
 export function overviewCase(family: WorkFamily): WorkCase {
   return {

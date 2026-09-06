@@ -7,13 +7,14 @@ import {
   familyOf,
   findCase,
   findFamily,
+  hostOf,
   layerIdFor,
 } from "@/lib/work";
 import { PageShell } from "@/components/page-shell";
 import { Reveal } from "@/components/reveal";
 import { ScrollPanel } from "@/components/scroll-panel";
 import { ButtonGhost, Tag, TextLink } from "@/components/ui";
-import { WorkLive, hostOf } from "@/components/work-live";
+import { WorkLive } from "@/components/work-live";
 import { CaseBeat, CaseTimeline } from "@/components/case-timeline";
 import { CaseGallery } from "@/components/case-gallery";
 import { AdjacentPager } from "@/components/adjacent-pager";
