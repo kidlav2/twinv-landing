@@ -186,6 +186,18 @@ function velocultGallery(hero: (typeof velocultFrames)[number]) {
   return velocultFrames.filter((src) => src !== hero);
 }
 
+/** Same arrangement for `public/work/petpassport/`. `_origin` is the product
+ *  shot — the landing beside the app — and `_appstore` is the RuStore
+ *  listing, which is the one piece of outside evidence the project has. */
+const petpassportFrames = [
+  "/work/petpassport/petpassport_origin.jpg",
+  "/work/petpassport/petpassport_appstore.jpg",
+] as const;
+
+function petpassportGallery(hero: (typeof petpassportFrames)[number]) {
+  return petpassportFrames.filter((src) => src !== hero);
+}
+
 export const work = {
   headline: "Selected work",
   sub: "The work, and what changed because of it.",
@@ -296,12 +308,16 @@ export const work = {
       summary:
         "PetPassport is one SaaS for the care an owner already does: history, reminders, and a card they can hand over. Four doors — site, app, landing, Telegram — write the same record, so a vaccine is not a note in one place and a blank stare in another.",
       kind: "self",
-      client: "",
+      /* The product's own name, the way Arrivalio carries its. `kind` still
+         says "self", so the chip reads as what we built rather than as a
+         client who paid for it. Without it the card and the case page opened
+         on "Self-initiated · 2026" and never said what the thing is called. */
+      client: "PetPassport",
       sector: "Pet care",
       year: "2026",
       type: "SaaS",
-      image: "",
-      gallery: [],
+      image: "/work/petpassport/petpassport_origin.jpg",
+      gallery: petpassportGallery("/work/petpassport/petpassport_origin.jpg"),
       metric: { value: "1", label: "record for the whole pet" },
       role: "Strategy, product, design, build",
       stack: ["Java", "PostgreSQL", "Spring", "Redis", "Docker"],
@@ -517,7 +533,7 @@ export const work = {
       title:
         "Give the public site one job: start the same health record the product already runs",
       kind: "self",
-      client: "",
+      client: "PetPassport",
       sector: "Pet care",
       year: "2026",
       type: "Website",
@@ -558,12 +574,12 @@ export const work = {
       short: "App",
       title: "Put the health record on the phone they already hold",
       kind: "self",
-      client: "",
+      client: "PetPassport",
       sector: "Pet care",
       year: "2026",
       type: "App",
-      image: "",
-      gallery: [],
+      image: "/work/petpassport/petpassport_appstore.jpg",
+      gallery: petpassportGallery("/work/petpassport/petpassport_appstore.jpg"),
       summary:
         "A native Android app for the jobs that happen standing in a clinic or a hallway: open the pet, see what is due, hand the card over. Same record as Telegram, not a squeezed website.",
       metric: { value: "1", label: "record the app already knows" },
@@ -600,12 +616,12 @@ export const work = {
       title:
         "Give the fear of a missed vaccine one page that starts the same record",
       kind: "self",
-      client: "",
+      client: "PetPassport",
       sector: "Pet care",
       year: "2026",
       type: "Website",
-      image: "",
-      gallery: [],
+      image: "/work/petpassport/petpassport_origin.jpg",
+      gallery: petpassportGallery("/work/petpassport/petpassport_origin.jpg"),
       summary:
         "A campaign page with one job: start PetPassport from the trigger the owner already feels. It is not a second product site, and the record it opens is the one the app and the bot already know.",
       metric: { value: "1", label: "job the landing is for" },
@@ -641,7 +657,7 @@ export const work = {
       short: "Tgbot",
       title: "Put Telegram on the same pet, not on a second pile of notes",
       kind: "self",
-      client: "",
+      client: "PetPassport",
       sector: "Pet care",
       year: "2026",
       type: "Automation",
