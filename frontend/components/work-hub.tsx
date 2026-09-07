@@ -13,13 +13,14 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { work } from "@/lib/content";
 import { isDocumentVisible, MOTION_OK } from "@/lib/motion";
 import type { WorkCase, WorkFamily } from "@/lib/work";
-import { familyLayers, hostOf } from "@/lib/work";
+import { familyLayers, hostOf, indexPager } from "@/lib/work";
 import { Reveal } from "./reveal";
 import { ScrollPanel } from "./scroll-panel";
-import { ButtonGhost, ButtonPrimary, Tag, TextLink } from "./ui";
+import { ButtonGhost, Tag, TextLink } from "./ui";
 import { WorkLive } from "./work-live";
 import { CaseBeat, CaseTimeline } from "./case-timeline";
 import { CaseGallery } from "./case-gallery";
+import { AdjacentPager } from "./adjacent-pager";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -55,58 +56,70 @@ function VoltageLead({ text }: { text: string }) {
   );
 }
 
+/**
+ * Timeline then gallery, as one fading group.
+ *
+ * The two sections are inside this component rather than around it because
+ * the hub cross-fades both together on a layer swap, and because the gallery
+ * brings its own `.shell` — nested inside another one it would have been
+ * indented by a second gutter on every hub page.
+ */
 function CaseBeats({ project }: { project: WorkCase }) {
   return (
     <>
-      <CaseTimeline>
-        <CaseBeat title={work.beats.problem}>
-          <p className="text-muted max-w-[46ch] text-body">
-            <VoltageLead text={project.task} />
-          </p>
-        </CaseBeat>
-
-        <CaseBeat title={work.beats.did}>
-          {project.approach.map((step) => (
-            <div
-              key={step.label}
-              className="border-line border-t py-8 first:border-t-0 first:pt-0 last:pb-0"
-            >
-              <h3 className="font-display text-heading-sm">{step.label}</h3>
-              <p className="text-muted mt-4 max-w-[46ch] text-body">
-                {step.body}
+      <section className="py-section">
+        <div className="shell">
+          <CaseTimeline>
+            <CaseBeat title={work.beats.problem}>
+              <p className="text-muted max-w-[46ch] text-body">
+                <VoltageLead text={project.task} />
               </p>
-            </div>
-          ))}
-        </CaseBeat>
+            </CaseBeat>
 
-        <CaseBeat title={work.beats.changed}>
-          <p className="text-fg max-w-[46ch] text-body">{project.outcome}</p>
-          {project.outcomeFacts.map((fact, i) => (
-            <div
-              key={`${fact.value}-${fact.label}-${i}`}
-              className="border-line mt-10 max-w-[46ch] border-t pt-8 first-of-type:mt-12"
-            >
-              <p className="font-display text-heading-lg">{fact.value}</p>
-              <p className="text-muted mt-3 font-mono text-caption uppercase">
-                {fact.label}
-              </p>
-            </div>
-          ))}
-        </CaseBeat>
+            <CaseBeat title={work.beats.did}>
+              {project.approach.map((step) => (
+                <div
+                  key={step.label}
+                  className="border-line border-t py-8 first:border-t-0 first:pt-0 last:pb-0"
+                >
+                  <h3 className="font-display text-heading-sm">{step.label}</h3>
+                  <p className="text-muted mt-4 max-w-[46ch] text-body">
+                    {step.body}
+                  </p>
+                </div>
+              ))}
+            </CaseBeat>
 
-        <CaseBeat title={work.beats.stack}>
-          <ul>
-            {project.stack.map((tool) => (
-              <li
-                key={tool}
-                className="border-line text-muted border-t py-5 font-mono text-caption uppercase first:border-t-0 first:pt-0"
-              >
-                {tool}
-              </li>
-            ))}
-          </ul>
-        </CaseBeat>
-      </CaseTimeline>
+            <CaseBeat title={work.beats.changed}>
+              <p className="text-fg max-w-[46ch] text-body">{project.outcome}</p>
+              {project.outcomeFacts.map((fact, i) => (
+                <div
+                  key={`${fact.value}-${fact.label}-${i}`}
+                  className="border-line mt-10 max-w-[46ch] border-t pt-8 first-of-type:mt-12"
+                >
+                  <p className="font-display text-heading-lg">{fact.value}</p>
+                  <p className="text-muted mt-3 font-mono text-caption uppercase">
+                    {fact.label}
+                  </p>
+                </div>
+              ))}
+            </CaseBeat>
+
+            <CaseBeat title={work.beats.stack}>
+              <ul>
+                {project.stack.map((tool) => (
+                  <li
+                    key={tool}
+                    className="border-line text-muted border-t py-5 font-mono text-caption uppercase first:border-t-0 first:pt-0"
+                  >
+                    {tool}
+                  </li>
+                ))}
+              </ul>
+            </CaseBeat>
+          </CaseTimeline>
+        </div>
+      </section>
 
       <CaseGallery
         slug={project.slug}
@@ -240,6 +253,7 @@ export function WorkHub({ family }: { family: WorkFamily }) {
   const project = layer.project;
   const kicker = family.kind === "self" ? "Self-initiated" : family.sector;
   const host = hostOf(project.url);
+  const pager = indexPager(family.slug);
 
   return (
     <>
@@ -326,27 +340,32 @@ export function WorkHub({ family }: { family: WorkFamily }) {
       </section>
 
       <ScrollPanel tone="dark" terminal cursor={false}>
-        <section className="py-section">
-          <div ref={beatsRef} className="shell">
-            <CaseBeats project={project} />
-          </div>
-        </section>
+        <div ref={beatsRef}>
+          <CaseBeats project={project} />
+        </div>
 
-        <section className="py-section-lg">
-          <Reveal className="shell">
-            <h2 className="reveal font-display max-w-[18ch] text-heading-lg">
-              {work.close.headline}
-            </h2>
-            <p className="reveal text-muted mt-8 max-w-[46ch] text-lead">
-              {work.close.body}
-            </p>
-            <div className="reveal mt-12">
-              <ButtonPrimary href={work.close.cta.href}>
-                {work.close.cta.label}
-              </ButtonPrimary>
-            </div>
-          </Reveal>
-        </section>
+        {/* Ends the way an ordinary case page ends — frames, then the next
+            project — and not on the "Tell us what you need to move" panel it
+            used to carry. That panel is the close of `/work`, the page a
+            visitor reaches when they have run out of projects. Sitting it at
+            the foot of a project made every engagement a dead end with a
+            form, while the two hubs were the only entries on the site with no
+            way forward. The footer still carries the CTA. */}
+        {pager ? (
+          <AdjacentPager
+            label={work.more}
+            prev={{
+              href: `/work/${pager.prev.slug}`,
+              kicker: work.pager.prev,
+              title: pager.prev.title,
+            }}
+            next={{
+              href: `/work/${pager.next.slug}`,
+              kicker: work.pager.next,
+              title: pager.next.title,
+            }}
+          />
+        ) : null}
       </ScrollPanel>
     </>
   );

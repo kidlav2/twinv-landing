@@ -8,6 +8,7 @@ import {
   findCase,
   findFamily,
   hostOf,
+  indexPager,
   layerIdFor,
 } from "@/lib/work";
 import { PageShell } from "@/components/page-shell";
@@ -118,10 +119,9 @@ export default async function ProjectPage({
     );
   }
 
-  const total = work.items.length;
-  const index = work.items.findIndex((p) => p.slug === project.slug);
-  const prev = work.items[(index - 1 + total) % total];
-  const next = work.items[(index + 1) % total];
+  /* The published index list, not `work.items` — see the note on
+     `indexPager` in lib/work.ts. */
+  const pager = indexPager(project.slug);
 
   const lead = project.kind === "self" ? "Self-initiated" : project.sector;
   const host = hostOf(project.url);
@@ -264,19 +264,21 @@ export default async function ProjectPage({
           shots={[project.image, ...project.gallery].filter(Boolean)}
         />
 
-        <AdjacentPager
-          label="More work"
-          prev={{
-            href: `/work/${prev.slug}`,
-            kicker: work.pager.prev,
-            title: prev.title,
-          }}
-          next={{
-            href: `/work/${next.slug}`,
-            kicker: work.pager.next,
-            title: next.title,
-          }}
-        />
+        {pager ? (
+          <AdjacentPager
+            label={work.more}
+            prev={{
+              href: `/work/${pager.prev.slug}`,
+              kicker: work.pager.prev,
+              title: pager.prev.title,
+            }}
+            next={{
+              href: `/work/${pager.next.slug}`,
+              kicker: work.pager.next,
+              title: pager.next.title,
+            }}
+          />
+        ) : null}
       </ScrollPanel>
     </PageShell>
   );

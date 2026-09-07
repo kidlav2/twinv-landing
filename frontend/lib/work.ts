@@ -187,6 +187,27 @@ export function indexTiles(): WorkTileItem[] {
   return tiles;
 }
 
+/**
+ * Prev / next across the published list — the same entries `/work` shows, in
+ * the same order.
+ *
+ * Deliberately not `work.items`. That array also holds every family child,
+ * and each one redirects to its hub (see app/work/[slug]/page.tsx), so a
+ * pager built on it offers "Next project: Put Telegram on the same pet" and
+ * then lands the reader back on the hub they just finished. What a visitor
+ * means by the next project is the next entry on the index.
+ */
+export function indexPager(slug: string) {
+  const tiles = indexTiles();
+  const index = tiles.findIndex((tile) => tile.slug === slug);
+  if (index < 0 || tiles.length < 2) return null;
+  const count = tiles.length;
+  return {
+    prev: tiles[(index - 1 + count) % count],
+    next: tiles[(index + 1) % count],
+  };
+}
+
 export function allWorkSlugs(): { slug: string }[] {
   return [
     ...work.families.map((family) => ({ slug: family.slug })),
