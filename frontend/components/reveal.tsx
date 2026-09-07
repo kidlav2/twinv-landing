@@ -18,6 +18,19 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
  * `batch` reveals each element against its own position, while elements that
  * arrive together still stagger together.
  *
+ * `group` is the opposite arrangement, for the one shape where per-element
+ * triggers are wrong: a block that is exactly as tall as the window and has
+ * to be read as a single picture. The case gallery is that block — a large
+ * frame with a strip of thumbnails under it. With a trigger per element the
+ * thumbnails only cross their own start line once the heading has already
+ * left the top of the screen, so a reader arriving at a full-bleed frame with
+ * empty space beneath it has no way to know there are eight more shots. One
+ * trigger on the wrapper brings the whole thing in together.
+ *
+ * It is an opt-in for that reason, not a better default: on a tall section
+ * (Services, the work index) a single wrapper trigger is exactly the bug the
+ * paragraph above describes.
+ *
  * Motion is gated behind matchMedia, so reduced-motion users get the finished
  * layout with no animation at all.
  */
@@ -27,12 +40,16 @@ export function Reveal({
   stagger = REVEAL.stagger,
   y = REVEAL.y,
   start = REVEAL.start,
+  group = false,
 }: {
   children: ReactNode;
   className?: string;
   stagger?: number;
   y?: number;
   start?: string;
+  /** One trigger on the wrapper instead of one per element. Only for blocks
+   *  that fit the window and read as a single composition. */
+  group?: boolean;
 }) {
   const scope = useRef<HTMLDivElement>(null);
 
@@ -53,21 +70,33 @@ export function Reveal({
 
         gsap.set(targets, { opacity: 0, y, willChange: "transform,opacity" });
 
+        const enter = (batch: Element[]) =>
+          gsap.to(batch, {
+            opacity: 1,
+            y: 0,
+            duration: REVEAL.duration,
+            ease: REVEAL.ease,
+            stagger: { each: stagger },
+            overwrite: true,
+            // will-change is a promise to the compositor, not a decoration —
+            // release it once the element has stopped moving.
+            onComplete: () => gsap.set(batch, { clearProps: "willChange" }),
+          });
+
+        if (group) {
+          ScrollTrigger.create({
+            trigger: scope.current,
+            start,
+            once: true,
+            onEnter: () => enter(targets),
+          });
+          return;
+        }
+
         ScrollTrigger.batch(targets, {
           start,
           once: true,
-          onEnter: (batch) =>
-            gsap.to(batch, {
-              opacity: 1,
-              y: 0,
-              duration: REVEAL.duration,
-              ease: REVEAL.ease,
-              stagger: { each: stagger },
-              overwrite: true,
-              // will-change is a promise to the compositor, not a decoration —
-              // release it once the element has stopped moving.
-              onComplete: () => gsap.set(batch, { clearProps: "willChange" }),
-            }),
+          onEnter: enter,
         });
       });
 

@@ -28,6 +28,14 @@ import { WorkStill } from "./work-still";
  * falls back to the old still, mat and all.
  *
  * The first slot is always the hero shot; anything in `gallery` follows.
+ *
+ * The reveal is `group`: one trigger on the whole block rather than the
+ * site's usual one per element. This section is exactly a window tall, so
+ * per-element triggers meant the thumbnail strip — sitting at the very bottom
+ * of it — did not start until the heading had scrolled off the top. What a
+ * reader saw was a single large frame with empty space under it and no reason
+ * to believe there was a second shot. Heading, frame and strip now arrive
+ * together, which is the only honest way to show a count of nine.
  */
 export function CaseGallery({
   slug,
@@ -51,7 +59,14 @@ export function CaseGallery({
 
   return (
     <section className="max-lg:pb-section lg:h-svh">
-      <Reveal className="shell flex h-full flex-col lg:pt-[calc(var(--nav-height)+12px)] lg:pb-8">
+      <Reveal
+        group
+        /* Later than the site default (`top 86%`): a window-tall block keyed
+           to 86% would start while a tenth of it is on screen and be finished
+           before the frame is in place. */
+        start="top 68%"
+        className="shell flex h-full flex-col lg:pt-[calc(var(--nav-height)+12px)] lg:pb-8"
+      >
         <div className="flex shrink-0 items-end justify-between gap-6">
           <h2 className="reveal font-display text-heading-lg max-w-[12ch]">
             {heading}
