@@ -311,14 +311,19 @@ function StillFor({ slug }: { slug: string }) {
  */
 const FRAME = {
   lg: "aspect-[4/3] w-full",
-  /** The case-page hero, inside WorkLive's browser chrome. 16:9 and paired
-   *  with `fit="contain"` at the call site, because the sources are not one
-   *  shape: the screenshots on this site run from 1.50 to 2.01, and a phone
-   *  shot is 0.46. Cropping a spread that wide to a fixed frame cuts real
-   *  interface — a 1.50 screenshot in the old 4:3 frame lost 11% off each
-   *  side, which on a CRM is exactly where the sidebar and the totals panel
-   *  live. Contain never cuts; WorkLive paints the leftover with the photo's
-   *  own ground so the chrome and the mat are one surface. */
+  /** The case-page hero, inside WorkLive's browser chrome. Paired with
+   *  `fit="contain"` at the call site, because the sources are not one shape:
+   *  the screenshots on this site run from 1.50 to 2.17, and a phone shot is
+   *  0.46. Cropping a spread that wide to a fixed frame cuts real interface —
+   *  a 1.50 screenshot in the old 4:3 frame lost 11% off each side, which on
+   *  a CRM is exactly where the sidebar and the totals panel live.
+   *
+   *  16:9 is now only the fallback. When the caller knows the file's own
+   *  ratio (lib/image-size.ts measures it at build time) it is passed in as
+   *  `ratio` and the frame takes the picture's shape, so `contain` has no
+   *  leftover to paint and the screenshot fills the whole card. Without it —
+   *  a CSS drawing, or a file the parser could not read — this is what the
+   *  frame falls back to. */
   hero: "aspect-[16/9] w-full",
   wide: "aspect-[3/2] w-full",
   tile: "aspect-[3/2] w-full",
@@ -347,6 +352,7 @@ export function WorkStill({
   size = "lg",
   bleed,
   fit = "cover",
+  ratio,
   className = "",
 }: {
   slug: string;
@@ -360,6 +366,10 @@ export function WorkStill({
    *  homepage/`/work` tiles so a full screenshot sits inside the 3:2 frame,
    *  and on the case gallery's `fit` size whose aspect is arbitrary. */
   fit?: "cover" | "contain";
+  /** The picture's own aspect ratio, measured from the file at build time.
+   *  Overrides `FRAME[size]` so a contained screenshot has no mat around it.
+   *  An inline style beats the utility class, which is the point. */
+  ratio?: number;
   className?: string;
 }) {
   const phoneBleed = bleed ?? size === "lg";
@@ -367,6 +377,7 @@ export function WorkStill({
   return (
     <div
       aria-hidden
+      style={image && ratio ? { aspectRatio: ratio } : undefined}
       className={`@container rounded-card relative overflow-hidden ${FRAME[size]} ${
         phoneBleed ? BLEED : ""
       } ${className}`}

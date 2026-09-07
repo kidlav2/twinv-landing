@@ -21,17 +21,39 @@ type LiveItem = {
  * hover is only confirmation. The whole frame is the link; WorkStill stays
  * `aria-hidden` so the drawing inside does not also enter the tree.
  *
- * The bar (and the contain mat under it) take the photo's own ground, so a
- * white site or a black dashboard is not sitting in a carbon hole. Mint
- * stays on dark chrome only; on a light ground it fails contrast, and the
- * host drops to carbon — the frame is already the link.
+ * The bar takes the photo's own ground, so a white site or a black dashboard
+ * is not sitting in a carbon hole. Mint stays on dark chrome only; on a light
+ * ground it fails contrast, and the host drops to carbon — the frame is
+ * already the link.
+ *
+ * `photo` is the screenshot's own pixel size, measured from the file at build
+ * time (lib/image-size.ts). The frame takes its shape, so the picture fills
+ * the card edge to edge instead of sitting between two bands of mat — which
+ * is what a 3:2 dashboard in a 16:9 frame looked like, and on a dark shot the
+ * bands read as black bars. Nothing is cropped to achieve it: the frame
+ * moves, not the picture. Without a measurement the frame falls back to 16:9
+ * and the mat fills the difference, so the two cases still agree on a colour.
  */
+
+/**
+ * The hero is one composition with the chrome bar above it, so unlike the
+ * gallery it keeps a frame rather than letting the picture size itself. The
+ * clamp is the price of that: a phone capture (0.46) as a case hero would be
+ * a column of screenshot two viewports tall, and a stitched full-page export
+ * a letterbox slot. Inside these bounds the mat still shows, but only where
+ * the alternative was unusable — no current file reaches either end.
+ */
+const MIN_RATIO = 4 / 3;
+const MAX_RATIO = 21 / 9;
 export function WorkLive({
   item,
+  photo,
   className = "",
   reveal = true,
 }: {
   item: LiveItem;
+  /** Pixel dimensions of `item.image`, from the server. */
+  photo?: { w: number; h: number };
   className?: string;
   /** Hub stage already owns entrance; a nested `.reveal` would pre-hide
    *  the still and freeze it if the swap remounts off the original batch. */
@@ -39,6 +61,9 @@ export function WorkLive({
 }) {
   const host = hostOf(item.url);
   const mat = usePhotoMat(item.image);
+  const ratio = photo
+    ? Math.min(Math.max(photo.w / photo.h, MIN_RATIO), MAX_RATIO)
+    : undefined;
 
   return (
     <a
@@ -75,6 +100,7 @@ export function WorkLive({
           size="hero"
           bleed={false}
           fit="contain"
+          ratio={ratio}
           className="rounded-none"
         />
       </div>

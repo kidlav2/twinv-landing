@@ -64,7 +64,13 @@ function VoltageLead({ text }: { text: string }) {
  * brings its own `.shell` — nested inside another one it would have been
  * indented by a second gutter on every hub page.
  */
-function CaseBeats({ project }: { project: WorkCase }) {
+function CaseBeats({
+  project,
+  photos,
+}: {
+  project: WorkCase;
+  photos: Record<string, { w: number; h: number }>;
+}) {
   return (
     <>
       <section className="py-section">
@@ -125,6 +131,7 @@ function CaseBeats({ project }: { project: WorkCase }) {
         slug={project.slug}
         heading={work.frames}
         shots={[project.image, ...project.gallery].filter(Boolean)}
+        photos={photos}
       />
     </>
   );
@@ -136,7 +143,17 @@ function CaseBeats({ project }: { project: WorkCase }) {
  * The switcher is inside the fading stage so it leaves and comes back with
  * the rest of the material, mint on the new layer.
  */
-export function WorkHub({ family }: { family: WorkFamily }) {
+export function WorkHub({
+  family,
+  photos = {},
+}: {
+  family: WorkFamily;
+  /** Pixel dimensions of every picture this hub can swap to — heroes and
+   *  gallery frames alike — keyed by public path. Measured on the server
+   *  (lib/image-size.ts) and handed over whole, because the swap happens here
+   *  without a request. */
+  photos?: Record<string, { w: number; h: number }>;
+}) {
   const layers = familyLayers(family);
   const [active, setActive] = useState(0);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -274,7 +291,7 @@ export function WorkHub({ family }: { family: WorkFamily }) {
             className="grid items-center gap-10 lg:grid-cols-12 lg:gap-12"
           >
             <div className="lg:col-span-7">
-              <WorkLive item={project} reveal={false} />
+              <WorkLive item={project} photo={photos[project.image]} reveal={false} />
               <div className="mt-6 lg:hidden">
                 <ButtonGhost href={project.url} external className="w-full">
                   {`${work.visit} · ${host}`}
@@ -341,7 +358,7 @@ export function WorkHub({ family }: { family: WorkFamily }) {
 
       <ScrollPanel tone="dark" terminal cursor={false}>
         <div ref={beatsRef}>
-          <CaseBeats project={project} />
+          <CaseBeats project={project} photos={photos} />
         </div>
 
         {/* Ends the way an ordinary case page ends — frames, then the next

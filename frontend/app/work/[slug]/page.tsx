@@ -4,6 +4,7 @@ import Link from "next/link";
 import { work } from "@/lib/content";
 import {
   allWorkSlugs,
+  familyLayers,
   familyOf,
   findCase,
   findFamily,
@@ -11,6 +12,7 @@ import {
   indexPager,
   layerIdFor,
 } from "@/lib/work";
+import { photoSize, photoSizes } from "@/lib/image-size";
 import { PageShell } from "@/components/page-shell";
 import { Reveal } from "@/components/reveal";
 import { ScrollPanel } from "@/components/scroll-panel";
@@ -99,9 +101,21 @@ export default async function ProjectPage({
   const slug = (await params).slug;
   const family = findFamily(slug);
   if (family) {
+    /* Every picture the hub can reach — each layer's hero and every frame in
+       each layer's gallery — measured here. The hub swaps layers and the
+       gallery swaps frames in the browser with no request in between, so the
+       sizes have to travel with the page. See lib/image-size.ts. */
     return (
       <PageShell flushFooter footerTone="dark">
-        <WorkHub family={family} />
+        <WorkHub
+          family={family}
+          photos={photoSizes(
+            familyLayers(family).flatMap((layer) => [
+              layer.project.image,
+              ...layer.project.gallery,
+            ]),
+          )}
+        />
       </PageShell>
     );
   }
@@ -142,7 +156,7 @@ export default async function ProjectPage({
 
           <div className="mt-12 grid items-center gap-10 lg:mt-16 lg:grid-cols-12 lg:gap-12">
             <div className="lg:col-span-7">
-              <WorkLive item={project} />
+              <WorkLive item={project} photo={photoSize(project.image)} />
               {/* Phone: the visit control sits under the still, not under a
                   title that has already scrolled away. Desktop keeps the
                   text-column link — two destinations, not a nested <a>. */}
@@ -262,6 +276,7 @@ export default async function ProjectPage({
           slug={project.slug}
           heading={work.frames}
           shots={[project.image, ...project.gallery].filter(Boolean)}
+          photos={photoSizes([project.image, ...project.gallery])}
         />
 
         {pager ? (
