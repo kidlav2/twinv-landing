@@ -5,12 +5,10 @@ import { ButtonPrimary } from "./ui";
 /**
  * Mobile is a 2-column link grid under the brand, not a centred stub that
  * hides Services and Studio. Those columns were dropped below `lg` to save
- * height; what it actually did was leave a brand block and four social
- * links stacked in the middle of the screen, which read as unfinished.
- * Two columns fit a 375px width; the brand spans both so the mark stays
- * on the leading edge (Krehel: order by importance, align to shared edges).
- * Connect spans the row as a wrapping list — four socials side-by-side
- * rather than a third ragged column.
+ * height; what it actually did was leave a brand block stacked in the middle
+ * of the screen, which read as unfinished. Two columns fit a 375px width;
+ * the brand spans both so the mark stays on the leading edge (Krehel: order
+ * by importance, align to shared edges).
  *
  * Colours are tone-aware ROLES (text-fg / text-muted / text-faint /
  * border-line), not fixed palette names, so this renders correctly inside a
@@ -41,7 +39,7 @@ export function Footer({
       <div className="border-line border-t" />
 
       <div className="shell pt-8 lg:pt-12">
-        <div className="grid grid-cols-2 gap-x-8 gap-y-10 lg:grid-cols-[1.5fr_repeat(3,1fr)] lg:gap-x-8 lg:gap-y-12">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-10 lg:grid-cols-[1.5fr_repeat(2,1fr)] lg:gap-x-8 lg:gap-y-12">
           <div className="col-span-2 lg:col-span-1">
             <span
               className="brand-mark text-fg h-10 sm:h-12"
@@ -66,37 +64,25 @@ export function Footer({
             ) : null}
           </div>
 
-          {footer.columns.map((col) => {
-            const connect = col.title === "Connect";
-            return (
-              <div
-                key={col.title}
-                className={connect ? "col-span-2 lg:col-span-1" : undefined}
-              >
-                <p className="text-faint font-mono text-caption uppercase">
-                  {col.title}
-                </p>
-                <ul
-                  className={
-                    connect
-                      ? "mt-4 flex flex-wrap gap-x-6 gap-y-0 sm:mt-5 lg:flex-col lg:gap-x-0 lg:gap-y-1"
-                      : "mt-4 flex flex-col gap-1 sm:mt-5"
-                  }
-                >
-                  {col.links.map((l) => (
-                    <li key={l.label}>
-                      <Link
-                        href={l.href}
-                        className="text-muted hover:text-fg inline-flex min-h-11 items-center text-body-sm transition-colors"
-                      >
-                        {l.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            );
-          })}
+          {footer.columns.map((col) => (
+            <div key={col.title}>
+              <p className="text-faint font-mono text-caption uppercase">
+                {col.title}
+              </p>
+              <ul className="mt-4 flex flex-col gap-1 sm:mt-5">
+                {col.links.map((l) => (
+                  <li key={l.label}>
+                    <Link
+                      href={l.href}
+                      className="text-muted hover:text-fg inline-flex min-h-11 items-center text-body-sm transition-colors"
+                    >
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
       </div>
 

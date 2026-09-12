@@ -1456,15 +1456,6 @@ export const footer = {
         { label: "About", href: "/about" },
       ],
     },
-    {
-      title: "Connect",
-      links: [
-        { label: "LinkedIn", href: "#" },
-        { label: "Instagram", href: "#" },
-        { label: "Dribbble", href: "#" },
-        { label: "GitHub", href: "#" },
-      ],
-    },
   ],
   legal: [
     { label: "Terms of Service", href: "/terms" },
