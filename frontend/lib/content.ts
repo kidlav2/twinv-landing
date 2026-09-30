@@ -232,7 +232,7 @@ export const work = {
    * Homepage `#work` track. Deliberately not `items` — otherwise a
    * four-product engagement would be the whole teaser.
    */
-  teaser: ["velocult", "arrivalio", "thechistka-crm"],
+  teaser: ["velocult", "arrivalio", "thechistka-crm", "mr-oktoberfest"],
   /**
    * Written but not published. A slug here is filtered out of `findCase`,
    * the `/work` index and `generateStaticParams` (see lib/work.ts), so the
@@ -824,6 +824,54 @@ export const work = {
       ],
       outcome:
         "Built, deployed, and handed over. The price list, the order history, and the payment record now sit in one system the administrator opens from her phone, instead of a rented CRM plus a sheet retyped by hand. Figures from the first month of live use will follow.",
+      outcomeFacts: [],
+    },
+    {
+      slug: "mr-oktoberfest",
+      family: "",
+      short: "",
+      title: "Moved a musician off Wix to a site he runs from his phone",
+      kind: "client",
+      client: "Mr. Oktoberfest",
+      sector: "Music",
+      year: "2026",
+      type: "Website",
+      image: "/work/mr-oktoberfest/card_image.png",
+      gallery: [
+        "/work/mr-oktoberfest/01-hero.png",
+        "/work/mr-oktoberfest/02-listen.png",
+        "/work/mr-oktoberfest/03-songs.png",
+        "/work/mr-oktoberfest/04-gallery.png",
+        "/work/mr-oktoberfest/05-book-mobile.png",
+        "/work/mr-oktoberfest/06-menu-mobile.png",
+      ],
+      summary:
+        "A website, booking pipeline and moderated guest book for a solo accordionist in Metro Vancouver, built around an owner who answers the phone, not email.",
+      /* Empty on purpose, same call as the TheChistka card: the site went
+         live this month and there is no month of real traffic to quote yet.
+         A number here now would be a guess wearing a metric's clothes. Fill
+         it once analytics has visits and booking requests to show. */
+      metric: { value: "", label: "" },
+      role: "Design, build, launch",
+      stack: ["Cloudflare Workers", "D1", "JavaScript", "GSAP", "Resend"],
+      url: "https://mroktoberfest.com",
+      task: "Gary Wenzlaff plays accordion at Oktoberfests, community halls and seniors' residences. His site was a Wix template he never opened: compressed photos, recordings in an embedded player, and no way to change a song list without learning a builder. The site existed, but it didn't work for him, and bookings still happened by phone.",
+      approach: [
+        {
+          label: "One step for every job he repeats",
+          body: "A booking request lands as a plain email he answers with Reply. A guest's comment arrives with a link and one gold button that publishes it, so nothing goes up without him and there is nothing to log into. If an email fails, the request is saved first and waits in the admin.",
+        },
+        {
+          label: "An admin sized for a phone",
+          body: "Songs, venues, page wording and photos are all editable from a phone. Every item is its own card with Remove kept away from Save. The photo manager shows how each crop will look on a computer and on a phone before it goes live.",
+        },
+        {
+          label: "A launch that didn't break his links",
+          body: "Wix doesn't allow nameserver changes, so the domain moved from Wix to Porkbun and onto Cloudflare DNS. Every old Wix URL redirects to the matching section of the new page.",
+        },
+      ],
+      outcome:
+        "Live on mroktoberfest.com since September 2026. Gary edits the site himself, approves guest comments from his inbox, and gets booking requests he can answer in one reply.",
       outcomeFacts: [],
     },
   ],
