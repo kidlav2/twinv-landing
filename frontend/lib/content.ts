@@ -908,7 +908,7 @@ export const stack = {
     },
     {
       title: "Ship & run",
-      items: ["Vercel", "Docker", "Git", "Kubernetes", "Linux"],
+      items: ["Vercel", "Cloudflare", "Docker", "Git", "Kubernetes", "Linux"],
     },
     {
       title: "Android",
