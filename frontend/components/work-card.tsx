@@ -64,7 +64,18 @@ export function WorkCard({ item }: { item: WorkCase }) {
     <Link
       href={`/work/${item.slug}`}
       data-card
-      className="reveal work-card work-card-teaser bg-paper rounded-card flex w-[85vw] shrink-0 snap-start flex-col overflow-hidden sm:w-[420px]"
+      /* Width is a share of the TRACK, not a fixed number of pixels, so the
+         row always holds exactly three cards and the fourth has to be
+         paged to. At a fixed 420px the count was whatever happened to fit:
+         three on a laptop, four squeezed onto a 27" monitor, and the
+         arrows had nothing left to reveal. `100%` is the track's content
+         box and 48px is the two `gap-6` gutters between three cards.
+
+         `max()` keeps the old 420px as a floor: the share alone drops to
+         291px at the `lg` breakpoint, which is narrower than the card was
+         ever designed for. Below that floor fewer than three fit and the
+         row simply scrolls, which is the right answer on a small screen. */
+      className="reveal work-card work-card-teaser bg-paper rounded-card flex w-[85vw] shrink-0 snap-start flex-col overflow-hidden sm:w-[420px] lg:w-[max(420px,calc((100%-48px)/3))]"
     >
       <div className="work-card-pin">
         <div className="work-card-still">

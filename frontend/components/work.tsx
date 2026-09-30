@@ -101,16 +101,27 @@ export function Work() {
           </div>
         </div>
 
-        {/* `lg:justify-center` only takes effect once the row is narrower than
-            the track — with 3 cards it fits and centres on a normal desktop
-            width; on anything narrower the cards overflow and this has no
-            effect, so the native scroll/snap behaviour is unchanged there. */}
+        {/* No `justify-center` here. It used to centre a row that fitted, but
+            the card is now a share of the track (see work-card.tsx), so three
+            cards fill the row exactly and any fourth overflows. Centring an
+            overflowing flex row splits the overhang to BOTH sides: the first
+            card gets cut off before the scroll origin and cannot be scrolled
+            back to. Measured at 2560 it left two cards whole instead of three
+            and halved the scrollable range. */}
         <div
           ref={trackRef}
-          className="mt-12 flex snap-x snap-mandatory items-stretch gap-6 overflow-x-auto pb-4 [scrollbar-width:none] lg:justify-center [&::-webkit-scrollbar]:hidden"
+          className="mt-12 flex snap-x snap-mandatory items-stretch gap-6 overflow-x-auto pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           style={{
             paddingInlineStart: "var(--shell-padding)",
             paddingInlineEnd: "var(--shell-padding)",
+            /* Without this the first card sits flush against the window edge,
+               72–96px left of the heading above it. `snap-mandatory` aligns a
+               card's start edge to the SNAPPORT, and the snapport ignores the
+               container's own padding — so the browser scrolled the track by
+               exactly the gutter to satisfy the snap. `scroll-padding` is what
+               moves the snapport inward, and the row lines up with the rest of
+               the page again. */
+            scrollPaddingInline: "var(--shell-padding)",
           }}
         >
           {teasers.map((item) => (
