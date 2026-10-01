@@ -7,9 +7,28 @@ import { teaserItems } from "@/lib/work";
 import { Reveal } from "./reveal";
 import { WorkCard } from "./work-card";
 
-function cardStep(track: HTMLDivElement) {
+/**
+ * Everything the track's controls need, measured rather than assumed.
+ *
+ * `pages` is the fix for a real bug: the dots used to be one per CARD, and
+ * `scrollTo(i * step)` for the later ones ran past the end of the scroll
+ * range and clamped. On a 27" monitor the track holds four cards at once and
+ * can only travel 528px, so dots two through five all landed in the same
+ * place and four of the five looked dead.
+ *
+ * A page is one card step. The last page is wherever the scroll runs out,
+ * which is normally short of a full step — it counts as its own page only
+ * when it is further than a gutter from the one before, otherwise two dots
+ * sit a few pixels apart and both read as broken.
+ */
+function metrics(track: HTMLDivElement) {
   const card = track.querySelector<HTMLElement>("[data-card]");
-  return card ? card.offsetWidth + 24 : track.clientWidth;
+  const step = card ? card.offsetWidth + 24 : track.clientWidth;
+  const maxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
+  const whole = Math.floor(maxScroll / step);
+  const stub = maxScroll - whole * step;
+  const pages = maxScroll <= 4 ? 1 : whole + (stub > 24 ? 2 : 1);
+  return { step, maxScroll, pages };
 }
 
 /**
@@ -23,14 +42,17 @@ export function Work() {
   const [atStart, setAtStart] = useState(true);
   const [atEnd, setAtEnd] = useState(false);
   const [active, setActive] = useState(0);
+  const [pages, setPages] = useState(1);
 
   const sync = useCallback(() => {
     const el = trackRef.current;
     if (!el) return;
+    const { step, maxScroll, pages: count } = metrics(el);
     setAtStart(el.scrollLeft <= 4);
     // Sub-pixel widths make an exact comparison unreliable; allow a small slop.
-    setAtEnd(el.scrollLeft >= el.scrollWidth - el.clientWidth - 4);
-    setActive(Math.round(el.scrollLeft / cardStep(el)));
+    setAtEnd(el.scrollLeft >= maxScroll - 4);
+    setPages(count);
+    setActive(Math.min(Math.round(el.scrollLeft / step), count - 1));
   }, []);
 
   useEffect(() => {
@@ -48,13 +70,16 @@ export function Work() {
   const scrollBy = (dir: 1 | -1) => {
     const el = trackRef.current;
     if (!el) return;
-    el.scrollBy({ left: dir * cardStep(el), behavior: "smooth" });
+    el.scrollBy({ left: dir * metrics(el).step, behavior: "smooth" });
   };
 
   const scrollToIndex = (i: number) => {
     const el = trackRef.current;
     if (!el) return;
-    el.scrollTo({ left: i * cardStep(el), behavior: "smooth" });
+    // Clamped: the last page is short of a full step, and an unclamped
+    // target there scrolls to the same place as the one before it.
+    const { step, maxScroll } = metrics(el);
+    el.scrollTo({ left: Math.min(i * step, maxScroll), behavior: "smooth" });
   };
 
   return (
@@ -129,24 +154,20 @@ export function Work() {
           ))}
         </div>
 
-        {/* Always rendered, which is a deliberate exception rather than an
-            oversight. These used to appear only once the row actually
-            overflowed, on the argument that a pager promising pages that do
-            not exist is dishonest. Three 420px cards fit whole from about
-            1600px wide, so on a large monitor the dots vanished and the
-            section stopped reading as something you could page through at
-            all — which is its own kind of wrong, and the one a visitor
-            actually notices. Asked for explicitly; the arrows above still
-            disable themselves honestly at either end. */}
-        {teasers.length > 1 && (
+        {/* One dot per PAGE, not per card. The old version rendered
+            `teasers.length` of them, which on a wide monitor meant five dots
+            over two reachable positions — three of them scrolled nowhere and
+            looked broken. `metrics()` counts what the track can actually stop
+            on; when that is one, there is nothing to page and no dots. */}
+        {pages > 1 && (
           <div className="mt-8 flex justify-center gap-2" role="tablist">
-            {teasers.map((item, i) => (
+            {Array.from({ length: pages }, (_, i) => (
               <button
-                key={item.slug}
+                key={i}
                 type="button"
                 role="tab"
                 aria-selected={i === active}
-                aria-label={`Go to project ${i + 1}`}
+                aria-label={`Go to slide ${i + 1}`}
                 onClick={() => scrollToIndex(i)}
                 className={`h-2 rounded-full transition-all duration-300 ${
                   i === active ? "bg-carbon w-6" : "bg-ash w-2"
