@@ -7,6 +7,10 @@ import { teaserItems } from "@/lib/work";
 import { Reveal } from "./reveal";
 import { WorkCard } from "./work-card";
 
+/** Past this many pixels a press is a drag, and the click it would otherwise
+ *  fire on the card underneath is swallowed. */
+const DRAG_SLOP = 6;
+
 /**
  * Everything the track's controls need, measured rather than assumed.
  *
@@ -32,6 +36,105 @@ function metrics(track: HTMLDivElement) {
 }
 
 /**
+ * Click-and-drag paging, mouse only.
+ *
+ * A trackpad and a touchscreen already scroll this natively; the mouse is the
+ * one pointer with no gesture for a horizontal list. Three things have to be
+ * suspended for the duration of a drag, each fighting it differently:
+ * mandatory snapping re-snaps on every write to `scrollLeft`; the cards hold
+ * `<Image>`, so pressing one starts the browser's own drag-and-drop; and a
+ * drag that ends over a card would otherwise open that project.
+ *
+ * The click guard is a flag, not a one-shot listener. A drag does not always
+ * produce a click to consume — end it outside the track and the browser may
+ * fire none — and a one-shot listener left armed eats the next genuine click
+ * on a card. Clearing the flag on the next press is the moment that is
+ * certainly safe.
+ */
+function useDragScroll(ref: React.RefObject<HTMLDivElement | null>) {
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    let startX = 0;
+    let startLeft = 0;
+    let dragging = false;
+    let moved = 0;
+    let suppressClick = false;
+
+    const onDown = (e: PointerEvent) => {
+      if (e.pointerType !== "mouse" || e.button !== 0) return;
+      suppressClick = false;
+      dragging = true;
+      moved = 0;
+      startX = e.clientX;
+      startLeft = el.scrollLeft;
+      el.style.scrollSnapType = "none";
+      el.style.cursor = "grabbing";
+    };
+
+    const onMove = (e: PointerEvent) => {
+      if (!dragging) return;
+      const dx = e.clientX - startX;
+      moved = Math.max(moved, Math.abs(dx));
+      if (moved > DRAG_SLOP) {
+        // Captured only once the press has become a drag, so a plain click
+        // still reaches the link.
+        el.setPointerCapture(e.pointerId);
+        el.scrollLeft = startLeft - dx;
+      }
+    };
+
+    const onUp = () => {
+      if (!dragging) return;
+      dragging = false;
+      el.style.cursor = "";
+      el.style.scrollSnapType = "";
+      if (moved > DRAG_SLOP) {
+        suppressClick = true;
+        // Snapping is back on, but the browser only applies it on the next
+        // scroll, so settle onto the nearest card explicitly.
+        const { step, maxScroll } = metrics(el);
+        el.scrollTo({
+          left: Math.min(Math.round(el.scrollLeft / step) * step, maxScroll),
+          behavior: "smooth",
+        });
+      }
+    };
+
+    /* Capture phase, so it lands before React's delegated dispatch.
+       `preventDefault` only — next/link checks `defaultPrevented` and stops,
+       which is all that is needed. No `stopPropagation`: the delegated anchor
+       handler in smooth-scroll.tsx listens on `document` and has already run,
+       and the note there is explicit that nothing in this chain may stop
+       propagation. */
+    const onClick = (e: MouseEvent) => {
+      if (!suppressClick) return;
+      suppressClick = false;
+      e.preventDefault();
+    };
+
+    const onDragStart = (e: Event) => e.preventDefault();
+
+    el.addEventListener("click", onClick, true);
+    el.addEventListener("pointerdown", onDown);
+    el.addEventListener("pointermove", onMove);
+    el.addEventListener("pointerup", onUp);
+    el.addEventListener("pointercancel", onUp);
+    el.addEventListener("dragstart", onDragStart);
+
+    return () => {
+      el.removeEventListener("click", onClick, true);
+      el.removeEventListener("pointerdown", onDown);
+      el.removeEventListener("pointermove", onMove);
+      el.removeEventListener("pointerup", onUp);
+      el.removeEventListener("pointercancel", onUp);
+      el.removeEventListener("dragstart", onDragStart);
+    };
+  }, [ref]);
+}
+
+/**
  * The homepage teaser. It shows the cards in `work.teaser`, not the full
  * index — the index owns the portfolio, and this section links to it. A
  * four-product engagement is one card, not four.
@@ -54,6 +157,8 @@ export function Work() {
     setPages(count);
     setActive(Math.min(Math.round(el.scrollLeft / step), count - 1));
   }, []);
+
+  useDragScroll(trackRef);
 
   useEffect(() => {
     const el = trackRef.current;
@@ -135,7 +240,9 @@ export function Work() {
             and halved the scrollable range. */}
         <div
           ref={trackRef}
-          className="mt-12 flex snap-x snap-mandatory items-stretch gap-6 overflow-x-auto pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className={`mt-12 flex snap-x snap-mandatory items-stretch gap-6 overflow-x-auto pb-4 select-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
+            pages > 1 ? "cursor-grab" : ""
+          }`}
           style={{
             paddingInlineStart: "var(--shell-padding)",
             paddingInlineEnd: "var(--shell-padding)",
