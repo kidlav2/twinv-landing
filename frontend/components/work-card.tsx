@@ -71,11 +71,17 @@ export function WorkCard({ item }: { item: WorkCase }) {
          arrows had nothing left to reveal. `100%` is the track's content
          box and 48px is the two `gap-6` gutters between three cards.
 
-         `max()` keeps the old 420px as a floor: the share alone drops to
-         291px at the `lg` breakpoint, which is narrower than the card was
-         ever designed for. Below that floor fewer than three fit and the
-         row simply scrolls, which is the right answer on a small screen. */
-      className="reveal work-card work-card-teaser bg-paper rounded-card flex w-[85vw] shrink-0 snap-start flex-col overflow-hidden sm:w-[420px] lg:w-[max(420px,calc((100%-48px)/3))]"
+         `clamp()` fences the share at both ends. The floor is the old 420px:
+         the share alone drops to 291px at the `lg` breakpoint, narrower than
+         the card was ever designed for. The ceiling is 560px, because the
+         share keeps growing with the window and hits 773px on a 27" monitor
+         — exactly three cards, but each one nearly twice the size the card
+         was drawn at.
+         The ceiling costs something and it is a deliberate trade: past about
+         2100px the row fits a fourth card again. That is the honest price of
+         capping the width, and it is why the teaser wants five entries
+         rather than four — see `work.teaser` in lib/content.ts. */
+      className="reveal work-card work-card-teaser bg-paper rounded-card flex w-[85vw] shrink-0 snap-start flex-col overflow-hidden sm:w-[420px] lg:w-[clamp(420px,calc((100%-48px)/3),560px)]"
     >
       <div className="work-card-pin">
         <div className="work-card-still">

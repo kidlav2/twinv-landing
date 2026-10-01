@@ -232,7 +232,13 @@ export const work = {
    * Homepage `#work` track. Deliberately not `items` — otherwise a
    * four-product engagement would be the whole teaser.
    */
-  teaser: ["velocult", "arrivalio", "thechistka-crm", "mr-oktoberfest"],
+  teaser: [
+    "velocult",
+    "petpassport",
+    "arrivalio",
+    "thechistka-crm",
+    "mr-oktoberfest",
+  ],
   /**
    * Written but not published. A slug here is filtered out of `findCase`,
    * the `/work` index and `generateStaticParams` (see lib/work.ts), so the
